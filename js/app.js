@@ -35,8 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
     ),
   };
 
-  // Add Roadmap layer as default
-  let currentLayer = tileLayers.roadmap;
+  // Add Hybrid layer as default (Satellite map with labels)
+  let currentLayer = tileLayers.hybrid;
   currentLayer.addTo(map);
 
   // 3. Handle Floating Layer Switcher Buttons
@@ -57,22 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 4. Polygon Styling definitions
+  // 4. Polygon Styling definitions (Vibrant High-Contrast Coral & Gold theme for max visibility on Satellite)
   const defaultPolygonStyle = {
-    color: "#10b981", // Emerald green
-    weight: 3.5,
-    opacity: 0.9,
-    fillColor: "#10b981",
-    fillOpacity: 0.12,
+    color: "#ff4d4d", // Vibrant Neon Coral Red
+    weight: 4.0,      // Thicker and more prominent
+    opacity: 0.95,
+    fillColor: "#ff4d4d",
+    fillOpacity: 0.06, // Faint premium red overlay, highly transparent to view satellite layers clearly
     className: "commune-polygon",
   };
 
   const hoverPolygonStyle = {
-    color: "#4f46e5", // Indigo
-    weight: 4.5,
-    opacity: 1,
-    fillColor: "#4f46e5",
-    fillOpacity: 0.18,
+    color: "#ff9f0a", // Luminous Neon Gold
+    weight: 5.5,      // Even thicker on hover for tactile responsiveness
+    opacity: 1.0,
+    fillColor: "#ff9f0a",
+    fillOpacity: 0.14,
     className: "commune-polygon hover",
   };
 
@@ -126,23 +126,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Bootstrap data loading (resilient against local CORS)
-  if (typeof CAU_KE_GEOJSON !== "undefined") {
-    loadGeoJSON(CAU_KE_GEOJSON);
-  } else {
-    // Fallback in case they serve it via a local web server (http/https)
-    fetch("map data/Cầu Kè.geojson")
-      .then((response) => response.json())
-      .then((data) => {
-        loadGeoJSON(data);
-      })
-      .catch((err) => {
-        console.error("Lỗi khi tải GeoJSON từ file local: ", err);
-        alert(
-          "Không thể tải dữ liệu bản đồ. Vui lòng đảm bảo data.js được tải chính xác."
-        );
-      });
-  }
+  // Load GeoJSON data directly via Fetch
+  fetch("map data/Cầu Kè.geojson")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      loadGeoJSON(data);
+    })
+    .catch((err) => {
+      console.error("Lỗi khi tải GeoJSON: ", err);
+      alert(
+        "Không thể tải dữ liệu bản đồ từ 'map data/Cầu Kè.geojson'.\n\n" +
+        "Lưu ý: Nếu bạn đang mở trực tiếp file HTML (giao thức file://), trình duyệt sẽ chặn yêu cầu tải file này vì lý do bảo mật (CORS). " +
+        "Vui lòng chạy ứng dụng thông qua một Web Server cục bộ (như VS Code Live Server, http-server, hoặc các công cụ tương tự)."
+      );
+    });
 
   // 6. Sidebar Controls & Backdrop
   const sidebar = document.getElementById("sidebar");
@@ -153,7 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function openSidebar(props) {
     sidebar.classList.add("active");
     if (backdrop) backdrop.classList.add("active");
-    
+
     // Change toggle button icon to close
     sidebarToggle.querySelector("i").className = "fas fa-times";
     sidebarToggle.style.display = "none"; // Hide floating button when sidebar is active to clean up UI
@@ -176,9 +178,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Table elements
     document.getElementById("info-type").innerText = props.loai || "Xã";
-    document.getElementById("info-level").innerText = `Cấp ${
-      props.cap || "2"
-    }`;
+    document.getElementById("info-level").innerText = `Cấp ${props.cap || "2"
+      }`;
     document.getElementById("info-stt").innerText = props.stt || "--";
     document.getElementById("info-merger").innerText =
       props.sap_nhap || "Không có";
@@ -206,9 +207,23 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
     }
+
+    // Tự động phát thuyết minh giọng nói giới thiệu thông tin xã
+    speakCommuneInfo(props);
   }
 
   function closeSidebar() {
+    // Dừng phát âm thanh giới thiệu khi đóng bảng thông tin
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
+      const ttsBtn = document.getElementById("tts-btn");
+      if (ttsBtn) ttsBtn.classList.remove("speaking");
+    }
+    if (resumeInterval) {
+      clearInterval(resumeInterval);
+      resumeInterval = null;
+    }
+
     sidebar.classList.remove("active");
     if (backdrop) {
       backdrop.classList.remove("active");
@@ -230,7 +245,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   closeSidebarBtn.addEventListener("click", closeSidebar);
-  
+
   if (backdrop) {
     backdrop.addEventListener("click", closeSidebar);
   }
@@ -271,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Chỉ cho phép kéo đi xuống dưới (cử chỉ đóng)
     if (diffY > 0) {
       sidebar.style.transform = `translateY(${diffY}px)`;
-      
+
       // Giảm dần độ mờ lớp phủ nền khi kéo xuống
       const sheetHeight = window.innerHeight * 0.65;
       const percentOpen = Math.max(0, 1 - (diffY / sheetHeight));
@@ -285,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!isDragging) return;
     isDragging = false;
     sidebar.style.transition = ""; // Khôi phục smooth CSS transitions ban đầu
-    
+
     const diffY = currentY - startY;
 
     // Nếu khoảng kéo lớn hơn 120px, kích hoạt đóng hoàn toàn Bottom Sheet
@@ -342,5 +357,132 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
     window.requestAnimationFrame(step);
+  }
+
+  // 8. Text-to-Speech (TTS) Voice Introduction for the Commune
+  let speechUtterance = null;
+  let currentProperties = null;
+  let resumeInterval = null;
+
+  function speakCommuneInfo(props) {
+    if (!window.speechSynthesis) return;
+
+    // Dừng phát âm thanh hiện tại và dọn dẹp interval cũ nếu có
+    window.speechSynthesis.cancel();
+    if (resumeInterval) {
+      clearInterval(resumeInterval);
+      resumeInterval = null;
+    }
+
+    currentProperties = props; // Lưu trữ để phát lại thủ công nếu cần
+
+    const name = props.ten || "Cầu Kè";
+    const area = props.dien_tich_km2 || "54.12";
+    const areaSpoken = area.toString().replace(/\./g, ",");
+    const pop = props.dan_so || "35491";
+    const popSpoken = pop.toString().replace(/\./g, "");
+    const density = props.mat_do_km2 || "655.78";
+    const densitySpoken = density.toString().replace(/\./g, ",");
+
+    const loai = props.loai || "Xã";
+    const cap = props.cap || "2";
+    const stt = props.stt || "50";
+
+    const secretary = props.bi_thu || "Trần Phong Ba";
+    const chairman = props.chu_tich || "Lê Hoàng Lam";
+
+    let sapNhapSpoken = "";
+    if (props.sap_nhap) {
+      sapNhapSpoken = props.sap_nhap
+        .replace(/Cầu Kè\s*\(thị trấn\s*\)/gi, "thị trấn Cầu Kè")
+        .replace(/Hòa Ân/gi, "xã Hòa Ân")
+        .replace(/Châu Điền/gi, "xã Châu Điền");
+    } else {
+      sapNhapSpoken = "Không có khu vực nào";
+    }
+
+    // Xây dựng đoạn văn thuyết minh hành chính tự nhiên, đầy đủ thông tin từ Sidebar (loại bỏ số điện thoại và mã hành chính theo yêu cầu)
+    const introText = `Chào mừng bạn đến với xã ${name}. Đây là đơn vị hành chính cấp xã thuộc huyện Cầu Kè, tỉnh Trà Vinh. Xã được xếp vào phân loại hành chính là ${loai} cấp ${cap}. 
+
+    Về số liệu địa lý, xã ${name} có diện tích tự nhiên là ${areaSpoken} ki-lô-mét vuông. Quy mô dân số của xã đạt ${popSpoken} người, với mật độ dân cư trung bình tương ứng là ${densitySpoken} người trên một ki-lô-mét vuông. Các khu vực giáp ranh hoặc sáp nhập của xã bao gồm: ${sapNhapSpoken}. 
+
+    Về ban lãnh đạo chủ chốt của địa phương hiện tại, Bí thư Đảng ủy xã là ông ${secretary}, và Chủ tịch Ủy ban nhân dân xã là ông ${chairman}.`;
+
+    speechUtterance = new SpeechSynthesisUtterance(introText);
+    speechUtterance.lang = "vi-VN";
+    speechUtterance.rate = 0.95; // Tốc độ đọc vừa phải, mạch lạc, dễ nghe
+    speechUtterance.pitch = 1.05; // Tăng cao độ nhẹ để tạo giọng nữ trẻ trung, ấm áp và truyền cảm
+
+    // Tìm kiếm giọng đọc tiếng Việt chất lượng tốt nhất
+    const voices = window.speechSynthesis.getVoices();
+    const viVoice = voices.find(v => v.lang.includes("vi-VN") || v.lang.includes("vi_VN"));
+    if (viVoice) {
+      speechUtterance.voice = viVoice;
+    }
+
+    const ttsBtn = document.getElementById("tts-btn");
+    const ttsIcon = ttsBtn ? ttsBtn.querySelector("i") : null;
+
+    speechUtterance.onstart = () => {
+      if (ttsBtn) ttsBtn.classList.add("speaking");
+      if (ttsIcon) ttsIcon.className = "fas fa-volume-up";
+
+      // Khởi động interval để giữ cho bộ đọc không bị ngắt quãng giữa chừng trên Chrome
+      resumeInterval = setInterval(() => {
+        if (window.speechSynthesis && window.speechSynthesis.speaking) {
+          window.speechSynthesis.resume();
+        } else {
+          clearInterval(resumeInterval);
+          resumeInterval = null;
+        }
+      }, 5000);
+    };
+
+    speechUtterance.onend = () => {
+      if (ttsBtn) ttsBtn.classList.remove("speaking");
+      if (ttsIcon) ttsIcon.className = "fas fa-volume-up";
+      if (resumeInterval) {
+        clearInterval(resumeInterval);
+        resumeInterval = null;
+      }
+    };
+
+    speechUtterance.onerror = () => {
+      if (ttsBtn) ttsBtn.classList.remove("speaking");
+      if (ttsIcon) ttsIcon.className = "fas fa-volume-up";
+      if (resumeInterval) {
+        clearInterval(resumeInterval);
+        resumeInterval = null;
+      }
+    };
+
+    window.speechSynthesis.speak(speechUtterance);
+  }
+
+  // Tải trước danh sách giọng đọc đối với các trình duyệt tải bất đồng bộ như Chrome
+  if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = () => {
+      window.speechSynthesis.getVoices();
+    };
+  }
+
+  // Thiết lập trình bắt sự kiện click cho nút loa phát thanh điều khiển thủ công
+  const ttsBtn = document.getElementById("tts-btn");
+  if (ttsBtn) {
+    ttsBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (!window.speechSynthesis) return;
+
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        ttsBtn.classList.remove("speaking");
+        if (resumeInterval) {
+          clearInterval(resumeInterval);
+          resumeInterval = null;
+        }
+      } else if (currentProperties) {
+        speakCommuneInfo(currentProperties);
+      }
+    });
   }
 });

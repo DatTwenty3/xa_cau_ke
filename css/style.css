@@ -246,6 +246,51 @@ body {
   font-weight: 700;
 }
 
+/* TTS Speech Audio Button */
+.tts-speech-btn {
+  background: var(--accent-emerald-glow);
+  border: 1px solid rgba(5, 150, 105, 0.25);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--accent-emerald);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  outline: none;
+}
+
+.tts-speech-btn i {
+  font-size: 16px;
+}
+
+.tts-speech-btn:hover {
+  background: var(--accent-emerald);
+  color: #fff;
+  border-color: var(--accent-emerald);
+  transform: scale(1.08);
+}
+
+.tts-speech-btn.speaking {
+  animation: pulseSpeech 1.2s infinite ease-in-out;
+  background: var(--accent-indigo-glow);
+  color: var(--accent-indigo);
+  border-color: rgba(79, 70, 229, 0.3);
+}
+
+@keyframes pulseSpeech {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+  }
+  50% {
+    transform: scale(1.08);
+    box-shadow: 0 0 12px 4px rgba(79, 70, 229, 0.15);
+  }
+}
+
 /* Sidebar Body Scroll */
 .sidebar-content {
   flex: 1;
@@ -622,12 +667,27 @@ body {
 
 /* Interactive Polygon custom style rules */
 .commune-polygon {
-  filter: drop-shadow(0 0 6px var(--accent-emerald-glow));
+  filter: drop-shadow(0 0 8px rgba(255, 75, 75, 0.45));
   transition: all 0.3s ease;
 }
 
 .commune-polygon:hover {
-  filter: drop-shadow(0 0 12px var(--accent-indigo-glow));
+  filter: drop-shadow(0 0 14px rgba(255, 160, 10, 0.65));
+}
+
+/* Remove Leaflet focus outline/square box around polygon when selected */
+.leaflet-interactive {
+  outline: none !important;
+}
+
+.leaflet-interactive:focus,
+path.leaflet-interactive:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.leaflet-container :focus {
+  outline: none !important;
 }
 
 /* Responsive Styles */

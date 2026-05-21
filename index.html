@@ -56,7 +56,12 @@
     <div class="sidebar-content">
       <!-- Identity card -->
       <div class="info-title-group">
-        <h1 id="commune-name">Xã Cầu Kè</h1>
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px;">
+          <h1 id="commune-name" style="margin: 0;">Xã Cầu Kè</h1>
+          <button id="tts-btn" class="tts-speech-btn" title="Nghe giới thiệu bằng giọng nói">
+            <i class="fas fa-volume-up"></i>
+          </button>
+        </div>
         <div class="commune-code">Mã hành chính: <span id="commune-code-val">30050</span></div>
       </div>
       
@@ -142,10 +147,10 @@
 
   <!-- Floating Custom Map Layer Controller -->
   <div class="map-layer-control">
-    <button class="layer-btn" data-layer="hybrid" title="Ảnh vệ tinh kết hợp nhãn đường đi">
+    <button class="layer-btn active" data-layer="hybrid" title="Ảnh vệ tinh kết hợp nhãn đường đi">
       <i class="fas fa-earth-asia"></i> <span>Google Vệ Tinh</span>
     </button>
-    <button class="layer-btn active" data-layer="roadmap" title="Bản đồ đường đi Google Maps tiêu chuẩn">
+    <button class="layer-btn" data-layer="roadmap" title="Bản đồ đường đi Google Maps tiêu chuẩn">
       <i class="fas fa-road"></i> <span>Google Bản Đồ</span>
     </button>
     <button class="layer-btn" data-layer="terrain" title="Bản đồ địa hình Google">
@@ -162,8 +167,7 @@
   <!-- Map element takes full screen behind panels -->
   <main id="map"></main>
 
-  <!-- Core Scripts (Data first, then Controller logic) -->
-  <script src="js/data.js"></script>
+  <!-- Core Scripts (Controller logic) -->
   <script src="js/app.js"></script>
 </body>
 </html>
