@@ -410,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     speechUtterance = new SpeechSynthesisUtterance(introText);
     speechUtterance.lang = "vi-VN";
-    speechUtterance.rate = 0.95; // Tốc độ đọc vừa phải, mạch lạc, dễ nghe
+    speechUtterance.rate = 1.2; // Tốc độ đọc vừa phải, mạch lạc, dễ nghe
     speechUtterance.pitch = 1.05; // Tăng cao độ nhẹ để tạo giọng nữ trẻ trung, ấm áp và truyền cảm
 
     // Tìm kiếm giọng đọc tiếng Việt chất lượng tốt nhất
