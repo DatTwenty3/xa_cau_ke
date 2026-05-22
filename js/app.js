@@ -91,10 +91,18 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   let hamletsLayerGroup = L.layerGroup().addTo(map);
+  let hamletLabelsLayerGroup = L.layerGroup().addTo(map);
+  let hamletGlowLayerGroup = L.layerGroup().addTo(map);
   let selectedHamletProperties = null;
+  let selectedHamletName = null;
+  let hamletBlinkTimer = null;
+  let hamletBlinkBright = true;
+  const HAMLET_BLINK_INTERVAL_MS = 470;
+  let hamletGlowLayer = null;
   const hamletLayersByName = {};
   const hamletBoundsByName = {};
-  let suppressPopupCloseZoomReset = false;
+  const hamletFeaturesByName = {};
+  const hamletFeatureLayersByName = {};
   let zoomToHamletTimer = null;
 
   function getHamletMapPadding() {
@@ -105,9 +113,11 @@ document.addEventListener("DOMContentLoaded", () => {
         paddingBottomRight: L.point(20, window.innerHeight * 0.65 + 15),
       };
     }
+    const panelW = Math.min(560, window.innerWidth - 48);
+    const panelH = Math.min(580, window.innerHeight * 0.75);
     return {
       paddingTopLeft: L.point(50, 50),
-      paddingBottomRight: L.point(50, 50),
+      paddingBottomRight: L.point(panelW + 36, panelH + 36),
     };
   }
 
@@ -174,41 +184,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return props.sap_nhap_tu;
   }
 
-  function buildMergerTagsHTML(props) {
-    if (!isHamletMerged(props)) {
-      return `<span class="popup-merger-tag popup-merger-tag-keep"><i class="fas fa-circle-check"></i> Giữ nguyên</span>`;
-    }
-    return getMergerSourceNames(props)
-      .map(
-        (src) =>
-          `<span class="popup-merger-tag"><i class="fas fa-compress-arrows-alt"></i> ${src}</span>`
-      )
-      .join("");
-  }
-
-  const HAMLET_INFO_OFFSET_RIGHT = {
-    "Ấp Trà Kháo": 0.1,
-  };
-
-  function getHamletInfoOffsetRatio(hamletName) {
-    return HAMLET_INFO_OFFSET_RIGHT[hamletName] || 0;
-  }
-
-  function getHamletPopupOffset(hamletName) {
-    const ratio = getHamletInfoOffsetRatio(hamletName);
-    return L.point(Math.round(window.innerWidth * ratio), -10);
-  }
-
-  function applyHamletInfoPanelOffset(hamletName) {
-    const ratio = getHamletInfoOffsetRatio(hamletName);
-    sidebar.classList.toggle("hamlet-info-offset-right", ratio > 0);
-    if (ratio > 0) {
-      sidebar.style.setProperty("--hamlet-info-offset-right", `${ratio * 100}%`);
-    } else {
-      sidebar.style.removeProperty("--hamlet-info-offset-right");
-    }
-  }
-
   function renderMergerTags(container, props) {
     container.innerHTML = "";
     if (!isHamletMerged(props)) {
@@ -255,6 +230,45 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
+  const HAMLET_LABEL_OFFSET_X = {
+    "Ấp Trà Kháo": 0.02,
+  };
+  const hamletLabelMarkersByName = {};
+
+  function getLabelLatLng(hamletName, bounds) {
+    const center = bounds.getCenter();
+    const ratio = HAMLET_LABEL_OFFSET_X[hamletName];
+    if (!ratio) return center;
+    const point = map.latLngToContainerPoint(center);
+    return map.containerPointToLatLng(
+      L.point(point.x + window.innerWidth * ratio, point.y)
+    );
+  }
+
+  function updateOffsetHamletLabels() {
+    Object.keys(HAMLET_LABEL_OFFSET_X).forEach((name) => {
+      const marker = hamletLabelMarkersByName[name];
+      const bounds = hamletBoundsByName[name];
+      if (marker && bounds) {
+        marker.setLatLng(getLabelLatLng(name, bounds));
+      }
+    });
+  }
+
+  function createHamletLabelMarker(hamletName, bounds) {
+    const marker = L.marker(getLabelLatLng(hamletName, bounds), {
+      icon: L.divIcon({
+        className: "hamlet-map-label-icon",
+        html: `<span class="hamlet-map-label">${formatHamletName(hamletName)}</span>`,
+      }),
+      interactive: false,
+      keyboard: false,
+      zIndexOffset: 1000,
+    });
+    hamletLabelMarkersByName[hamletName] = marker;
+    return marker;
+  }
+
   function getHamletHoverStyle(name) {
     const color = hamletColors[name] || "#ff4d4d";
     return {
@@ -265,6 +279,122 @@ document.addEventListener("DOMContentLoaded", () => {
       fillOpacity: 0.45,
       className: "hamlet-polygon hover",
     };
+  }
+
+  function stopHamletBlink() {
+    if (hamletBlinkTimer) {
+      clearInterval(hamletBlinkTimer);
+      hamletBlinkTimer = null;
+    }
+    if (hamletGlowLayer) {
+      hamletGlowLayerGroup.removeLayer(hamletGlowLayer);
+      hamletGlowLayer = null;
+    }
+  }
+
+  function getHamletBlinkStyle(name, bright) {
+    const color = hamletColors[name] || "#ff4d4d";
+    if (bright) {
+      return {
+        color: "#ffffff",
+        weight: 6,
+        opacity: 1,
+        fillColor: color,
+        fillOpacity: 0.4,
+        className: "hamlet-polygon hamlet-polygon-selected",
+      };
+    }
+    return {
+      color: color,
+      weight: 2.5,
+      opacity: 0.25,
+      fillColor: color,
+      fillOpacity: 0.18,
+      className: "hamlet-polygon hamlet-polygon-selected",
+    };
+  }
+
+  function updateHamletGlowRing(hamletName, bright) {
+    const feature = hamletFeaturesByName[hamletName];
+    if (!feature) return;
+
+    const color = hamletColors[hamletName] || "#ff4d4d";
+    const glowStyle = {
+      color: bright ? "#ffffff" : color,
+      weight: bright ? 14 : 5,
+      opacity: bright ? 1 : 0.35,
+      fillOpacity: 0,
+      fill: false,
+      className: "hamlet-glow-ring",
+    };
+
+    if (!hamletGlowLayer || hamletGlowLayer._hamletName !== hamletName) {
+      if (hamletGlowLayer) hamletGlowLayerGroup.removeLayer(hamletGlowLayer);
+      hamletGlowLayer = L.geoJSON(feature, {
+        interactive: false,
+        style: () => glowStyle,
+      });
+      hamletGlowLayer._hamletName = hamletName;
+      hamletGlowLayer.addTo(hamletGlowLayerGroup);
+    } else {
+      hamletGlowLayer.eachLayer((l) => l.setStyle(glowStyle));
+    }
+  }
+
+  function applyHamletBlinkFrame() {
+    if (!selectedHamletName) return;
+    const name = selectedHamletName;
+    const feature = hamletFeaturesByName[name];
+    const pathLayer = hamletFeatureLayersByName[name];
+
+    updateHamletGlowRing(name, hamletBlinkBright);
+
+    const style = getHamletBlinkStyle(name, hamletBlinkBright);
+    if (pathLayer) {
+      pathLayer.setStyle(style);
+      pathLayer.bringToFront();
+    }
+    const group = hamletLayersByName[name];
+    if (group) {
+      group.eachLayer((l) => {
+        if (l !== pathLayer) l.setStyle(style);
+      });
+    }
+    if (hamletGlowLayer) hamletGlowLayer.bringToFront();
+
+    hamletBlinkBright = !hamletBlinkBright;
+  }
+
+  function startHamletBlink(hamletName) {
+    stopHamletBlink();
+    selectedHamletName = hamletName;
+    hamletBlinkBright = true;
+    applyHamletBlinkFrame();
+    hamletBlinkTimer = setInterval(applyHamletBlinkFrame, HAMLET_BLINK_INTERVAL_MS);
+  }
+
+  function clearHamletSelection() {
+    stopHamletBlink();
+    const prev = selectedHamletName;
+    if (!prev) return;
+    const feature = hamletFeaturesByName[prev];
+    const pathLayer = hamletFeatureLayersByName[prev];
+    if (pathLayer && feature) {
+      pathLayer.setStyle(getHamletStyle(feature));
+    }
+    const group = hamletLayersByName[prev];
+    if (group && feature) {
+      group.eachLayer((l) => {
+        if (l !== pathLayer) l.setStyle(getHamletStyle(feature));
+      });
+    }
+    selectedHamletName = null;
+  }
+
+  function selectHamlet(hamletName) {
+    clearHamletSelection();
+    if (!hamletFeatureLayersByName[hamletName]) return;
+    startHamletBlink(hamletName);
   }
 
   // 5. Setup Boundaries and Loading
@@ -282,12 +412,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const layer = L.geoJSON(data, {
           style: getHamletStyle,
           onEachFeature: (feature, featureLayer) => {
-            // Bind tooltips
+            hamletFeaturesByName[hamletName] = feature;
+            hamletFeatureLayersByName[hamletName] = featureLayer;
+
             featureLayer.bindTooltip(
-              `<strong>${formatHamletName(hamletName)}</strong><br><span style="font-size: 12.5px; opacity: 0.85; margin-top: 4px; display: inline-block;"><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
+              `<span><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
               {
                 permanent: false,
-                direction: "center",
+                direction: "top",
                 className: "custom-map-tooltip",
                 opacity: 0.95,
               }
@@ -295,118 +427,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Hover effects
             featureLayer.on("mouseover", (e) => {
+              if (selectedHamletName === hamletName) return;
               const l = e.target;
               l.setStyle(getHamletHoverStyle(hamletName));
               l.bringToFront();
             });
 
             featureLayer.on("mouseout", (e) => {
-              const l = e.target;
-              l.setStyle(getHamletStyle(feature));
+              if (selectedHamletName === hamletName) return;
+              e.target.setStyle(getHamletStyle(feature));
             });
 
             // Click event: Mở thông tin Ấp
             featureLayer.on("click", () => {
-              const isMobile = window.innerWidth <= 768;
-
-              if (isMobile) {
-                openHamletSidebar(feature.properties);
-              } else {
-                // Trên máy tính: Hiển thị Popup Glassmorphism ngay trên bản đồ
-                closeSidebar();
-                suppressPopupCloseZoomReset = true;
-                map.closePopup();
-                suppressPopupCloseZoomReset = false;
-
-                const props = feature.properties;
-                const name = formatHamletName(props.ten || "Chưa rõ tên");
-                const areaHa = parseFloat(props.dien_tich_ha || 0);
-                const popVal = parseInt(props.dan_so || 0);
-                const hoVal = parseInt(props.so_ho || 0);
-                
-                const areaFormatted = areaHa.toLocaleString("vi-VN", { minimumFractionDigits: 2 });
-                const popFormatted = popVal.toLocaleString("vi-VN");
-                const hoFormatted = hoVal.toLocaleString("vi-VN");
-                const densityFormatted = formatPopulationDensity(props);
-                
-                const mergerTagsHTML = buildMergerTagsHTML(props);
-                
-                const popupContent = `
-                  <div class="popup-header">
-                    <h3 class="popup-title">${name}</h3>
-                    <button id="popup-tts-btn" class="popup-tts-btn" title="Nghe thuyết minh giọng nói">
-                      <i class="fas fa-volume-up"></i>
-                    </button>
-                  </div>
-                  <div class="popup-stat-grid">
-                    <div class="popup-stat-card">
-                      <div class="popup-stat-icon"><i class="fas fa-vector-square"></i></div>
-                      <div class="popup-stat-value">${areaFormatted}</div>
-                      <div class="popup-stat-label">Diện tích (ha)</div>
-                    </div>
-                    <div class="popup-stat-card">
-                      <div class="popup-stat-icon"><i class="fas fa-users"></i></div>
-                      <div class="popup-stat-value">${popFormatted}</div>
-                      <div class="popup-stat-label">Dân số</div>
-                    </div>
-                    <div class="popup-stat-card">
-                      <div class="popup-stat-icon"><i class="fas fa-house-chimney"></i></div>
-                      <div class="popup-stat-value">${hoFormatted}</div>
-                      <div class="popup-stat-label">Số hộ</div>
-                    </div>
-                  </div>
-                  <div class="popup-info-section">
-                    <div class="popup-info-row">
-                      <span class="popup-info-label"><i class="fas fa-landmark"></i> Cấp hành chính:</span>
-                      <span class="popup-info-value">Ấp (Cấp 3)</span>
-                    </div>
-                    <div class="popup-info-row">
-                      <span class="popup-info-label"><i class="fas fa-chart-area"></i> Mật độ dân số:</span>
-                      <span class="popup-info-value">${densityFormatted}</span>
-                    </div>
-                    <div class="popup-info-row" style="flex-direction: column; align-items: flex-start; gap: 4px; border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
-                      <span class="popup-info-label"><i class="fas fa-code-merge"></i> Được sáp nhập từ:</span>
-                      <div class="popup-merger-tags">${mergerTagsHTML}</div>
-                    </div>
-                  </div>
-                `;
-                
-                const popup = L.popup({
-                  className: "glass-map-popup",
-                  maxWidth: 580,
-                  minWidth: 560,
-                  closeButton: true,
-                  autoPan: false,
-                  offset: getHamletPopupOffset(hamletName),
-                })
-                .setLatLng(hamletBoundsByName[hamletName].getCenter())
-                .setContent(popupContent)
-                .openOn(map);
-
-                currentProperties = props;
-                
-                // Đăng ký sự kiện nút thuyết minh trong popup sau khi Leaflet render xong
-                setTimeout(() => {
-                  const popupTtsBtn = document.getElementById("popup-tts-btn");
-                  if (popupTtsBtn) {
-                    popupTtsBtn.addEventListener("click", (evt) => {
-                      evt.stopPropagation();
-                      if (currentAudio && !currentAudio.paused) {
-                        currentAudio.pause();
-                        currentAudio.currentTime = 0;
-                        currentAudio = null;
-                        popupTtsBtn.classList.remove("speaking");
-                      } else {
-                        speakCommuneInfo(props, popupTtsBtn);
-                      }
-                    });
-                    
-                    // Tự động phát âm thanh giới thiệu
-                    speakCommuneInfo(props, popupTtsBtn);
-                  }
-                }, 100);
-              }
-
+              map.closePopup();
+              selectHamlet(hamletName);
+              openHamletSidebar(feature.properties);
               scheduleZoomToHamlet(hamletName);
 
               // Hide hint
@@ -420,7 +456,9 @@ document.addEventListener("DOMContentLoaded", () => {
         });
         layer.addTo(hamletsLayerGroup);
         hamletLayersByName[hamletName] = layer;
-        hamletBoundsByName[hamletName] = layer.getBounds();
+        const bounds = layer.getBounds();
+        hamletBoundsByName[hamletName] = bounds;
+        createHamletLabelMarker(hamletName, bounds).addTo(hamletLabelsLayerGroup);
         geojsonLayers.push(layer);
       });
 
@@ -431,9 +469,12 @@ document.addEventListener("DOMContentLoaded", () => {
         map.fitBounds(bounds, {
           padding: window.innerWidth < 768 ? [30, 30] : [80, 80],
         });
+        map.once("moveend", updateOffsetHamletLabels);
       }
     })
     .catch((err) => console.error("Lỗi khi tải danh sách các ấp:", err));
+
+  map.on("zoomend moveend", updateOffsetHamletLabels);
 
   // 6. Sidebar Controls & Backdrop
   const sidebar = document.getElementById("sidebar");
@@ -447,14 +488,17 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function openHamletSidebar(props) {
-    selectedHamletProperties = props; // Save properties for reopening via toggle button
+    selectedHamletProperties = props;
+    currentProperties = props;
 
-    applyHamletInfoPanelOffset(props.ten || "");
+    const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
-    if (backdrop) backdrop.classList.add("active");
+    if (isMobile && backdrop) backdrop.classList.add("active");
 
-    sidebarToggle.querySelector("i").className = "fas fa-times";
-    sidebarToggle.style.display = "none";
+    if (sidebarToggle) {
+      sidebarToggle.querySelector("i").className = "fas fa-times";
+      sidebarToggle.style.display = "none";
+    }
 
     // Header updates
     document.getElementById("commune-name").innerText = formatHamletName(props.ten);
@@ -519,9 +563,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ttsBtn.style.display = "none"; // Hide TTS button when sidebar is closed
     }
 
+    map.closePopup();
+    clearHamletSelection();
     sidebar.classList.remove("active");
-    sidebar.classList.remove("hamlet-info-offset-right");
-    sidebar.style.removeProperty("--hamlet-info-offset-right");
     if (backdrop) {
       backdrop.classList.remove("active");
       backdrop.style.opacity = ""; // Reset drag opacity
@@ -713,19 +757,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // 9. Dừng phát TTS và căn chỉnh bản đồ khi đóng Popup
-  map.on("popupclose", (e) => {
-    if (e.popup.options.className === "glass-map-popup") {
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-        currentAudio = null;
-      }
-      document.querySelectorAll(".popup-tts-btn, .tts-speech-btn").forEach(btn => btn.classList.remove("speaking"));
-      
-      if (!suppressPopupCloseZoomReset) {
-        zoomToAllHamlets();
-      }
-    }
-  });
 });
