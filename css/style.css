@@ -1057,6 +1057,20 @@ path.leaflet-interactive:focus {
 }
 
 /* Glassmorphism Map Popup styles */
+/* Dịch bảng thông tin sang phải (theo từng ấp, ví dụ Ấp Trà Kháo) */
+#sidebar.hamlet-info-offset-right.active {
+  left: var(--hamlet-info-offset-right, 10%);
+  width: calc(100% - var(--hamlet-info-offset-right, 10%));
+}
+
+@media (min-width: 769px) {
+  #sidebar.hamlet-info-offset-right.active {
+    left: 0;
+    width: var(--sidebar-width);
+    transform: translateX(var(--hamlet-info-offset-right, 10%));
+  }
+}
+
 .glass-map-popup .leaflet-popup-content-wrapper {
   background: rgba(255, 255, 255, 0.94) !important;
   backdrop-filter: blur(24px) saturate(180%);

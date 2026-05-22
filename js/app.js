@@ -186,6 +186,29 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
 
+  const HAMLET_INFO_OFFSET_RIGHT = {
+    "Ấp Trà Kháo": 0.1,
+  };
+
+  function getHamletInfoOffsetRatio(hamletName) {
+    return HAMLET_INFO_OFFSET_RIGHT[hamletName] || 0;
+  }
+
+  function getHamletPopupOffset(hamletName) {
+    const ratio = getHamletInfoOffsetRatio(hamletName);
+    return L.point(Math.round(window.innerWidth * ratio), -10);
+  }
+
+  function applyHamletInfoPanelOffset(hamletName) {
+    const ratio = getHamletInfoOffsetRatio(hamletName);
+    sidebar.classList.toggle("hamlet-info-offset-right", ratio > 0);
+    if (ratio > 0) {
+      sidebar.style.setProperty("--hamlet-info-offset-right", `${ratio * 100}%`);
+    } else {
+      sidebar.style.removeProperty("--hamlet-info-offset-right");
+    }
+  }
+
   function renderMergerTags(container, props) {
     container.innerHTML = "";
     if (!isHamletMerged(props)) {
@@ -354,7 +377,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   minWidth: 560,
                   closeButton: true,
                   autoPan: false,
-                  offset: L.point(0, -10)
+                  offset: getHamletPopupOffset(hamletName),
                 })
                 .setLatLng(hamletBoundsByName[hamletName].getCenter())
                 .setContent(popupContent)
@@ -426,6 +449,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function openHamletSidebar(props) {
     selectedHamletProperties = props; // Save properties for reopening via toggle button
 
+    applyHamletInfoPanelOffset(props.ten || "");
     sidebar.classList.add("active");
     if (backdrop) backdrop.classList.add("active");
 
@@ -496,6 +520,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     sidebar.classList.remove("active");
+    sidebar.classList.remove("hamlet-info-offset-right");
+    sidebar.style.removeProperty("--hamlet-info-offset-right");
     if (backdrop) {
       backdrop.classList.remove("active");
       backdrop.style.opacity = ""; // Reset drag opacity
