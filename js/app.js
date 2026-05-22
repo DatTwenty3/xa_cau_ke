@@ -153,9 +153,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const bounds = L.latLngBounds();
     hamletsLayerGroup.eachLayer((l) => bounds.extend(l.getBounds()));
     if (!bounds.isValid()) return;
+
+    const isMobile = window.innerWidth <= 768;
+    const isSidebarActive = sidebar && sidebar.classList.contains("active");
+
+    let paddingTopLeft, paddingBottomRight;
+
+    if (isMobile) {
+      paddingTopLeft = L.point(20, 20);
+      if (isSidebarActive) {
+        paddingBottomRight = L.point(20, window.innerHeight * 0.65 + 15);
+      } else {
+        paddingBottomRight = L.point(20, 20);
+      }
+    } else {
+      paddingTopLeft = L.point(50, 50);
+      if (isSidebarActive) {
+        const panelW = Math.min(560, window.innerWidth - 48);
+        paddingBottomRight = L.point(panelW + 36, 50);
+      } else {
+        paddingBottomRight = L.point(50, 50);
+      }
+    }
+
     map.fitBounds(bounds, {
-      padding: window.innerWidth < 768 ? [30, 80] : [80, 80],
+      paddingTopLeft: paddingTopLeft,
+      paddingBottomRight: paddingBottomRight,
       animate: true,
+      duration: 0.75,
     });
   }
 
@@ -482,9 +507,128 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeSidebarBtn = document.getElementById("close-sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
 
-  // Hide floating sidebar toggle button at start (only show once an ấp is selected)
-  if (sidebarToggle && window.innerWidth > 768) {
-    sidebarToggle.style.display = "none";
+  const communeProperties = {
+    ten: "Cầu Kè",
+    loai: "Xã",
+    cap: "2",
+    dien_tich_km2: "54.12",
+    dan_so: "35491",
+    so_ho: "8399",
+    mat_do_km2: "655.78"
+  };
+
+  function updateSidebarToggleButton() {
+    if (!sidebarToggle) return;
+    const textSpan = document.getElementById("sidebar-toggle-text");
+    const iconEl = document.getElementById("sidebar-toggle-icon");
+    
+    if (sidebar.classList.contains("active")) {
+      if (iconEl) iconEl.className = "fas fa-times";
+      if (textSpan) textSpan.innerText = "Đóng thông tin";
+    } else {
+      if (iconEl) {
+        if (selectedHamletProperties) {
+          iconEl.className = "fas fa-location-pin";
+        } else {
+          iconEl.className = "fas fa-landmark";
+        }
+      }
+      if (textSpan) {
+        if (selectedHamletProperties) {
+          textSpan.innerText = `Xem ${selectedHamletProperties.ten}`;
+        } else {
+          textSpan.innerText = "Xem thông tin xã";
+        }
+      }
+    }
+  }
+
+  function openCommuneSidebar() {
+    selectedHamletProperties = null;
+    clearHamletSelection();
+
+    const isMobile = window.innerWidth <= 768;
+    sidebar.classList.add("active");
+    if (isMobile && backdrop) backdrop.classList.add("active");
+
+    if (sidebarToggle) {
+      sidebarToggle.style.display = "none";
+    }
+
+    // Hide back to commune button
+    const backBtn = document.getElementById("back-to-commune");
+    if (backBtn) backBtn.style.display = "none";
+
+    // Header updates
+    document.getElementById("commune-name").innerText = "XÃ CẦU KÈ";
+    document.getElementById("commune-badge-text").innerText = "Đơn vị cấp Xã";
+    
+    // Style badge for Commune
+    const badge = document.getElementById("commune-level-badge");
+    if (badge) {
+      badge.style.borderColor = "rgba(5, 150, 105, 0.25)";
+      badge.style.background = "var(--accent-emerald-glow)";
+      badge.style.color = "#047857";
+      const badgeIcon = badge.querySelector("i");
+      if (badgeIcon) badgeIcon.className = "fas fa-shield-halved";
+    }
+
+    // Stat Grid Updates
+    document.getElementById("stat-area-label").innerText = "Diện tích";
+    document.getElementById("stat-pop-label").innerText = "Dân số";
+    document.getElementById("stat-density-label").innerText = "Số hộ";
+    const densityIcon = document.getElementById("stat-density-icon");
+    if (densityIcon) {
+      const densityIconI = densityIcon.querySelector("i");
+      if (densityIconI) densityIconI.className = "fas fa-house-chimney";
+    }
+
+    animateValue("stat-area", 0, parseFloat(communeProperties.dien_tich_km2), 1000, 2, " km²");
+    animateValue("stat-pop", 0, parseInt(communeProperties.dan_so), 1200, 0, " người");
+    animateValue("stat-density", 0, parseInt(communeProperties.so_ho), 1500, 0, " hộ");
+
+    // Hide TTS button for the whole commune
+    const ttsBtn = document.getElementById("tts-btn");
+    if (ttsBtn) ttsBtn.style.display = "none";
+
+    // Admin table updates
+    document.getElementById("info-type").innerText = "Xã";
+    document.getElementById("info-level").innerText = "Cấp 2";
+    const densityEl = document.getElementById("info-density");
+    if (densityEl) {
+      const densityVal = parseFloat(communeProperties.mat_do_km2);
+      densityEl.innerText = densityVal.toLocaleString("vi-VN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) + " người/km²";
+    }
+
+    // "Danh sách các ấp" container
+    const mergerTitle = document.getElementById("merger-title");
+    if (mergerTitle) {
+      mergerTitle.innerHTML = `<i class="fas fa-map-location-dot"></i> Danh sách các ấp:`;
+    }
+
+    const mergerContainer = document.getElementById("info-merger");
+    if (mergerContainer) {
+      mergerContainer.innerHTML = "";
+      hamletNames.forEach((hName) => {
+        const tag = document.createElement("span");
+        tag.className = "merger-tag";
+        tag.style.cursor = "pointer";
+        tag.innerHTML = `<i class="fas fa-location-dot"></i> ${hName}`;
+        tag.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const layer = hamletFeatureLayersByName[hName];
+          if (layer) {
+            layer.fire("click");
+          }
+        });
+        mergerContainer.appendChild(tag);
+      });
+    }
+
+    updateSidebarToggleButton();
   }
 
   function openHamletSidebar(props) {
@@ -496,25 +640,36 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isMobile && backdrop) backdrop.classList.add("active");
 
     if (sidebarToggle) {
-      sidebarToggle.querySelector("i").className = "fas fa-times";
       sidebarToggle.style.display = "none";
     }
+
+    // Show back to commune button inside sidebar
+    const backBtn = document.getElementById("back-to-commune");
+    if (backBtn) backBtn.style.display = "inline-flex";
 
     // Header updates
     document.getElementById("commune-name").innerText = formatHamletName(props.ten);
     document.getElementById("commune-badge-text").innerText = "Đơn vị cấp Ấp";
     
     // Style badge for Hamlet
-    document.getElementById("commune-level-badge").style.borderColor = "rgba(79, 70, 229, 0.25)";
-    document.getElementById("commune-level-badge").style.background = "var(--accent-indigo-glow)";
-    document.getElementById("commune-level-badge").style.color = "var(--accent-indigo)";
-    document.getElementById("commune-level-badge").querySelector("i").className = "fas fa-location-pin";
+    const badge = document.getElementById("commune-level-badge");
+    if (badge) {
+      badge.style.borderColor = "rgba(79, 70, 229, 0.25)";
+      badge.style.background = "var(--accent-indigo-glow)";
+      badge.style.color = "var(--accent-indigo)";
+      const badgeIcon = badge.querySelector("i");
+      if (badgeIcon) badgeIcon.className = "fas fa-location-pin";
+    }
 
     // Stat Grid Updates (Renamed metrics dynamically for Hamlet representation!)
     document.getElementById("stat-area-label").innerText = "Diện tích";
     document.getElementById("stat-pop-label").innerText = "Dân số";
     document.getElementById("stat-density-label").innerText = "Số hộ";
-    document.getElementById("stat-density-icon").querySelector("i").className = "fas fa-house-chimney";
+    const densityIcon = document.getElementById("stat-density-icon");
+    if (densityIcon) {
+      const densityIconI = densityIcon.querySelector("i");
+      if (densityIconI) densityIconI.className = "fas fa-house-chimney";
+    }
 
     const areaHa = parseFloat(props.dien_tich_ha || 0);
     const popVal = parseInt(props.dan_so || 0);
@@ -546,6 +701,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     speakCommuneInfo(props);
+    updateSidebarToggleButton();
   }
 
   function closeSidebar() {
@@ -572,11 +728,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     sidebar.style.transform = ""; // Reset drag transform
     sidebar.style.transition = ""; // Reset transition override
-    sidebarToggle.querySelector("i").className = "fas fa-bars";
     
-    // Show toggle button only if a hamlet has been selected
-    if (selectedHamletProperties) {
+    // Show toggle button
+    if (sidebarToggle) {
       sidebarToggle.style.display = "flex";
+      updateSidebarToggleButton();
     }
 
     if (wasActive) {
@@ -597,9 +753,31 @@ document.addEventListener("DOMContentLoaded", () => {
       if (selectedHamletProperties) {
         openHamletSidebar(selectedHamletProperties);
         scheduleZoomToHamlet(selectedHamletProperties.ten);
+      } else {
+        openCommuneSidebar();
       }
     }
   });
+
+  const backToCommuneBtn = document.getElementById("back-to-commune");
+  if (backToCommuneBtn) {
+    backToCommuneBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openCommuneSidebar();
+      zoomToAllHamlets();
+    });
+  }
+
+  // Initial setup: Open commune sidebar on desktop, keep closed on mobile
+  const isMobile = window.innerWidth <= 768;
+  if (!isMobile) {
+    openCommuneSidebar();
+  } else {
+    if (sidebarToggle) {
+      sidebarToggle.style.display = "flex";
+      updateSidebarToggleButton();
+    }
+  }
 
   // 7. Bộ lắng nghe cảm ứng vuốt chạm (Swipe Gesture) kéo Bottom Sheet xuống để đóng
   let startY = 0;

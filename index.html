@@ -26,7 +26,8 @@
 
   <!-- Floating Sidebar Toggle Button -->
   <button id="sidebar-toggle" class="sidebar-toggle-btn" title="Mở danh mục thông tin">
-    <i class="fas fa-bars"></i>
+    <i id="sidebar-toggle-icon" class="fas fa-bars"></i>
+    <span id="sidebar-toggle-text">Xem thông tin xã</span>
   </button>
 
   <!-- Sidebar Backdrop for Mobile focus and dimming -->
@@ -54,6 +55,11 @@
     </div>
     
     <div class="sidebar-content">
+      <!-- Back to Commune Button -->
+      <button id="back-to-commune" class="back-to-commune-btn" style="display: none;">
+        <i class="fas fa-arrow-left"></i> Quay lại thông tin xã
+      </button>
+
       <!-- Identity card -->
       <div class="info-title-group">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px;">
