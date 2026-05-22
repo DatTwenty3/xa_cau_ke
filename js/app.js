@@ -85,7 +85,7 @@ document.addEventListener("DOMContentLoaded", () => {
       onEachFeature: (feature, layer) => {
         // Add subtle popup/tooltip showing hint
         layer.bindTooltip(
-          `<strong>Xã ${feature.properties.ten}</strong><br><span style="font-size: 11px; opacity: 0.8;"><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
+          `<strong>Xã ${feature.properties.ten}</strong><br><span style="font-size: 12.5px; opacity: 0.85; margin-top: 4px; display: inline-block;"><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
           {
             permanent: false,
             direction: "center",
@@ -160,8 +160,8 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarToggle.querySelector("i").className = "fas fa-times";
     sidebarToggle.style.display = "none"; // Hide floating button when sidebar is active to clean up UI
 
-    // Update details in sidebar
-    document.getElementById("commune-name").innerText = `Xã ${props.ten}`;
+    const loaiVal = props.loai || "Xã";
+    document.getElementById("commune-name").innerText = `${loaiVal} ${props.ten}`;
     document.getElementById("commune-code-val").innerText = props.ma || "30050";
 
     // Leaders
@@ -177,12 +177,32 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("call-ct-btn").href = telCt ? `tel:${telCt}` : "#";
 
     // Table elements
-    document.getElementById("info-type").innerText = props.loai || "Xã";
-    document.getElementById("info-level").innerText = `Cấp ${props.cap || "2"
-      }`;
+    document.getElementById("info-type").innerText = loaiVal;
+    document.getElementById("info-level").innerText = `Cấp ${props.cap || "2"}`;
     document.getElementById("info-stt").innerText = props.stt || "--";
-    document.getElementById("info-merger").innerText =
-      props.sap_nhap || "Không có";
+    
+    // Render merger/border areas as gorgeous individual tag badges
+    const mergerContainer = document.getElementById("info-merger");
+    if (mergerContainer) {
+      mergerContainer.innerHTML = "";
+      const mergerStr = props.sap_nhap || "";
+      if (mergerStr && mergerStr !== "Không có") {
+        const places = mergerStr.split(",").map(p => p.trim()).filter(p => p.length > 0);
+        places.forEach(place => {
+          const tag = document.createElement("span");
+          tag.className = "merger-tag";
+          tag.innerHTML = `<i class="fas fa-map-pin"></i> ${place}`;
+          mergerContainer.appendChild(tag);
+        });
+      } else {
+        const emptySpan = document.createElement("span");
+        emptySpan.style.color = "var(--text-muted)";
+        emptySpan.style.fontSize = "13px";
+        emptySpan.style.fontStyle = "italic";
+        emptySpan.innerText = "Không có";
+        mergerContainer.appendChild(emptySpan);
+      }
+    }
 
     // Trigger Stat counter animations
     const areaVal = parseFloat(props.dien_tich_km2 || 54.12);
