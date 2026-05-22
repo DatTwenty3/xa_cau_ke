@@ -5,12 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
     zoomControl: false, // Disabling default zoom control to position custom styled one
   }).setView(defaultCenter, 13);
 
-  // Add custom zoom control in top-left but below the sidebar toggle
-  L.control
-    .zoom({
-      position: "topleft",
-    })
-    .addTo(map);
+
 
   // 2. Define Google Map Layers
   const tileLayers = {
@@ -91,13 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   let hamletsLayerGroup = L.layerGroup().addTo(map);
-  let hamletLabelsLayerGroup = L.layerGroup().addTo(map);
   let hamletGlowLayerGroup = L.layerGroup().addTo(map);
+  let hamletLabelsLayerGroup = L.layerGroup().addTo(map);
   let selectedHamletProperties = null;
   let selectedHamletName = null;
-  let hamletBlinkTimer = null;
-  let hamletBlinkBright = true;
-  const HAMLET_BLINK_INTERVAL_MS = 470;
   let hamletGlowLayer = null;
   const hamletLayersByName = {};
   const hamletBoundsByName = {};
@@ -109,15 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const isMobile = window.innerWidth <= 768;
     if (isMobile) {
       return {
-        paddingTopLeft: L.point(90, 20),
-        paddingBottomRight: L.point(20, window.innerHeight * 0.65 + 15),
+        paddingTopLeft: L.point(20, 20), // Reduced mobile top padding for better map clearance
+        paddingBottomRight: L.point(20, window.innerHeight * 0.50 + 15),
       };
     }
-    const panelW = Math.min(560, window.innerWidth - 48);
-    const panelH = Math.min(580, window.innerHeight * 0.75);
+    const panelW = Math.min(420, window.innerWidth - 48);
+    const panelH = Math.min(500, window.innerHeight * 0.65);
     return {
-      paddingTopLeft: L.point(50, 50),
-      paddingBottomRight: L.point(panelW + 36, panelH + 36),
+      paddingTopLeft: L.point(40, 40),
+      paddingBottomRight: L.point(panelW + 32, panelH + 32),
     };
   }
 
@@ -162,17 +154,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isMobile) {
       paddingTopLeft = L.point(20, 20);
       if (isSidebarActive) {
-        paddingBottomRight = L.point(20, window.innerHeight * 0.65 + 15);
+        paddingBottomRight = L.point(20, window.innerHeight * 0.50 + 15);
       } else {
         paddingBottomRight = L.point(20, 20);
       }
     } else {
-      paddingTopLeft = L.point(50, 50);
+      paddingTopLeft = L.point(40, 40);
       if (isSidebarActive) {
-        const panelW = Math.min(560, window.innerWidth - 48);
-        paddingBottomRight = L.point(panelW + 36, 50);
+        const panelW = Math.min(420, window.innerWidth - 48);
+        paddingBottomRight = L.point(panelW + 32, 40);
       } else {
-        paddingBottomRight = L.point(50, 50);
+        paddingBottomRight = L.point(40, 40);
       }
     }
 
@@ -255,44 +247,183 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  const HAMLET_LABEL_OFFSET_X = {
-    "Ấp Trà Kháo": 0.02,
+  const HAMLET_LABEL_CENTERS = {
+    "Ấp 1": [9.87591, 106.05837],
+    "Ấp 2": [9.86528, 106.06498],
+    "Ấp Trà Kháo": [9.88626, 106.08059],
+    "Ấp Bà My": [9.89267, 106.05308],
+    "Ấp Giồng Lớn": [9.87799, 106.06998],
+    "Ấp Thông Thảo": [9.91009, 106.07013],
+    "Ấp Giồng Dầu": [9.90806, 106.08577],
+    "Ấp Rùm Sóc": [9.83196, 106.06385],
+    "Ấp Ô Mịch": [9.84556, 106.06685],
+    "Ấp Ô Tưng": [9.86507, 106.08031],
+    "Ấp Châu Hưng": [9.89199, 106.10055],
+    "Ấp Ô Rồm": [9.86559, 106.11447],
+    "Ấp Xóm Lớn": [9.88916, 106.12291]
   };
   const hamletLabelMarkersByName = {};
 
-  function getLabelLatLng(hamletName, bounds) {
-    const center = bounds.getCenter();
-    const ratio = HAMLET_LABEL_OFFSET_X[hamletName];
-    if (!ratio) return center;
-    const point = map.latLngToContainerPoint(center);
-    return map.containerPointToLatLng(
-      L.point(point.x + window.innerWidth * ratio, point.y)
-    );
-  }
+  // HUD (Heads-Up Display) controller
+  const mapHud = document.getElementById("map-hud");
+  const hudText = document.getElementById("hud-text");
+  const hudAccent = mapHud ? mapHud.querySelector(".hud-accent") : null;
 
-  function updateOffsetHamletLabels() {
-    Object.keys(HAMLET_LABEL_OFFSET_X).forEach((name) => {
-      const marker = hamletLabelMarkersByName[name];
-      const bounds = hamletBoundsByName[name];
-      if (marker && bounds) {
-        marker.setLatLng(getLabelLatLng(name, bounds));
+  function updateMapHUD(hamletName, mode) {
+    if (!mapHud || !hudText) return;
+
+    if (hamletName && (mode === "hover" || mode === "selected")) {
+      const color = hamletColors[hamletName] || "var(--accent-indigo)";
+      hudText.innerText = formatHamletName(hamletName);
+      mapHud.classList.add("inspecting");
+      if (hudAccent) {
+        hudAccent.style.backgroundColor = color;
+        hudAccent.style.boxShadow = `0 0 12px ${color}`;
       }
-    });
+    } else {
+      // Revert to general commune or selected hamlet if exists
+      if (selectedHamletName) {
+        const color = hamletColors[selectedHamletName] || "var(--accent-indigo)";
+        hudText.innerText = formatHamletName(selectedHamletName);
+        mapHud.classList.add("inspecting");
+        if (hudAccent) {
+          hudAccent.style.backgroundColor = color;
+          hudAccent.style.boxShadow = `0 0 12px ${color}`;
+        }
+      } else {
+        hudText.innerText = "XÃ CẦU KÈ";
+        mapHud.classList.remove("inspecting");
+        if (hudAccent) {
+          hudAccent.style.backgroundColor = "var(--accent-emerald)";
+          hudAccent.style.boxShadow = "0 0 12px var(--accent-emerald)";
+        }
+      }
+    }
   }
 
   function createHamletLabelMarker(hamletName, bounds) {
-    const marker = L.marker(getLabelLatLng(hamletName, bounds), {
+    const centerCoords = HAMLET_LABEL_CENTERS[hamletName] || [bounds.getCenter().lat, bounds.getCenter().lng];
+    const latlng = L.latLng(centerCoords[0], centerCoords[1]);
+
+    const marker = L.marker(latlng, {
       icon: L.divIcon({
         className: "hamlet-map-label-icon",
-        html: `<span class="hamlet-map-label">${formatHamletName(hamletName)}</span>`,
+        html: `<span class="hamlet-map-label" data-hamlet="${hamletName}">${formatHamletName(hamletName)}</span>`,
       }),
-      interactive: false,
+      interactive: true,
       keyboard: false,
       zIndexOffset: 1000,
     });
+
+    // Khi marker được thêm vào bản đồ, đồng bộ ngay trạng thái hiển thị
+    marker.on("add", () => {
+      const el = marker.getElement();
+      if (el) {
+        const span = el.querySelector(".hamlet-map-label");
+        if (span) {
+          if (selectedHamletName === hamletName) {
+            span.classList.add("selected");
+            const color = hamletColors[hamletName] || "#ffffff";
+            span.style.setProperty("--label-glow-color", color);
+          }
+          // Gọi hàm updateOffset để áp dụng đúng font size theo mức zoom hiện tại
+          setTimeout(updateOffsetHamletLabels, 10);
+        }
+      }
+    });
+
+    // Đồng bộ rê chuột trên nhãn chữ -> kích hoạt ranh giới polygon ấp
+    marker.on("mouseover", () => {
+      const pathLayer = hamletFeatureLayersByName[hamletName];
+      if (pathLayer && selectedHamletName !== hamletName) {
+        pathLayer.setStyle(getHamletHoverStyle(hamletName));
+        pathLayer.bringToFront();
+      }
+      highlightLabel(hamletName, true);
+      updateMapHUD(hamletName, "hover");
+    });
+
+    marker.on("mouseout", () => {
+      const pathLayer = hamletFeatureLayersByName[hamletName];
+      const feature = hamletFeaturesByName[hamletName];
+      if (pathLayer && feature && selectedHamletName !== hamletName) {
+        pathLayer.setStyle(getHamletStyle(feature));
+      }
+      highlightLabel(hamletName, false);
+      updateMapHUD(null, "hover");
+    });
+
+    // Đồng bộ click trên nhãn chữ -> Zoom và hiển thị thông tin chi tiết
+    marker.on("click", (e) => {
+      L.DomEvent.stopPropagation(e);
+      const pathLayer = hamletFeatureLayersByName[hamletName];
+      const feature = hamletFeaturesByName[hamletName];
+      if (pathLayer && feature) {
+        map.closePopup();
+        selectHamlet(hamletName);
+        openHamletSidebar(feature.properties);
+        scheduleZoomToHamlet(hamletName);
+      }
+    });
+
     hamletLabelMarkersByName[hamletName] = marker;
     return marker;
   }
+
+  // Hàm phát sáng nhãn chữ theo màu đặc trưng khi di chuột
+  function highlightLabel(hamletName, isHighlighted) {
+    const marker = hamletLabelMarkersByName[hamletName];
+    if (!marker) return;
+    const element = marker.getElement();
+    if (!element) return;
+    const span = element.querySelector(".hamlet-map-label");
+    if (!span) return;
+
+    if (isHighlighted) {
+      span.classList.add("hover");
+      const color = hamletColors[hamletName] || "#ffffff";
+      span.style.setProperty("--label-glow-color", color);
+    } else {
+      span.classList.remove("hover");
+      if (selectedHamletName !== hamletName) {
+        span.style.removeProperty("--label-glow-color");
+      }
+    }
+  }
+
+  // Quản lý trạng thái nhãn được chọn
+  function selectLabel(hamletName, isSelected) {
+    // Reset toàn bộ nhãn khác
+    Object.keys(hamletLabelMarkersByName).forEach((name) => {
+      const marker = hamletLabelMarkersByName[name];
+      if (marker) {
+        const element = marker.getElement();
+        if (element) {
+          const span = element.querySelector(".hamlet-map-label");
+          if (span) {
+            span.classList.remove("selected");
+            if (selectedHamletName !== name) {
+              span.style.removeProperty("--label-glow-color");
+            }
+          }
+        }
+      }
+    });
+
+    if (isSelected) {
+      const marker = hamletLabelMarkersByName[hamletName];
+      if (!marker) return;
+      const element = marker.getElement();
+      if (!element) return;
+      const span = element.querySelector(".hamlet-map-label");
+      if (!span) return;
+
+      span.classList.add("selected");
+      const color = hamletColors[hamletName] || "#ffffff";
+      span.style.setProperty("--label-glow-color", color);
+    }
+  }
+
 
   function getHamletHoverStyle(name) {
     const color = hamletColors[name] || "#ff4d4d";
@@ -306,111 +437,73 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  function stopHamletBlink() {
-    if (hamletBlinkTimer) {
-      clearInterval(hamletBlinkTimer);
-      hamletBlinkTimer = null;
-    }
+  function stopHamletHighlight() {
     if (hamletGlowLayer) {
       hamletGlowLayerGroup.removeLayer(hamletGlowLayer);
       hamletGlowLayer = null;
     }
   }
 
-  function getHamletBlinkStyle(name, bright) {
-    const color = hamletColors[name] || "#ff4d4d";
-    if (bright) {
-      return {
-        color: "#ffffff",
-        weight: 6,
-        opacity: 1,
-        fillColor: color,
-        fillOpacity: 0.4,
-        className: "hamlet-polygon hamlet-polygon-selected",
-      };
-    }
-    return {
-      color: color,
-      weight: 2.5,
-      opacity: 0.25,
-      fillColor: color,
-      fillOpacity: 0.18,
-      className: "hamlet-polygon hamlet-polygon-selected",
-    };
-  }
-
-  function updateHamletGlowRing(hamletName, bright) {
+  function updateHamletGlowRing(hamletName) {
     const feature = hamletFeaturesByName[hamletName];
     if (!feature) return;
 
     const color = hamletColors[hamletName] || "#ff4d4d";
     const glowStyle = {
-      color: bright ? "#ffffff" : color,
-      weight: bright ? 14 : 5,
-      opacity: bright ? 1 : 0.35,
+      color: "#ffffff",
+      weight: 10,
+      opacity: 0.8,
       fillOpacity: 0,
       fill: false,
       className: "hamlet-glow-ring",
     };
 
-    if (!hamletGlowLayer || hamletGlowLayer._hamletName !== hamletName) {
-      if (hamletGlowLayer) hamletGlowLayerGroup.removeLayer(hamletGlowLayer);
-      hamletGlowLayer = L.geoJSON(feature, {
-        interactive: false,
-        style: () => glowStyle,
-      });
-      hamletGlowLayer._hamletName = hamletName;
-      hamletGlowLayer.addTo(hamletGlowLayerGroup);
-    } else {
-      hamletGlowLayer.eachLayer((l) => l.setStyle(glowStyle));
+    if (hamletGlowLayer) {
+      hamletGlowLayerGroup.removeLayer(hamletGlowLayer);
     }
-  }
+    
+    hamletGlowLayer = L.geoJSON(feature, {
+      interactive: false,
+      style: () => glowStyle,
+    });
+    hamletGlowLayer._hamletName = hamletName;
+    hamletGlowLayer.addTo(hamletGlowLayerGroup);
 
-  function applyHamletBlinkFrame() {
-    if (!selectedHamletName) return;
-    const name = selectedHamletName;
-    const feature = hamletFeaturesByName[name];
-    const pathLayer = hamletFeatureLayersByName[name];
-
-    updateHamletGlowRing(name, hamletBlinkBright);
-
-    const style = getHamletBlinkStyle(name, hamletBlinkBright);
-    if (pathLayer) {
-      pathLayer.setStyle(style);
-      pathLayer.bringToFront();
-    }
-    const group = hamletLayersByName[name];
-    if (group) {
-      group.eachLayer((l) => {
-        if (l !== pathLayer) l.setStyle(style);
-      });
-    }
-    if (hamletGlowLayer) hamletGlowLayer.bringToFront();
-
-    hamletBlinkBright = !hamletBlinkBright;
-  }
-
-  function startHamletBlink(hamletName) {
-    stopHamletBlink();
-    selectedHamletName = hamletName;
-    hamletBlinkBright = true;
-    applyHamletBlinkFrame();
-    hamletBlinkTimer = setInterval(applyHamletBlinkFrame, HAMLET_BLINK_INTERVAL_MS);
+    // Apply the CSS variable on glow layer DOM element
+    hamletGlowLayer.eachLayer((layer) => {
+      if (layer._path) {
+        layer._path.style.setProperty("--glow-color", color);
+      }
+    });
   }
 
   function clearHamletSelection() {
-    stopHamletBlink();
+    stopHamletHighlight();
     const prev = selectedHamletName;
+    
+    // Đồng bộ nhãn chữ về trạng thái thường
+    selectLabel(null, false);
+
     if (!prev) return;
     const feature = hamletFeaturesByName[prev];
     const pathLayer = hamletFeatureLayersByName[prev];
     if (pathLayer && feature) {
       pathLayer.setStyle(getHamletStyle(feature));
+      if (pathLayer._path) {
+        pathLayer._path.classList.remove("hamlet-polygon-selected");
+        pathLayer._path.style.removeProperty("--selected-color");
+      }
     }
     const group = hamletLayersByName[prev];
     if (group && feature) {
       group.eachLayer((l) => {
-        if (l !== pathLayer) l.setStyle(getHamletStyle(feature));
+        if (l !== pathLayer) {
+          l.setStyle(getHamletStyle(feature));
+          if (l._path) {
+            l._path.classList.remove("hamlet-polygon-selected");
+            l._path.style.removeProperty("--selected-color");
+          }
+        }
       });
     }
     selectedHamletName = null;
@@ -418,8 +511,42 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function selectHamlet(hamletName) {
     clearHamletSelection();
-    if (!hamletFeatureLayersByName[hamletName]) return;
-    startHamletBlink(hamletName);
+    
+    selectedHamletName = hamletName;
+    
+    // Đồng bộ nhãn chữ sang trạng thái được chọn
+    selectLabel(hamletName, true);
+
+    const feature = hamletFeaturesByName[hamletName];
+    const pathLayer = hamletFeatureLayersByName[hamletName];
+    
+    if (pathLayer && feature) {
+      const color = hamletColors[hamletName] || "#ff4d4d";
+      
+      // Set highlighting styles
+      pathLayer.setStyle({
+        color: "#ffffff", // Sharp white border
+        weight: 4.0,
+        opacity: 0.95,
+        fillColor: color,
+        fillOpacity: 0.38,
+        className: "hamlet-polygon hamlet-polygon-selected",
+      });
+      pathLayer.bringToFront();
+
+      // Dynamically add selection animation class and custom color property
+      if (pathLayer._path) {
+        pathLayer._path.style.setProperty("--selected-color", color);
+        pathLayer._path.classList.add("hamlet-polygon-selected");
+      }
+
+      // Add the smooth background glow pulsing halo
+      updateHamletGlowRing(hamletName);
+      
+      if (hamletGlowLayer) {
+        hamletGlowLayer.bringToFront();
+      }
+    }
   }
 
   // 5. Setup Boundaries and Loading
@@ -440,27 +567,21 @@ document.addEventListener("DOMContentLoaded", () => {
             hamletFeaturesByName[hamletName] = feature;
             hamletFeatureLayersByName[hamletName] = featureLayer;
 
-            featureLayer.bindTooltip(
-              `<span><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
-              {
-                permanent: false,
-                direction: "top",
-                className: "custom-map-tooltip",
-                opacity: 0.95,
-              }
-            );
-
             // Hover effects
             featureLayer.on("mouseover", (e) => {
               if (selectedHamletName === hamletName) return;
               const l = e.target;
               l.setStyle(getHamletHoverStyle(hamletName));
               l.bringToFront();
+              highlightLabel(hamletName, true);
+              updateMapHUD(hamletName, "hover");
             });
 
             featureLayer.on("mouseout", (e) => {
               if (selectedHamletName === hamletName) return;
               e.target.setStyle(getHamletStyle(feature));
+              highlightLabel(hamletName, false);
+              updateMapHUD(null, "hover");
             });
 
             // Click event: Mở thông tin Ấp
@@ -469,13 +590,6 @@ document.addEventListener("DOMContentLoaded", () => {
               selectHamlet(hamletName);
               openHamletSidebar(feature.properties);
               scheduleZoomToHamlet(hamletName);
-
-              // Hide hint
-              const hintOverlay = document.getElementById("map-hint");
-              if (hintOverlay) {
-                hintOverlay.style.opacity = "0";
-                setTimeout(() => hintOverlay.remove(), 500);
-              }
             });
           },
         });
@@ -499,12 +613,71 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch((err) => console.error("Lỗi khi tải danh sách các ấp:", err));
 
+  // Tự động thu phóng/ẩn nhãn theo mức độ zoom để bản đồ luôn thoáng đạt
+  function updateOffsetHamletLabels() {
+    const zoom = map.getZoom();
+    Object.keys(hamletLabelMarkersByName).forEach((hamletName) => {
+      const marker = hamletLabelMarkersByName[hamletName];
+      if (!marker) return;
+      const element = marker.getElement();
+      if (!element) return;
+      const span = element.querySelector(".hamlet-map-label");
+      if (!span) return;
+
+      const isMobile = window.innerWidth <= 768;
+
+      if (zoom < 12) {
+        // Thu nhỏ hoàn toàn và ẩn đi khi zoom quá xa
+        span.style.opacity = "0";
+        span.style.transform = "translate(-50%, -50%) scale(0.5)";
+        span.style.pointerEvents = "none";
+      } else if (zoom === 12) {
+        // Bắt đầu hiển thị rất nhỏ
+        span.style.opacity = "0.7";
+        span.style.fontSize = "10px";
+        span.style.padding = "3px 6px";
+        span.style.pointerEvents = "auto";
+        if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
+          span.style.transform = "translate(-50%, -50%) scale(0.8)";
+        }
+      } else if (zoom === 13) {
+        // Zoom mặc định chuẩn
+        span.style.opacity = "1";
+        span.style.fontSize = isMobile ? "11px" : "14px";
+        span.style.padding = isMobile ? "4px 8px" : "5px 12px";
+        span.style.pointerEvents = "auto";
+        if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
+          span.style.transform = "translate(-50%, -50%) scale(1)";
+        }
+      } else if (zoom === 14) {
+        // Phóng to nhẹ khi bắt đầu cận cảnh
+        span.style.opacity = "1";
+        span.style.fontSize = isMobile ? "12px" : "15px";
+        span.style.padding = isMobile ? "4px 10px" : "6px 14px";
+        span.style.pointerEvents = "auto";
+        if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
+          span.style.transform = "translate(-50%, -50%) scale(1.05)";
+        }
+      } else {
+        // Zoom cận cảnh tối đa
+        span.style.opacity = "1";
+        span.style.fontSize = isMobile ? "13px" : "16px";
+        span.style.padding = isMobile ? "5px 12px" : "8px 16px";
+        span.style.pointerEvents = "auto";
+        if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
+          span.style.transform = "translate(-50%, -50%) scale(1.1)";
+        }
+      }
+    });
+  }
+
   map.on("zoomend moveend", updateOffsetHamletLabels);
 
   // 6. Sidebar Controls & Backdrop
   const sidebar = document.getElementById("sidebar");
   const sidebarToggle = document.getElementById("sidebar-toggle");
   const closeSidebarBtn = document.getElementById("close-sidebar");
+  const minimizeSidebarBtn = document.getElementById("minimize-sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
 
   const communeProperties = {
@@ -549,6 +722,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
+    sidebar.classList.remove("minimized");
+    updateMinimizeButtonState();
     if (isMobile && backdrop) backdrop.classList.add("active");
 
     if (sidebarToggle) {
@@ -637,6 +812,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
+    sidebar.classList.remove("minimized");
+    updateMinimizeButtonState();
     if (isMobile && backdrop) backdrop.classList.add("active");
 
     if (sidebarToggle) {
@@ -722,6 +899,8 @@ document.addEventListener("DOMContentLoaded", () => {
     map.closePopup();
     clearHamletSelection();
     sidebar.classList.remove("active");
+    sidebar.classList.remove("minimized");
+    updateMinimizeButtonState();
     if (backdrop) {
       backdrop.classList.remove("active");
       backdrop.style.opacity = ""; // Reset drag opacity
@@ -741,6 +920,38 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   closeSidebarBtn.addEventListener("click", closeSidebar);
+
+  function updateMinimizeButtonState() {
+    if (!minimizeSidebarBtn) return;
+    const icon = minimizeSidebarBtn.querySelector("i");
+    if (sidebar.classList.contains("minimized")) {
+      if (icon) icon.className = "fas fa-expand-alt";
+      minimizeSidebarBtn.title = "Phóng to bảng";
+    } else {
+      if (icon) icon.className = "fas fa-compress-alt";
+      minimizeSidebarBtn.title = "Thu nhỏ bảng";
+    }
+  }
+
+  if (minimizeSidebarBtn) {
+    minimizeSidebarBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      sidebar.classList.toggle("minimized");
+      updateMinimizeButtonState();
+    });
+  }
+
+  // Click vào sidebar header để phục hồi nếu đang thu nhỏ
+  const sidebarHeaderEl = document.querySelector(".sidebar-header");
+  if (sidebarHeaderEl) {
+    sidebarHeaderEl.addEventListener("click", (e) => {
+      if (e.target.closest("button")) return;
+      if (sidebar.classList.contains("minimized")) {
+        sidebar.classList.remove("minimized");
+        updateMinimizeButtonState();
+      }
+    });
+  }
 
   if (backdrop) {
     backdrop.addEventListener("click", closeSidebar);
