@@ -214,15 +214,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function closeSidebar() {
     // Dừng phát âm thanh giới thiệu khi đóng bảng thông tin
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-      const ttsBtn = document.getElementById("tts-btn");
-      if (ttsBtn) ttsBtn.classList.remove("speaking");
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
     }
-    if (resumeInterval) {
-      clearInterval(resumeInterval);
-      resumeInterval = null;
-    }
+    const ttsBtn = document.getElementById("tts-btn");
+    if (ttsBtn) ttsBtn.classList.remove("speaking");
 
     sidebar.classList.remove("active");
     if (backdrop) {
@@ -360,110 +358,49 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 8. Text-to-Speech (TTS) Voice Introduction for the Commune
-  let speechUtterance = null;
+  let currentAudio = null;
   let currentProperties = null;
-  let resumeInterval = null;
 
   function speakCommuneInfo(props) {
-    if (!window.speechSynthesis) return;
-
-    // Dừng phát âm thanh hiện tại và dọn dẹp interval cũ nếu có
-    window.speechSynthesis.cancel();
-    if (resumeInterval) {
-      clearInterval(resumeInterval);
-      resumeInterval = null;
+    // Dừng phát âm thanh hiện tại nếu có
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
     }
 
     currentProperties = props; // Lưu trữ để phát lại thủ công nếu cần
 
-    const name = props.ten || "Cầu Kè";
-    const area = props.dien_tich_km2 || "54.12";
-    const areaSpoken = area.toString().replace(/\./g, ",");
-    const pop = props.dan_so || "35491";
-    const popSpoken = pop.toString().replace(/\./g, "");
-    const density = props.mat_do_km2 || "655.78";
-    const densitySpoken = density.toString().replace(/\./g, ",");
-
-    const loai = props.loai || "Xã";
-    const cap = props.cap || "2";
-    const stt = props.stt || "50";
-
-    const secretary = props.bi_thu || "Trần Phong Ba";
-    const chairman = props.chu_tich || "Lê Hoàng Lam";
-
-    let sapNhapSpoken = "";
-    if (props.sap_nhap) {
-      sapNhapSpoken = props.sap_nhap
-        .replace(/Cầu Kè\s*\(thị trấn\s*\)/gi, "thị trấn Cầu Kè")
-        .replace(/Hòa Ân/gi, "xã Hòa Ân")
-        .replace(/Châu Điền/gi, "xã Châu Điền");
-    } else {
-      sapNhapSpoken = "Không có khu vực nào";
-    }
-
-    // Xây dựng đoạn văn thuyết minh hành chính tự nhiên, đầy đủ thông tin từ Sidebar (loại bỏ số điện thoại và mã hành chính theo yêu cầu)
-    const introText = `Chào mừng bạn đến với xã ${name}. Đây là đơn vị hành chính cấp xã thuộc huyện Cầu Kè, tỉnh Trà Vinh. Xã được xếp vào phân loại hành chính là ${loai} cấp ${cap}. 
-
-    Về số liệu địa lý, xã ${name} có diện tích tự nhiên là ${areaSpoken} ki-lô-mét vuông. Quy mô dân số của xã đạt ${popSpoken} người, với mật độ dân cư trung bình tương ứng là ${densitySpoken} người trên một ki-lô-mét vuông. Các khu vực giáp ranh hoặc sáp nhập của xã bao gồm: ${sapNhapSpoken}. 
-
-    Về ban lãnh đạo chủ chốt của địa phương hiện tại, Bí thư Đảng ủy xã là ông ${secretary}, và Chủ tịch Ủy ban nhân dân xã là ông ${chairman}.`;
-
-    speechUtterance = new SpeechSynthesisUtterance(introText);
-    speechUtterance.lang = "vi-VN";
-    speechUtterance.rate = 1.2; // Tốc độ đọc vừa phải, mạch lạc, dễ nghe
-    speechUtterance.pitch = 1.05; // Tăng cao độ nhẹ để tạo giọng nữ trẻ trung, ấm áp và truyền cảm
-
-    // Tìm kiếm giọng đọc tiếng Việt chất lượng tốt nhất
-    const voices = window.speechSynthesis.getVoices();
-    const viVoice = voices.find(v => v.lang.includes("vi-VN") || v.lang.includes("vi_VN"));
-    if (viVoice) {
-      speechUtterance.voice = viVoice;
-    }
-
+    const ma = props.ma || "30050";
+    const audioPath = `audio/${ma}.mp3`;
+    
+    currentAudio = new Audio(audioPath);
+    
     const ttsBtn = document.getElementById("tts-btn");
     const ttsIcon = ttsBtn ? ttsBtn.querySelector("i") : null;
 
-    speechUtterance.onstart = () => {
+    currentAudio.addEventListener("play", () => {
       if (ttsBtn) ttsBtn.classList.add("speaking");
       if (ttsIcon) ttsIcon.className = "fas fa-volume-up";
+    });
 
-      // Khởi động interval để giữ cho bộ đọc không bị ngắt quãng giữa chừng trên Chrome
-      resumeInterval = setInterval(() => {
-        if (window.speechSynthesis && window.speechSynthesis.speaking) {
-          window.speechSynthesis.resume();
-        } else {
-          clearInterval(resumeInterval);
-          resumeInterval = null;
-        }
-      }, 5000);
-    };
-
-    speechUtterance.onend = () => {
+    currentAudio.addEventListener("ended", () => {
       if (ttsBtn) ttsBtn.classList.remove("speaking");
       if (ttsIcon) ttsIcon.className = "fas fa-volume-up";
-      if (resumeInterval) {
-        clearInterval(resumeInterval);
-        resumeInterval = null;
-      }
-    };
+      currentAudio = null;
+    });
 
-    speechUtterance.onerror = () => {
+    currentAudio.addEventListener("error", (e) => {
+      console.error("Lỗi tải/phát âm thanh thuyết minh:", e);
       if (ttsBtn) ttsBtn.classList.remove("speaking");
       if (ttsIcon) ttsIcon.className = "fas fa-volume-up";
-      if (resumeInterval) {
-        clearInterval(resumeInterval);
-        resumeInterval = null;
-      }
-    };
+      currentAudio = null;
+    });
 
-    window.speechSynthesis.speak(speechUtterance);
-  }
-
-  // Tải trước danh sách giọng đọc đối với các trình duyệt tải bất đồng bộ như Chrome
-  if (window.speechSynthesis && window.speechSynthesis.onvoiceschanged !== undefined) {
-    window.speechSynthesis.onvoiceschanged = () => {
-      window.speechSynthesis.getVoices();
-    };
+    currentAudio.play().catch((err) => {
+      console.warn("Trình duyệt chặn tự động phát âm thanh:", err);
+      if (ttsBtn) ttsBtn.classList.remove("speaking");
+    });
   }
 
   // Thiết lập trình bắt sự kiện click cho nút loa phát thanh điều khiển thủ công
@@ -471,15 +408,12 @@ document.addEventListener("DOMContentLoaded", () => {
   if (ttsBtn) {
     ttsBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      if (!window.speechSynthesis) return;
 
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.cancel();
+      if (currentAudio && !currentAudio.paused) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
         ttsBtn.classList.remove("speaking");
-        if (resumeInterval) {
-          clearInterval(resumeInterval);
-          resumeInterval = null;
-        }
       } else if (currentProperties) {
         speakCommuneInfo(currentProperties);
       }
