@@ -2,18 +2,18 @@
 
 :root {
   --bg-primary: #f8fafc;
-  --bg-sidebar: rgba(255, 255, 255, 0.72);
-  --bg-card: rgba(255, 255, 255, 0.45);
-  --bg-card-hover: rgba(255, 255, 255, 0.9);
-  --accent-emerald: #10b981;
-  --accent-emerald-glow: rgba(16, 185, 129, 0.08);
-  --accent-indigo: #6366f1;
-  --accent-indigo-glow: rgba(99, 102, 241, 0.08);
-  --text-primary: #1e293b;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
-  --border-color: rgba(15, 23, 42, 0.04);
-  --border-color-glow: rgba(16, 185, 129, 0.18);
+  --bg-sidebar: #ffffff; /* Nền trắng tinh khiết cho bảng thông tin */
+  --bg-card: rgba(15, 43, 92, 0.03); /* Nền thẻ màu xanh dương nhạt cực nhẹ và sang */
+  --bg-card-hover: rgba(15, 43, 92, 0.06);
+  --accent-emerald: #cf4d03; /* Cam đậm */
+  --accent-emerald-glow: rgba(207, 77, 3, 0.08);
+  --accent-indigo: #0f2b5c; /* Xanh dương đậm */
+  --accent-indigo-glow: rgba(15, 43, 92, 0.08);
+  --text-primary: #0f2b5c; /* Chữ chính màu xanh dương đậm */
+  --text-secondary: #2c3e50; /* Chữ phụ màu xanh tối */
+  --text-muted: #5a738e;
+  --border-color: rgba(15, 43, 92, 0.08);
+  --border-color-glow: rgba(207, 77, 3, 0.18);
   --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
   --sidebar-width: 520px;
 }
@@ -260,9 +260,9 @@ body {
 
 .close-sidebar-btn:hover,
 .minimize-sidebar-btn:hover {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.15);
-  color: var(--accent-indigo);
+  background: var(--accent-emerald-glow);
+  border-color: rgba(207, 77, 3, 0.15);
+  color: var(--accent-emerald); /* Cam đậm */
   transform: scale(1.08);
 }
 
@@ -281,7 +281,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 20px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 8px 20px rgba(207, 77, 3, 0.2);
 }
 
 .brand-icon i {
@@ -295,7 +295,7 @@ body {
   letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text-primary);
-  background: linear-gradient(to right, #0f172a, #312e81);
+  background: linear-gradient(to right, #0f2b5c, #cf4d03);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -312,8 +312,8 @@ body {
   align-items: center;
   gap: 6px;
   background: var(--accent-emerald-glow);
-  border: 1px solid rgba(5, 150, 105, 0.25);
-  color: #047857;
+  border: 1px solid rgba(207, 77, 3, 0.25);
+  color: var(--accent-emerald);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 13px;
@@ -323,7 +323,7 @@ body {
 /* TTS Speech Audio Button */
 .tts-speech-btn {
   background: var(--accent-emerald-glow);
-  border: 1px solid rgba(5, 150, 105, 0.25);
+  border: 1px solid rgba(207, 77, 3, 0.25);
   width: 38px;
   height: 38px;
   border-radius: 50%;
@@ -351,17 +351,17 @@ body {
   animation: pulseSpeech 1.2s infinite ease-in-out;
   background: var(--accent-indigo-glow);
   color: var(--accent-indigo);
-  border-color: rgba(79, 70, 229, 0.3);
+  border-color: rgba(15, 43, 92, 0.3);
 }
 
 @keyframes pulseSpeech {
   0%, 100% {
     transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4);
+    box-shadow: 0 0 0 0 rgba(15, 43, 92, 0.4);
   }
   50% {
     transform: scale(1.08);
-    box-shadow: 0 0 12px 4px rgba(79, 70, 229, 0.15);
+    box-shadow: 0 0 12px 4px rgba(15, 43, 92, 0.15);
   }
 }
 
@@ -414,7 +414,7 @@ body {
 .info-title-group .commune-code span {
   font-family: monospace;
   color: var(--accent-indigo);
-  background: rgba(79, 70, 229, 0.08);
+  background: rgba(15, 43, 92, 0.08);
   padding: 2px 6px;
   border-radius: 4px;
   font-weight: bold;
@@ -440,9 +440,9 @@ body {
 
 .stat-card:hover {
   background: var(--bg-card-hover);
-  border-color: rgba(99, 102, 241, 0.15);
+  border-color: rgba(15, 43, 92, 0.15);
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px -6px rgba(99, 102, 241, 0.06);
+  box-shadow: 0 12px 24px -6px rgba(15, 43, 92, 0.08);
 }
 
 .stat-icon-wrapper {
@@ -454,7 +454,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.02);
+  background: rgba(15, 43, 92, 0.02);
   transition: var(--transition-smooth);
 }
 
@@ -462,13 +462,18 @@ body {
   transform: scale(1.08);
 }
 
-.stat-card:nth-child(1) .stat-icon-wrapper { color: var(--accent-emerald); background: var(--accent-emerald-glow); }
-.stat-card:nth-child(2) .stat-icon-wrapper { color: var(--accent-indigo); background: var(--accent-indigo-glow); }
-.stat-card:nth-child(3) .stat-icon-wrapper { color: #f59e0b; background: rgba(245, 158, 11, 0.06); }
+.stat-card:nth-child(1) .stat-icon-wrapper,
+.stat-card:nth-child(2) .stat-icon-wrapper,
+.stat-card:nth-child(3) .stat-icon-wrapper { 
+  color: var(--accent-emerald); /* Cam đậm */
+  background: var(--accent-emerald-glow); 
+}
 
-.stat-card:nth-child(1):hover .stat-icon-wrapper { background: rgba(16, 185, 129, 0.16); }
-.stat-card:nth-child(2):hover .stat-icon-wrapper { background: rgba(99, 102, 241, 0.16); }
-.stat-card:nth-child(3):hover .stat-icon-wrapper { background: rgba(245, 158, 11, 0.14); }
+.stat-card:nth-child(1):hover .stat-icon-wrapper,
+.stat-card:nth-child(2):hover .stat-icon-wrapper,
+.stat-card:nth-child(3):hover .stat-icon-wrapper { 
+  background: rgba(207, 77, 3, 0.16); 
+}
 
 .stat-value {
   font-size: 18px;
@@ -513,7 +518,7 @@ body {
 }
 
 .section-title i {
-  color: var(--accent-indigo);
+  color: var(--accent-emerald); /* Cam đậm */
 }
 
 /* Leaders Directory */
@@ -639,7 +644,7 @@ body {
 }
 
 .info-label i {
-  color: var(--accent-indigo);
+  color: var(--accent-emerald); /* Cam đậm */
   font-size: 13px;
 }
 
@@ -665,24 +670,24 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(99, 102, 241, 0.04);
-  border: 1px solid rgba(99, 102, 241, 0.08);
+  background: var(--accent-indigo-glow);
+  border: 1px solid rgba(15, 43, 92, 0.1);
   color: var(--accent-indigo);
   padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 650;
-  box-shadow: 0 2px 5px rgba(99, 102, 241, 0.01);
+  box-shadow: 0 2px 5px rgba(15, 43, 92, 0.02);
   transition: var(--transition-smooth);
   cursor: default;
 }
 
 .merger-tag:hover {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.25);
+  background: rgba(15, 43, 92, 0.1);
+  border-color: rgba(15, 43, 92, 0.25);
   color: var(--accent-indigo);
   transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 6px 15px -3px rgba(99, 102, 241, 0.12);
+  box-shadow: 0 6px 15px -3px rgba(15, 43, 92, 0.12);
 }
 
 .merger-tag i {
@@ -696,15 +701,13 @@ body {
   top: 20px;
   right: 20px;
   z-index: 999;
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(15, 23, 42, 0.04);
+  background: #ffffff; /* Nền màu trắng tinh tế */
+  border: 1.5px solid var(--border-color);
   padding: 4px;
   border-radius: 30px;
   display: flex;
   gap: 4px;
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.01);
+  box-shadow: 0 10px 30px -5px rgba(15, 43, 92, 0.08), 0 1px 3px rgba(15, 43, 92, 0.02);
 }
 
 .layer-btn {
@@ -724,18 +727,20 @@ body {
 
 .layer-btn i {
   font-size: 13px;
+  color: var(--accent-emerald); /* Cam đậm */
+  transition: var(--transition-smooth);
 }
 
 .layer-btn:hover {
   color: var(--accent-indigo);
-  background: rgba(99, 102, 241, 0.04);
+  background: var(--accent-indigo-glow);
 }
 
 .layer-btn.active {
   background: #ffffff;
-  color: var(--accent-indigo);
-  border-color: rgba(99, 102, 241, 0.15);
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.06);
+  color: var(--accent-indigo); /* Xanh dương đậm */
+  border-color: var(--accent-emerald) !important; /* Viền màu cam đậm nổi bật */
+  box-shadow: 0 4px 10px rgba(15, 43, 92, 0.1);
 }
 
 /* Glowing hint panel overlay on initial load */
@@ -793,7 +798,12 @@ body {
 /* Interactive Polygon custom style rules */
 .commune-polygon {
   filter: drop-shadow(0 0 8px rgba(255, 75, 75, 0.45));
-  transition: all 0.3s ease;
+  transition: fill 0.3s ease, 
+              fill-opacity 0.3s ease, 
+              stroke 0.3s ease, 
+              stroke-width 0.3s ease, 
+              stroke-opacity 0.3s ease, 
+              filter 0.3s ease;
 }
 
 .commune-polygon:hover {
@@ -827,20 +837,17 @@ path.leaflet-interactive:focus {
 .hamlet-map-label {
   display: inline-block;
   transform: translate(-50%, -50%);
-  padding: 5px 12px;
-  border-radius: 8px;
-  background: rgba(15, 23, 42, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  color: #fff;
+  padding: 2.5px 6px;
+  border-radius: 5px;
+  background: #ffffff !important;
+  border: 1px solid var(--accent-emerald) !important; /* Cam đậm */
+  color: var(--accent-indigo) !important; /* Xanh dương đậm */
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 14px;
+  font-size: 8px;
   font-weight: 800;
   letter-spacing: 0.4px;
   white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.35);
+  box-shadow: 0 4px 12px rgba(15, 43, 92, 0.12) !important;
   pointer-events: none; /* Rê chuột xuyên qua text vào marker icon */
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, box-shadow, border-color, opacity;
@@ -849,28 +856,31 @@ path.leaflet-interactive:focus {
 /* Hiệu ứng di chuột (hover) trên nhãn */
 .hamlet-map-label.hover {
   transform: translate(-50%, -50%) scale(1.12);
-  background: rgba(15, 23, 42, 0.88) !important;
-  border-color: var(--label-glow-color, rgba(255, 255, 255, 0.7)) !important;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45), 
-              0 0 14px var(--label-glow-color, rgba(255, 255, 255, 0.35)) !important;
+  background: #ffffff !important;
+  border-color: var(--label-glow-color, var(--accent-emerald)) !important;
+  color: var(--accent-emerald) !important; /* Đổi sang màu cam đậm khi hover */
+  box-shadow: 0 6px 18px rgba(15, 43, 92, 0.18), 
+              0 0 12px var(--label-glow-color, var(--accent-emerald)) !important;
   z-index: 9999 !important;
 }
 
 /* Hiệu ứng khi nhãn đã được chọn */
 .hamlet-map-label.selected {
   transform: translate(-50%, -50%) scale(1.15);
-  background: rgba(15, 23, 42, 0.95) !important;
-  border-color: var(--label-glow-color, #ffffff) !important;
-  border-width: 1.5px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 
-              0 0 18px var(--label-glow-color, rgba(255, 255, 255, 0.55)) !important;
+  background: #ffffff !important;
+  border-color: var(--label-glow-color, var(--accent-indigo)) !important;
+  border-width: 2px !important;
+  color: var(--accent-indigo) !important; /* Đổi sang màu xanh dương đậm khi được chọn */
+  box-shadow: 0 8px 24px rgba(15, 43, 92, 0.25), 
+              0 0 16px var(--label-glow-color, var(--accent-indigo)) !important;
   z-index: 10000 !important;
 }
 
 @media (max-width: 768px) {
   .hamlet-map-label {
-    font-size: 11px;
-    padding: 4px 8px;
+    font-size: 6px;
+    padding: 2px 4px;
+    border-radius: 3px;
   }
   .hamlet-map-label.hover {
     transform: translate(-50%, -50%) scale(1.08);
@@ -915,7 +925,7 @@ path.leaflet-interactive:focus {
     display: block;
     width: 36px;
     height: 4px;
-    background: rgba(15, 23, 42, 0.08);
+    background: rgba(15, 43, 92, 0.12);
     border-radius: 10px;
     margin: 10px auto 4px;
     flex-shrink: 0;
@@ -932,7 +942,7 @@ path.leaflet-interactive:focus {
     transform: translateY(calc(100% + 24px));
     border: 1px solid var(--border-color);
     border-radius: 24px !important;
-    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.15);
+    box-shadow: 0 10px 40px rgba(15, 43, 92, 0.15);
     background: var(--bg-sidebar);
     backdrop-filter: blur(30px) saturate(220%);
     -webkit-backdrop-filter: blur(30px) saturate(220%);
@@ -1091,7 +1101,7 @@ path.leaflet-interactive:focus {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--border-color);
-    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+    box-shadow: 0 8px 24px rgba(15, 43, 92, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1111,8 +1121,8 @@ path.leaflet-interactive:focus {
   .layer-btn.active {
     background: #ffffff;
     color: var(--accent-indigo);
-    border-color: rgba(99, 102, 241, 0.2);
-    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.12);
+    border-color: var(--accent-emerald) !important; /* Cam đậm */
+    box-shadow: 0 8px 24px rgba(15, 43, 92, 0.15);
   }
 
   /* Sleek floating toggle button at the bottom center (Apple/Google Maps style) */
@@ -1130,13 +1140,17 @@ path.leaflet-interactive:focus {
     display: flex !important;
     align-items: center !important;
     gap: 8px !important;
-    background: rgba(255, 255, 255, 0.85) !important;
+    background: #ffffff !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
-    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08) !important;
-    border: 1px solid rgba(99, 102, 241, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(15, 43, 92, 0.1) !important;
+    border: 1px solid rgba(15, 43, 92, 0.15) !important;
     color: var(--accent-indigo) !important;
     transition: var(--transition-smooth) !important;
+  }
+
+  .sidebar-toggle-btn i {
+    color: var(--accent-emerald) !important;
   }
 
 
@@ -1159,8 +1173,8 @@ path.leaflet-interactive:focus {
 
 /* Back to Commune button inside sidebar */
 .back-to-commune-btn {
-  background: rgba(99, 102, 241, 0.04);
-  border: 1px solid rgba(99, 102, 241, 0.12);
+  background: var(--accent-indigo-glow);
+  border: 1px solid rgba(15, 43, 92, 0.12);
   color: var(--accent-indigo);
   padding: 8px 14px;
   border-radius: 12px;
@@ -1177,21 +1191,27 @@ path.leaflet-interactive:focus {
 }
 
 .back-to-commune-btn:hover {
-  background: rgba(99, 102, 241, 0.08);
-  border-color: rgba(99, 102, 241, 0.25);
+  background: rgba(15, 43, 92, 0.1);
+  border-color: rgba(15, 43, 92, 0.25);
   color: var(--accent-indigo);
   transform: translateY(-2px);
-  box-shadow: 0 6px 15px rgba(99, 102, 241, 0.06);
+  box-shadow: 0 6px 15px rgba(15, 43, 92, 0.06);
 }
 
 .back-to-commune-btn i {
   font-size: 12px;
+  color: var(--accent-emerald); /* Cam đậm */
 }
 
 /* Custom interactive styling for Hamlet Polygons */
 .hamlet-polygon {
   filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: fill 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              fill-opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              stroke 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              stroke-width 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              stroke-opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .hamlet-polygon.hover {
@@ -1258,9 +1278,9 @@ path.leaflet-interactive:focus {
   background: rgba(255, 255, 255, 0.94) !important;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border: 1px solid rgba(79, 70, 229, 0.15) !important;
+  border: 1px solid rgba(15, 43, 92, 0.15) !important;
   border-radius: 20px !important;
-  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2) !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 43, 92, 0.2) !important;
   padding: 0 !important;
   overflow: hidden;
 }
@@ -1275,12 +1295,12 @@ path.leaflet-interactive:focus {
 
 .glass-map-popup .leaflet-popup-tip {
   background: rgba(255, 255, 255, 0.94) !important;
-  border: 1px solid rgba(79, 70, 229, 0.15) !important;
+  border: 1px solid rgba(15, 43, 92, 0.15) !important;
   box-shadow: none !important;
 }
 
 .glass-map-popup .leaflet-popup-close-button {
-  color: rgba(15, 23, 42, 0.5) !important;
+  color: rgba(15, 43, 92, 0.5) !important;
   font-size: 20px !important;
   padding: 16px 16px 0 0 !important;
   transition: all 0.3s ease;
@@ -1297,7 +1317,7 @@ path.leaflet-interactive:focus {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  border-bottom: 1px solid rgba(15, 43, 92, 0.08);
   padding-bottom: 16px;
 }
 
@@ -1306,7 +1326,7 @@ path.leaflet-interactive:focus {
   font-weight: 800;
   margin: 0;
   letter-spacing: -0.5px;
-  background: linear-gradient(135deg, #0f172a, #4f46e5);
+  background: linear-gradient(135deg, var(--text-primary), var(--accent-indigo));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -1316,9 +1336,9 @@ path.leaflet-interactive:focus {
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 20px;
-  border: 1px solid rgba(79, 70, 229, 0.3);
-  background: rgba(79, 70, 229, 0.15);
-  color: #4f46e5;
+  border: 1px solid rgba(15, 43, 92, 0.3);
+  background: rgba(15, 43, 92, 0.15);
+  color: var(--accent-indigo);
 }
 
 .popup-stat-grid {
@@ -1336,41 +1356,41 @@ path.leaflet-interactive:focus {
 }
 
 .popup-stat-card:nth-child(1) {
-  background: rgba(5, 150, 105, 0.07);
-  border: 1px solid rgba(5, 150, 105, 0.18);
+  background: var(--accent-emerald-glow);
+  border: 1px solid rgba(207, 77, 3, 0.18);
 }
 .popup-stat-card:nth-child(1) .popup-stat-value {
-  color: #047857;
+  color: var(--accent-emerald);
 }
 .popup-stat-card:nth-child(1) .popup-stat-icon {
-  color: #059669;
+  color: var(--accent-emerald);
 }
 
 .popup-stat-card:nth-child(2) {
-  background: rgba(79, 70, 229, 0.07);
-  border: 1px solid rgba(79, 70, 229, 0.18);
+  background: var(--accent-indigo-glow);
+  border: 1px solid rgba(15, 43, 92, 0.18);
 }
 .popup-stat-card:nth-child(2) .popup-stat-value {
-  color: #4338ca;
+  color: var(--accent-indigo);
 }
 .popup-stat-card:nth-child(2) .popup-stat-icon {
-  color: #4f46e5;
+  color: var(--accent-indigo);
 }
 
 .popup-stat-card:nth-child(3) {
-  background: rgba(217, 119, 6, 0.07);
-  border: 1px solid rgba(217, 119, 6, 0.18);
+  background: var(--accent-emerald-glow);
+  border: 1px solid rgba(207, 77, 3, 0.18);
 }
 .popup-stat-card:nth-child(3) .popup-stat-value {
-  color: #b45309;
+  color: var(--accent-emerald);
 }
 .popup-stat-card:nth-child(3) .popup-stat-icon {
-  color: #d97706;
+  color: var(--accent-emerald);
 }
 
 .popup-stat-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 8px 16px rgba(15, 43, 92, 0.05);
 }
 
 .popup-stat-icon {
@@ -1394,10 +1414,10 @@ path.leaflet-interactive:focus {
 }
 
 .popup-info-section {
-  background: rgba(15, 23, 42, 0.02);
+  background: rgba(15, 43, 92, 0.02);
   border-radius: 16px;
   padding: 18px 20px;
-  border: 1px solid rgba(15, 23, 42, 0.05);
+  border: 1px solid rgba(15, 43, 92, 0.05);
   margin-bottom: 12px;
 }
 
@@ -1407,7 +1427,7 @@ path.leaflet-interactive:focus {
   align-items: center;
   font-size: 16px;
   padding-bottom: 10px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+  border-bottom: 1px solid rgba(15, 43, 92, 0.05);
   margin-bottom: 10px;
   gap: 12px;
 }
@@ -1451,9 +1471,9 @@ path.leaflet-interactive:focus {
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 8px;
-  background: rgba(79, 70, 229, 0.06);
-  border: 1px solid rgba(79, 70, 229, 0.15);
-  color: #4f46e5;
+  background: var(--accent-indigo-glow);
+  border: 1px solid rgba(15, 43, 92, 0.15);
+  color: var(--accent-indigo);
   transition: var(--transition-smooth);
 }
 
@@ -1467,16 +1487,16 @@ path.leaflet-interactive:focus {
 /* Green vibrant "Giữ nguyên" style for unmerged hamlets */
 .popup-merger-tag-keep,
 .merger-tag-keep {
-  background: rgba(5, 150, 105, 0.08) !important;
-  border: 1px solid rgba(5, 150, 105, 0.18) !important;
-  color: #059669 !important;
+  background: var(--accent-emerald-glow) !important;
+  border: 1px solid rgba(207, 77, 3, 0.18) !important;
+  color: var(--accent-emerald) !important;
 }
 
 .popup-merger-tag-keep:hover,
 .merger-tag-keep:hover {
-  background: #059669 !important;
+  background: var(--accent-emerald) !important;
   color: #fff !important;
-  border-color: #059669 !important;
+  border-color: var(--accent-emerald) !important;
   transform: translateY(-1px);
 }
 
@@ -1486,9 +1506,9 @@ path.leaflet-interactive:focus {
   height: 46px;
   font-size: 18px;
   border-radius: 50%;
-  background: rgba(5, 150, 105, 0.15);
-  border: 1px solid rgba(5, 150, 105, 0.3);
-  color: #059669;
+  background: var(--accent-emerald-glow);
+  border: 1px solid rgba(207, 77, 3, 0.3);
+  color: var(--accent-emerald);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1497,22 +1517,22 @@ path.leaflet-interactive:focus {
 }
 
 .popup-tts-btn:hover {
-  background: #059669;
+  background: var(--accent-emerald);
   color: #fff;
-  border-color: #059669;
+  border-color: var(--accent-emerald);
   transform: scale(1.1);
 }
 
 .popup-tts-btn.speaking {
   animation: pulse-speaker 1.5s infinite;
-  background: #059669;
+  background: var(--accent-emerald);
   color: #fff;
 }
 
 @keyframes pulse-speaker {
-  0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
-  70% { box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(207, 77, 3, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(207, 77, 3, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(207, 77, 3, 0); }
 }
 
 /* Accordion cho Chỉ số hành chính */
@@ -1604,7 +1624,7 @@ path.leaflet-interactive:focus {
     right: 12px !important;
     width: calc(100% - 24px) !important;
     border-radius: 20px !important;
-    box-shadow: 0 8px 30px rgba(15, 23, 42, 0.12) !important;
+    box-shadow: 0 8px 30px rgba(15, 43, 92, 0.12) !important;
     overflow: hidden !important;
   }
   

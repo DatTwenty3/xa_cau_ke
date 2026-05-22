@@ -334,6 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Đồng bộ rê chuột trên nhãn chữ -> kích hoạt ranh giới polygon ấp
     marker.on("mouseover", () => {
+      clearAllHoverStates();
       const pathLayer = hamletFeatureLayersByName[hamletName];
       if (pathLayer && selectedHamletName !== hamletName) {
         pathLayer.setStyle(getHamletHoverStyle(hamletName));
@@ -368,6 +369,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     hamletLabelMarkersByName[hamletName] = marker;
     return marker;
+  }
+
+  // Hàm xóa mọi trạng thái phát sáng và hover của các nhãn và polygon ấp chưa chọn
+  function clearAllHoverStates() {
+    Object.keys(hamletLabelMarkersByName).forEach((name) => {
+      const marker = hamletLabelMarkersByName[name];
+      if (marker) {
+        const element = marker.getElement();
+        if (element) {
+          const span = element.querySelector(".hamlet-map-label");
+          if (span) {
+            span.classList.remove("hover");
+            if (selectedHamletName !== name) {
+              span.style.removeProperty("--label-glow-color");
+            }
+          }
+        }
+      }
+      const pathLayer = hamletFeatureLayersByName[name];
+      const feature = hamletFeaturesByName[name];
+      if (pathLayer && feature && selectedHamletName !== name) {
+        pathLayer.setStyle(getHamletStyle(feature));
+      }
+    });
   }
 
   // Hàm phát sáng nhãn chữ theo màu đặc trưng khi di chuột
@@ -570,6 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Hover effects
             featureLayer.on("mouseover", (e) => {
               if (selectedHamletName === hamletName) return;
+              clearAllHoverStates();
               const l = e.target;
               l.setStyle(getHamletHoverStyle(hamletName));
               l.bringToFront();
@@ -634,8 +660,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (zoom === 12) {
         // Bắt đầu hiển thị rất nhỏ
         span.style.opacity = "0.7";
-        span.style.fontSize = "10px";
-        span.style.padding = "3px 6px";
+        span.style.fontSize = "5px";
+        span.style.padding = "1.5px 3px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
           span.style.transform = "translate(-50%, -50%) scale(0.8)";
@@ -643,8 +669,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (zoom === 13) {
         // Zoom mặc định chuẩn
         span.style.opacity = "1";
-        span.style.fontSize = isMobile ? "11px" : "14px";
-        span.style.padding = isMobile ? "4px 8px" : "5px 12px";
+        span.style.fontSize = isMobile ? "6px" : "8px";
+        span.style.padding = isMobile ? "2px 4px" : "2.5px 6px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
           span.style.transform = "translate(-50%, -50%) scale(1)";
@@ -652,8 +678,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (zoom === 14) {
         // Phóng to nhẹ khi bắt đầu cận cảnh
         span.style.opacity = "1";
-        span.style.fontSize = isMobile ? "12px" : "15px";
-        span.style.padding = isMobile ? "4px 10px" : "6px 14px";
+        span.style.fontSize = isMobile ? "6.5px" : "8px";
+        span.style.padding = isMobile ? "2px 5px" : "3px 7px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
           span.style.transform = "translate(-50%, -50%) scale(1.05)";
@@ -661,8 +687,8 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         // Zoom cận cảnh tối đa
         span.style.opacity = "1";
-        span.style.fontSize = isMobile ? "13px" : "16px";
-        span.style.padding = isMobile ? "5px 12px" : "8px 16px";
+        span.style.fontSize = isMobile ? "7px" : "9px";
+        span.style.padding = isMobile ? "2.5px 6px" : "4px 8px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
           span.style.transform = "translate(-50%, -50%) scale(1.1)";
@@ -672,6 +698,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   map.on("zoomend moveend", updateOffsetHamletLabels);
+
+  // Khôi phục trạng thái thường khi chuột di chuyển trên nền bản đồ trống hoặc ra ngoài bản đồ
+  map.on("mousemove", (e) => {
+    if (e.originalEvent && e.originalEvent.target) {
+      const target = e.originalEvent.target;
+      const isOverInteractive = target.closest('.leaflet-marker-icon') || 
+                                target.closest('.leaflet-interactive') ||
+                                target.classList.contains('hamlet-polygon') ||
+                                target.classList.contains('hamlet-map-label');
+      if (!isOverInteractive) {
+        clearAllHoverStates();
+        updateMapHUD(null, "hover");
+      }
+    }
+  });
+
+  map.on("mouseout", (e) => {
+    if (!e.originalEvent || !e.originalEvent.relatedTarget || !map.getContainer().contains(e.originalEvent.relatedTarget)) {
+      clearAllHoverStates();
+      updateMapHUD(null, "hover");
+    }
+  });
 
   // 6. Sidebar Controls & Backdrop
   const sidebar = document.getElementById("sidebar");
@@ -741,9 +789,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Style badge for Commune
     const badge = document.getElementById("commune-level-badge");
     if (badge) {
-      badge.style.borderColor = "rgba(5, 150, 105, 0.25)";
+      badge.style.borderColor = "rgba(207, 77, 3, 0.25)";
       badge.style.background = "var(--accent-emerald-glow)";
-      badge.style.color = "#047857";
+      badge.style.color = "var(--accent-emerald)";
       const badgeIcon = badge.querySelector("i");
       if (badgeIcon) badgeIcon.className = "fas fa-shield-halved";
     }
@@ -831,7 +879,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Style badge for Hamlet
     const badge = document.getElementById("commune-level-badge");
     if (badge) {
-      badge.style.borderColor = "rgba(79, 70, 229, 0.25)";
+      badge.style.borderColor = "rgba(15, 43, 92, 0.25)";
       badge.style.background = "var(--accent-indigo-glow)";
       badge.style.color = "var(--accent-indigo)";
       const badgeIcon = badge.querySelector("i");
