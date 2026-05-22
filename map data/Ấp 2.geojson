@@ -28,11 +28,11 @@
         "ma": "3005002",
         "ten": "Ấp 2",
         "loai": "Ấp",
-        "dien_tich_km2": "0.1681",
+        "dien_tich_km2": "1.6809",
         "dien_tich_ha": "168.09",
         "dan_so": "3372",
         "so_ho": "838",
-        "mat_do_km2": "20061.16"
+        "mat_do_km2": "2006.07"
       },
       "geometry": {
         "type": "Polygon",

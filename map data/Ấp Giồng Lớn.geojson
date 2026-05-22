@@ -26,11 +26,11 @@
         "ma": "3005005",
         "ten": "Ấp Giồng Lớn",
         "loai": "Ấp",
-        "dien_tich_km2": "0.3938",
+        "dien_tich_km2": "3.9381",
         "dien_tich_ha": "393.81",
         "dan_so": "2494",
         "so_ho": "601",
-        "mat_do_km2": "6332.98"
+        "mat_do_km2": "633.30"
       },
       "geometry": {
         "type": "Polygon",

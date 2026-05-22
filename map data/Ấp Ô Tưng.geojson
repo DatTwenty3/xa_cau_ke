@@ -27,11 +27,11 @@
         "ma": "3005010",
         "ten": "Ấp Ô Tưng",
         "loai": "Ấp",
-        "dien_tich_km2": "0.7607",
+        "dien_tich_km2": "7.6073",
         "dien_tich_ha": "760.73",
         "dan_so": "3567",
         "so_ho": "834",
-        "mat_do_km2": "4688.90"
+        "mat_do_km2": "468.89"
       },
       "geometry": {
         "type": "Polygon",

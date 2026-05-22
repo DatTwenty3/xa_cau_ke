@@ -27,11 +27,11 @@
         "ma": "3005013",
         "ten": "Ấp Xóm Lớn",
         "loai": "Ấp",
-        "dien_tich_km2": "0.6775",
+        "dien_tich_km2": "6.7754",
         "dien_tich_ha": "677.54",
         "dan_so": "3989",
         "so_ho": "887",
-        "mat_do_km2": "5887.50"
+        "mat_do_km2": "588.75"
       },
       "geometry": {
         "type": "Polygon",

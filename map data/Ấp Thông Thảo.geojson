@@ -26,11 +26,11 @@
         "ma": "3005006",
         "ten": "Ấp Thông Thảo",
         "loai": "Ấp",
-        "dien_tich_km2": "0.3859",
+        "dien_tich_km2": "3.8591",
         "dien_tich_ha": "385.91",
         "dan_so": "2421",
         "so_ho": "571",
-        "mat_do_km2": "6273.50"
+        "mat_do_km2": "627.35"
       },
       "geometry": {
         "type": "Polygon",

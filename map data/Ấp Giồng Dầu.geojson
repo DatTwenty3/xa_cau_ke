@@ -26,11 +26,11 @@
         "ma": "3005007",
         "ten": "Ấp Giồng Dầu",
         "loai": "Ấp",
-        "dien_tich_km2": "0.3219",
+        "dien_tich_km2": "3.2191",
         "dien_tich_ha": "321.91",
         "dan_so": "1704",
         "so_ho": "413",
-        "mat_do_km2": "5293.40"
+        "mat_do_km2": "529.34"
       },
       "geometry": {
         "type": "Polygon",

@@ -149,6 +149,76 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function formatHamletName(name) {
+    if (!name) return "";
+    return String(name).toLocaleUpperCase("vi-VN");
+  }
+
+  function normalizeHamletName(name) {
+    return String(name || "").trim().toLocaleLowerCase("vi-VN");
+  }
+
+  /** Ấp được sáp nhập từ nhiều nguồn; nếu chỉ 1 nguồn trùng tên hiện tại → giữ nguyên. */
+  function isHamletMerged(props) {
+    const sourceList = props.sap_nhap_tu;
+    const ten = props.ten || "";
+    if (!sourceList || !Array.isArray(sourceList) || sourceList.length === 0) {
+      return false;
+    }
+    if (sourceList.length > 1) return true;
+    return normalizeHamletName(sourceList[0]) !== normalizeHamletName(ten);
+  }
+
+  function getMergerSourceNames(props) {
+    if (!isHamletMerged(props)) return [];
+    return props.sap_nhap_tu;
+  }
+
+  function buildMergerTagsHTML(props) {
+    if (!isHamletMerged(props)) {
+      return `<span class="popup-merger-tag popup-merger-tag-keep"><i class="fas fa-circle-check"></i> Giữ nguyên</span>`;
+    }
+    return getMergerSourceNames(props)
+      .map(
+        (src) =>
+          `<span class="popup-merger-tag"><i class="fas fa-compress-arrows-alt"></i> ${src}</span>`
+      )
+      .join("");
+  }
+
+  function renderMergerTags(container, props) {
+    container.innerHTML = "";
+    if (!isHamletMerged(props)) {
+      const tag = document.createElement("span");
+      tag.className = "merger-tag merger-tag-keep";
+      tag.innerHTML = `<i class="fas fa-circle-check"></i> Giữ nguyên`;
+      container.appendChild(tag);
+      return;
+    }
+    getMergerSourceNames(props).forEach((sourceName) => {
+      const tag = document.createElement("span");
+      tag.className = "merger-tag";
+      tag.innerHTML = `<i class="fas fa-compress-arrows-alt"></i> ${sourceName}`;
+      container.appendChild(tag);
+    });
+  }
+
+  function formatPopulationDensity(props) {
+    const pop = parseInt(props.dan_so || 0, 10);
+    const km2 = parseFloat(String(props.dien_tich_km2 || 0).replace(",", "."));
+    const density =
+      km2 > 0
+        ? pop / km2
+        : parseFloat(String(props.mat_do_km2 || 0).replace(",", "."));
+    if (!density || Number.isNaN(density)) return "—";
+    return (
+      density.toLocaleString("vi-VN", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }) + " người/km²"
+    );
+  }
+
   function getHamletStyle(feature) {
     const name = feature.properties.ten || "";
     const color = hamletColors[name] || "#ff4d4d";
@@ -191,7 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
           onEachFeature: (feature, featureLayer) => {
             // Bind tooltips
             featureLayer.bindTooltip(
-              `<strong>${hamletName}</strong><br><span style="font-size: 12.5px; opacity: 0.85; margin-top: 4px; display: inline-block;"><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
+              `<strong>${formatHamletName(hamletName)}</strong><br><span style="font-size: 12.5px; opacity: 0.85; margin-top: 4px; display: inline-block;"><i class="fas fa-mouse-pointer"></i> Nhấp để xem chi tiết</span>`,
               {
                 permanent: false,
                 direction: "center",
@@ -226,7 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 suppressPopupCloseZoomReset = false;
 
                 const props = feature.properties;
-                const name = props.ten || "Chưa rõ tên";
+                const name = formatHamletName(props.ten || "Chưa rõ tên");
                 const areaHa = parseFloat(props.dien_tich_ha || 0);
                 const popVal = parseInt(props.dan_so || 0);
                 const hoVal = parseInt(props.so_ho || 0);
@@ -234,18 +304,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const areaFormatted = areaHa.toLocaleString("vi-VN", { minimumFractionDigits: 2 });
                 const popFormatted = popVal.toLocaleString("vi-VN");
                 const hoFormatted = hoVal.toLocaleString("vi-VN");
+                const densityFormatted = formatPopulationDensity(props);
                 
-                let mergerTagsHTML = "";
-                const sourceList = props.sap_nhap_tu;
-                const isMerged = sourceList && Array.isArray(sourceList) && (sourceList.length > 1 || (sourceList.length === 1 && sourceList[0] !== name));
-                
-                if (isMerged) {
-                  sourceList.forEach(src => {
-                    mergerTagsHTML += `<span class="popup-merger-tag"><i class="fas fa-compress-arrows-alt"></i> ${src}</span>`;
-                  });
-                } else {
-                  mergerTagsHTML = `<span class="popup-merger-tag popup-merger-tag-keep"><i class="fas fa-circle-check"></i> Giữ nguyên</span>`;
-                }
+                const mergerTagsHTML = buildMergerTagsHTML(props);
                 
                 const popupContent = `
                   <div class="popup-header">
@@ -276,6 +337,10 @@ document.addEventListener("DOMContentLoaded", () => {
                       <span class="popup-info-label"><i class="fas fa-landmark"></i> Cấp hành chính:</span>
                       <span class="popup-info-value">Ấp (Cấp 3)</span>
                     </div>
+                    <div class="popup-info-row">
+                      <span class="popup-info-label"><i class="fas fa-chart-area"></i> Mật độ dân số:</span>
+                      <span class="popup-info-value">${densityFormatted}</span>
+                    </div>
                     <div class="popup-info-row" style="flex-direction: column; align-items: flex-start; gap: 4px; border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
                       <span class="popup-info-label"><i class="fas fa-code-merge"></i> Được sáp nhập từ:</span>
                       <div class="popup-merger-tags">${mergerTagsHTML}</div>
@@ -285,8 +350,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 const popup = L.popup({
                   className: "glass-map-popup",
-                  maxWidth: 480,
-                  minWidth: 440,
+                  maxWidth: 580,
+                  minWidth: 560,
                   closeButton: true,
                   autoPan: false,
                   offset: L.point(0, -10)
@@ -368,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebarToggle.style.display = "none";
 
     // Header updates
-    document.getElementById("commune-name").innerText = props.ten;
+    document.getElementById("commune-name").innerText = formatHamletName(props.ten);
     document.getElementById("commune-badge-text").innerText = "Đơn vị cấp Ấp";
     
     // Style badge for Hamlet
@@ -398,6 +463,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Admin table updates
     document.getElementById("info-type").innerText = "Ấp";
     document.getElementById("info-level").innerText = "Cấp 3";
+    const densityEl = document.getElementById("info-density");
+    if (densityEl) densityEl.innerText = formatPopulationDensity(props);
 
     // "Được sáp nhập từ:" tags list
     const mergerTitle = document.getElementById("merger-title");
@@ -407,23 +474,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const mergerContainer = document.getElementById("info-merger");
     if (mergerContainer) {
-      mergerContainer.innerHTML = "";
-      const sourceList = props.sap_nhap_tu;
-      const isMerged = sourceList && Array.isArray(sourceList) && (sourceList.length > 1 || (sourceList.length === 1 && sourceList[0] !== props.ten));
-      
-      if (isMerged) {
-        sourceList.forEach((sourceName) => {
-          const tag = document.createElement("span");
-          tag.className = "merger-tag";
-          tag.innerHTML = `<i class="fas fa-compress-arrows-alt"></i> ${sourceName}`;
-          mergerContainer.appendChild(tag);
-        });
-      } else {
-        const tag = document.createElement("span");
-        tag.className = "merger-tag merger-tag-keep";
-        tag.innerHTML = `<i class="fas fa-circle-check"></i> Giữ nguyên`;
-        mergerContainer.appendChild(tag);
-      }
+      renderMergerTags(mergerContainer, props);
     }
 
     speakCommuneInfo(props);

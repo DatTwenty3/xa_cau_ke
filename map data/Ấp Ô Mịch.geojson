@@ -26,11 +26,11 @@
         "ma": "3005009",
         "ten": "Ấp Ô Mịch",
         "loai": "Ấp",
-        "dien_tich_km2": "0.4710",
+        "dien_tich_km2": "4.7098",
         "dien_tich_ha": "470.98",
         "dan_so": "2044",
         "so_ho": "471",
-        "mat_do_km2": "4339.85"
+        "mat_do_km2": "433.99"
       },
       "geometry": {
         "type": "Polygon",
