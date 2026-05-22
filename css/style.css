@@ -992,8 +992,306 @@ path.leaflet-interactive:focus {
     text-align: center;
     padding: 10px 16px;
   }
-
   .map-hint-overlay span {
     font-size: 12px;
   }
 }
+
+/* Back to Commune button inside sidebar */
+.back-to-commune-btn {
+  background: var(--accent-indigo-glow);
+  border: 1px solid rgba(79, 70, 229, 0.25);
+  color: var(--accent-indigo);
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+  justify-content: center;
+  transition: var(--transition-smooth);
+}
+
+.back-to-commune-btn:hover {
+  background: var(--accent-indigo);
+  color: #fff;
+  border-color: var(--accent-indigo);
+  transform: translateY(-1.5px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.15);
+}
+
+.back-to-commune-btn i {
+  font-size: 12px;
+}
+
+/* Custom interactive styling for Hamlet Polygons */
+.hamlet-polygon {
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.15));
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hamlet-polygon.hover {
+  filter: drop-shadow(0 0 16px rgba(255, 255, 255, 0.8));
+}
+
+/* Commune outline polygon */
+.commune-outline {
+  pointer-events: none !important; /* Let clicks pass through to hamlets inside */
+}
+
+/* Glassmorphism Map Popup styles */
+.glass-map-popup .leaflet-popup-content-wrapper {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(79, 70, 229, 0.15) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.2) !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.glass-map-popup .leaflet-popup-content {
+  margin: 0 !important;
+  padding: 24px !important;
+  width: 440px !important;
+  color: #0f172a !important;
+  font-family: 'Plus Jakarta Sans', sans-serif !important;
+}
+
+.glass-map-popup .leaflet-popup-tip {
+  background: rgba(255, 255, 255, 0.94) !important;
+  border: 1px solid rgba(79, 70, 229, 0.15) !important;
+  box-shadow: none !important;
+}
+
+.glass-map-popup .leaflet-popup-close-button {
+  color: rgba(15, 23, 42, 0.5) !important;
+  font-size: 20px !important;
+  padding: 16px 16px 0 0 !important;
+  transition: all 0.3s ease;
+}
+
+.glass-map-popup .leaflet-popup-close-button:hover {
+  color: #ef4444 !important;
+  background: transparent !important;
+}
+
+/* Custom styled sections within Glass Popup */
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+  padding-bottom: 12px;
+}
+
+.popup-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #0f172a, #4f46e5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.popup-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(79, 70, 229, 0.3);
+  background: rgba(79, 70, 229, 0.15);
+  color: #4f46e5;
+}
+
+.popup-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.popup-stat-card {
+  border-radius: 16px;
+  padding: 14px 10px;
+  text-align: center;
+  transition: var(--transition-smooth);
+}
+
+.popup-stat-card:nth-child(1) {
+  background: rgba(5, 150, 105, 0.07);
+  border: 1px solid rgba(5, 150, 105, 0.18);
+}
+.popup-stat-card:nth-child(1) .popup-stat-value {
+  color: #047857;
+}
+.popup-stat-card:nth-child(1) .popup-stat-icon {
+  color: #059669;
+}
+
+.popup-stat-card:nth-child(2) {
+  background: rgba(79, 70, 229, 0.07);
+  border: 1px solid rgba(79, 70, 229, 0.18);
+}
+.popup-stat-card:nth-child(2) .popup-stat-value {
+  color: #4338ca;
+}
+.popup-stat-card:nth-child(2) .popup-stat-icon {
+  color: #4f46e5;
+}
+
+.popup-stat-card:nth-child(3) {
+  background: rgba(217, 119, 6, 0.07);
+  border: 1px solid rgba(217, 119, 6, 0.18);
+}
+.popup-stat-card:nth-child(3) .popup-stat-value {
+  color: #b45309;
+}
+.popup-stat-card:nth-child(3) .popup-stat-icon {
+  color: #d97706;
+}
+
+.popup-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(15, 23, 42, 0.05);
+}
+
+.popup-stat-icon {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+
+.popup-stat-value {
+  font-size: 15px;
+  font-weight: 800;
+  margin-bottom: 2px;
+  white-space: nowrap;
+}
+
+.popup-stat-label {
+  font-size: 11px;
+  color: #475569;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.popup-info-section {
+  background: rgba(15, 23, 42, 0.02);
+  border-radius: 16px;
+  padding: 14px 16px;
+  border: 1px solid rgba(15, 23, 42, 0.05);
+  margin-bottom: 12px;
+}
+
+.popup-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+  margin-bottom: 8px;
+}
+
+.popup-info-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+}
+
+.popup-info-label {
+  color: #475569;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.popup-info-value {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.popup-merger-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.popup-merger-tag {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(79, 70, 229, 0.06);
+  border: 1px solid rgba(79, 70, 229, 0.15);
+  color: #4f46e5;
+  transition: var(--transition-smooth);
+}
+
+.popup-merger-tag:hover {
+  background: var(--accent-indigo);
+  color: #fff;
+  border-color: var(--accent-indigo);
+  transform: translateY(-1px);
+}
+
+/* Green vibrant "Giữ nguyên" style for unmerged hamlets */
+.popup-merger-tag-keep,
+.merger-tag-keep {
+  background: rgba(5, 150, 105, 0.08) !important;
+  border: 1px solid rgba(5, 150, 105, 0.18) !important;
+  color: #059669 !important;
+}
+
+.popup-merger-tag-keep:hover,
+.merger-tag-keep:hover {
+  background: #059669 !important;
+  color: #fff !important;
+  border-color: #059669 !important;
+  transform: translateY(-1px);
+}
+
+/* Speaker button styled inside popup */
+.popup-tts-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(5, 150, 105, 0.15);
+  border: 1px solid rgba(5, 150, 105, 0.3);
+  color: #059669;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.popup-tts-btn:hover {
+  background: #059669;
+  color: #fff;
+  border-color: #059669;
+  transform: scale(1.1);
+}
+
+.popup-tts-btn.speaking {
+  animation: pulse-speaker 1.5s infinite;
+  background: #059669;
+  color: #fff;
+}
+
+@keyframes pulse-speaker {
+  0% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.7); }
+  70% { box-shadow: 0 0 0 10px rgba(5, 150, 105, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); }
+}
+

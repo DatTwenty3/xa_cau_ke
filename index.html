@@ -48,8 +48,8 @@
           <p>Bản đồ Hành chính</p>
         </div>
       </div>
-      <span class="commune-badge">
-        <i class="fas fa-shield-halved"></i> Đơn vị cấp Xã
+      <span id="commune-level-badge" class="commune-badge">
+        <i class="fas fa-shield-halved"></i> <span id="commune-badge-text">Đơn vị cấp Xã</span>
       </span>
     </div>
     
@@ -57,12 +57,11 @@
       <!-- Identity card -->
       <div class="info-title-group">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px;">
-          <h1 id="commune-name" style="margin: 0;">Xã Cầu Kè</h1>
-          <button id="tts-btn" class="tts-speech-btn" title="Nghe giới thiệu bằng giọng nói">
+          <h1 id="commune-name" style="margin: 0;">Chọn một ấp</h1>
+          <button id="tts-btn" class="tts-speech-btn" title="Nghe giới thiệu bằng giọng nói" style="display: none;">
             <i class="fas fa-volume-up"></i>
           </button>
         </div>
-        <div class="commune-code">Mã hành chính: <span id="commune-code-val">30050</span></div>
       </div>
       
       <!-- Metrics Stat Grid -->
@@ -72,7 +71,7 @@
             <i class="fas fa-vector-square"></i>
           </div>
           <div id="stat-area" class="stat-value">54,12 km²</div>
-          <div class="stat-label">Diện tích</div>
+          <div id="stat-area-label" class="stat-label">Diện tích</div>
         </div>
         
         <div class="stat-card" title="Tổng quy mô dân số">
@@ -80,43 +79,15 @@
             <i class="fas fa-users"></i>
           </div>
           <div id="stat-pop" class="stat-value">35.491</div>
-          <div class="stat-label">Dân số</div>
+          <div id="stat-pop-label" class="stat-label">Dân số</div>
         </div>
         
-        <div class="stat-card" title="Mật độ dân cư trung bình">
-          <div class="stat-icon-wrapper">
-            <i class="fas fa-chart-area"></i>
+        <div class="stat-card" title="Tổng số hộ gia đình toàn xã">
+          <div id="stat-density-icon" class="stat-icon-wrapper">
+            <i class="fas fa-house-chimney"></i>
           </div>
-          <div id="stat-density" class="stat-value">655,78</div>
-          <div class="stat-label">Mật độ/km²</div>
-        </div>
-      </div>
-
-      <!-- Leaders Info Section -->
-      <div class="info-section">
-        <h3 class="section-title"><i class="fas fa-user-tie"></i> Ban lãnh đạo chủ chốt</h3>
-        <div class="leaders-list">
-          <div class="leader-item">
-            <div class="leader-avatar">BT</div>
-            <div class="leader-info">
-              <div class="leader-role">Bí thư Đảng ủy</div>
-              <div id="leader-secretary-name" class="leader-name">Trần Phong Ba</div>
-            </div>
-            <a id="call-bt-btn" href="tel:0918353032" class="leader-call-btn" title="Gọi điện liên hệ Bí thư">
-              <i class="fas fa-phone-alt"></i>
-            </a>
-          </div>
-          
-          <div class="leader-item">
-            <div class="leader-avatar">CT</div>
-            <div class="leader-info">
-              <div class="leader-role">Chủ tịch UBND</div>
-              <div id="leader-chairman-name" class="leader-name">Lê Hoàng Lam</div>
-            </div>
-            <a id="call-ct-btn" href="tel:0939032932" class="leader-call-btn" title="Gọi điện liên hệ Chủ tịch">
-              <i class="fas fa-phone-alt"></i>
-            </a>
-          </div>
+          <div id="stat-density" class="stat-value">8.399</div>
+          <div id="stat-density-label" class="stat-label">Số hộ</div>
         </div>
       </div>
 
@@ -132,12 +103,8 @@
             <span class="info-label"><i class="fas fa-layer-group"></i> Cấp quản lý:</span>
             <span id="info-level" class="info-value">Cấp 2</span>
           </div>
-          <div class="info-row">
-            <span class="info-label"><i class="fas fa-arrow-down-1-9"></i> Thứ tự STT hành chính:</span>
-            <span id="info-stt" class="info-value">50</span>
-          </div>
           <div class="info-row" style="flex-direction: column; gap: 6px; align-items: stretch; border: none; padding-bottom: 0;">
-            <span class="info-label" style="font-weight: 700; color: var(--text-primary);"><i class="fas fa-compress-arrows-alt"></i> Khu vực giáp ranh / sáp nhập:</span>
+            <span id="merger-title" class="info-label" style="font-weight: 700; color: var(--text-primary);"><i class="fas fa-compress-arrows-alt"></i> Khu vực giáp ranh / sáp nhập:</span>
             <div id="info-merger" class="merger-tags-container"></div>
           </div>
         </div>
@@ -161,7 +128,7 @@
   <!-- Interactive Pulse Hint Overlay on map center -->
   <div id="map-hint" class="map-hint-overlay">
     <i class="fas fa-hand-pointer"></i>
-    <span>Nhấp chuột vào vùng xã Cầu Kè để xem thông tin</span>
+    <span>Nhấp chuột vào một ấp để xem thông tin chi tiết</span>
   </div>
 
   <!-- Map element takes full screen behind panels -->
