@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
     "Ấp Xóm Lớn": "#f43f5e"    // Vibrant Pink-Red
   };
 
+  let oldHamletsLayerGroup = L.layerGroup().addTo(map);
   let hamletsLayerGroup = L.layerGroup().addTo(map);
   let hamletGlowLayerGroup = L.layerGroup().addTo(map);
   let hamletLabelsLayerGroup = L.layerGroup().addTo(map);
@@ -93,6 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const hamletFeaturesByName = {};
   const hamletFeatureLayersByName = {};
   let zoomToHamletTimer = null;
+  let oldHamletLabelMarkers = [];
 
   function getHamletMapPadding() {
     const isMobile = window.innerWidth <= 768;
@@ -636,6 +638,60 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch((err) => console.error("Lỗi khi tải danh sách các ấp:", err));
 
+  // Load Old Hamlet Boundaries (shown underneath new hamlets)
+  const oldHamletNames = [
+    "Ấp Trà Bôn",
+    "Ấp Xóm Lớn",
+    "Ấp Ô Tưng A",
+    "Ấp Ô Tưng B"
+  ];
+
+  oldHamletNames.forEach((name) => {
+    fetch(`map data/ranh gioi ap cu/${encodeURIComponent(name)}.geojson`)
+      .then((res) => res.json())
+      .then((data) => {
+        const geojsonLayer = L.geoJSON(data, {
+          style: {
+            color: "#ffffff",
+            weight: 2.2,
+            opacity: 0.95,
+            fill: false,
+            interactive: false
+          }
+        }).addTo(oldHamletsLayerGroup);
+
+        // Tạo nhãn tên cho ranh giới ấp cũ
+        const bounds = geojsonLayer.getBounds();
+        if (bounds.isValid()) {
+          const latlng = bounds.getCenter();
+          
+          // Dịch chuyển nhẹ tọa độ nhãn để tránh đè trực tiếp lên nhãn mới
+          let offsetLatlng = latlng;
+          if (name === "Ấp Xóm Lớn") {
+            offsetLatlng = L.latLng(latlng.lat - 0.002, latlng.lng + 0.001);
+          } else if (name === "Ấp Trà Bôn") {
+            offsetLatlng = L.latLng(latlng.lat + 0.001, latlng.lng - 0.001);
+          } else if (name === "Ấp Ô Tưng B") {
+            offsetLatlng = L.latLng(latlng.lat - 0.001, latlng.lng + 0.001);
+          }
+
+          const labelText = `${formatHamletName(name)} (ẤP CŨ)`;
+          const marker = L.marker(offsetLatlng, {
+            icon: L.divIcon({
+              className: "hamlet-map-label-icon",
+              html: `<span class="hamlet-map-label old-hamlet-map-label">${labelText}</span>`,
+            }),
+            interactive: false,
+            keyboard: false,
+            zIndexOffset: 500
+          }).addTo(hamletLabelsLayerGroup);
+
+          oldHamletLabelMarkers.push(marker);
+        }
+      })
+      .catch((err) => console.error(`Lỗi khi tải ranh giới ấp cũ ${name}:`, err));
+  });
+
   // Tự động thu phóng/ẩn nhãn theo mức độ zoom để bản đồ luôn thoáng đạt
   function updateOffsetHamletLabels() {
     const zoom = map.getZoom();
@@ -690,6 +746,40 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
           span.style.transform = "translate(-50%, -50%) scale(1.1)";
         }
+      }
+    });
+
+    // Tự động thu phóng/ẩn nhãn ấp cũ theo mức độ zoom (nhỏ hơn 20%)
+    oldHamletLabelMarkers.forEach((marker) => {
+      if (!marker) return;
+      const element = marker.getElement();
+      if (!element) return;
+      const span = element.querySelector(".old-hamlet-map-label");
+      if (!span) return;
+
+      if (zoom < 12) {
+        span.style.opacity = "0";
+        span.style.transform = "translate(-50%, -50%) scale(0.4)";
+      } else if (zoom === 12) {
+        span.style.opacity = "0.6";
+        span.style.fontSize = "4px";
+        span.style.padding = "1px 2px";
+        span.style.transform = "translate(-50%, -50%) scale(0.64)";
+      } else if (zoom === 13) {
+        span.style.opacity = "0.85";
+        span.style.fontSize = isMobile ? "4.8px" : "6.4px";
+        span.style.padding = isMobile ? "1.6px 3.2px" : "2px 4.8px";
+        span.style.transform = "translate(-50%, -50%) scale(0.8)";
+      } else if (zoom === 14) {
+        span.style.opacity = "0.85";
+        span.style.fontSize = isMobile ? "5.2px" : "6.4px";
+        span.style.padding = isMobile ? "1.6px 4px" : "2.4px 5.6px";
+        span.style.transform = "translate(-50%, -50%) scale(0.84)";
+      } else {
+        span.style.opacity = "0.85";
+        span.style.fontSize = isMobile ? "5.6px" : "7.2px";
+        span.style.padding = isMobile ? "2px 4.8px" : "3.2px 6.4px";
+        span.style.transform = "translate(-50%, -50%) scale(0.88)";
       }
     });
   }

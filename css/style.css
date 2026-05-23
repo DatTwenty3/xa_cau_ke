@@ -864,6 +864,15 @@ path.leaflet-interactive:focus {
   will-change: transform, box-shadow, border-color, opacity;
 }
 
+/* Nhãn ranh giới ấp cũ (nhỏ hơn 20%, viền nét đứt màu trắng và nền sẫm kính mờ) */
+.old-hamlet-map-label {
+  background: rgba(15, 23, 42, 0.75) !important;
+  border: 1px dashed rgba(255, 255, 255, 0.6) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+  opacity: 0.85;
+}
+
 /* Hiệu ứng di chuột (hover) trên nhãn */
 .hamlet-map-label.hover {
   transform: translate(-50%, -50%) scale(1.12);
