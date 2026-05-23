@@ -1148,6 +1148,14 @@ document.addEventListener("DOMContentLoaded", () => {
   if (backToCommuneBtn) {
     backToCommuneBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+      
+      // Dừng phát âm thanh thuyết minh hiện tại
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+      
       openCommuneSidebar();
       zoomToAllHamlets();
     });
