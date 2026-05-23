@@ -770,9 +770,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
-    sidebar.classList.remove("minimized");
+    if (isMobile) {
+      sidebar.classList.add("minimized");
+      if (backdrop) backdrop.classList.remove("active");
+    } else {
+      sidebar.classList.remove("minimized");
+    }
     updateMinimizeButtonState();
-    if (isMobile && backdrop) backdrop.classList.add("active");
 
     if (sidebarToggle) {
       sidebarToggle.style.display = "none";
@@ -860,9 +864,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
-    sidebar.classList.remove("minimized");
+    if (isMobile) {
+      sidebar.classList.add("minimized");
+      if (backdrop) backdrop.classList.remove("active");
+    } else {
+      sidebar.classList.remove("minimized");
+    }
     updateMinimizeButtonState();
-    if (isMobile && backdrop) backdrop.classList.add("active");
 
     if (sidebarToggle) {
       sidebarToggle.style.display = "none";
@@ -986,6 +994,15 @@ document.addEventListener("DOMContentLoaded", () => {
       e.stopPropagation();
       sidebar.classList.toggle("minimized");
       updateMinimizeButtonState();
+      
+      const isMobile = window.innerWidth <= 768;
+      if (isMobile && backdrop) {
+        if (sidebar.classList.contains("minimized")) {
+          backdrop.classList.remove("active");
+        } else {
+          backdrop.classList.add("active");
+        }
+      }
     });
   }
 
@@ -997,6 +1014,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (sidebar.classList.contains("minimized")) {
         sidebar.classList.remove("minimized");
         updateMinimizeButtonState();
+        
+        const isMobile = window.innerWidth <= 768;
+        if (isMobile && backdrop) {
+          backdrop.classList.add("active");
+        }
       }
     });
   }
