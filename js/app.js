@@ -4,8 +4,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const introEnterBtn = document.getElementById("intro-enter-btn");
   const introCard = introOverlay ? introOverlay.querySelector(".intro-card") : null;
 
-  let introAudio = new Audio("audio/intro.mp3");
+  let introAudio = new Audio();
+  introAudio.src = "audio/intro.mp3";
+  introAudio.preload = "auto";
+  introAudio.load(); // Chủ động tải âm thanh ngay lập tức
+  
   let isIntroPlaying = false;
+  let isPlayPending = false;
 
   if (introOverlay && introCard) {
     // Show intro overlay with smooth entry scale and fade-in animation
@@ -16,30 +21,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Helper to start the audio dynamically
     const startIntroAudio = () => {
-      if (introAudio.paused && !isIntroPlaying) {
-        introAudio.play()
-          .then(() => {
-            isIntroPlaying = true;
-            // Clean up fallback listeners once it successfully plays
-            document.removeEventListener("click", startIntroAudio);
-            introOverlay.removeEventListener("click", startIntroAudio);
-            document.removeEventListener("touchstart", startIntroAudio);
-          })
-          .catch((err) => console.log("Autoplay fallback failed or blocked:", err));
-      }
+      if (isIntroPlaying || isPlayPending) return;
+
+      isPlayPending = true;
+      introAudio.play()
+        .then(() => {
+          isIntroPlaying = true;
+          isPlayPending = false;
+          // Dọn dẹp các sự kiện lắng nghe khi đã phát thành công
+          removeIntroListeners();
+        })
+        .catch((err) => {
+          isPlayPending = false;
+          console.log("Autoplay fallback failed or blocked:", err);
+        });
     };
 
-    // 1. First, attempt to play automatically immediately
+    // Dọn dẹp các sự kiện lắng nghe dự phòng phát âm thanh
+    const removeIntroListeners = () => {
+      document.removeEventListener("click", startIntroAudio);
+      introOverlay.removeEventListener("click", startIntroAudio);
+      document.removeEventListener("touchstart", startIntroAudio);
+    };
+
+    // 1. Cố gắng tự động phát ngay lập tức
+    isPlayPending = true;
     introAudio.play()
       .then(() => {
         isIntroPlaying = true;
+        isPlayPending = false;
       })
       .catch((err) => {
+        isPlayPending = false;
         console.log("Autoplay blocked by browser policy. Registering fallback interactive touch/click gesture listeners.");
-        // 2. If blocked, register one-shot listeners to play audio on first user touch/click interaction
-        document.addEventListener("click", startIntroAudio, { once: true });
-        introOverlay.addEventListener("click", startIntroAudio, { once: true });
-        document.addEventListener("touchstart", startIntroAudio, { once: true });
+        // 2. Nếu bị chặn, đăng ký sự kiện tương tác để kích hoạt phát âm thanh
+        // Không dùng { once: true } để có thể thử lại nếu phát bị lỗi tạm thời do chưa tải xong
+        document.addEventListener("click", startIntroAudio);
+        introOverlay.addEventListener("click", startIntroAudio);
+        document.addEventListener("touchstart", startIntroAudio);
       });
 
     // Enter Map Transition Handler
@@ -49,9 +68,7 @@ document.addEventListener("DOMContentLoaded", () => {
       isIntroPlaying = false;
       
       // Clean up fallback listeners if map is entered before audio plays
-      document.removeEventListener("click", startIntroAudio);
-      introOverlay.removeEventListener("click", startIntroAudio);
-      document.removeEventListener("touchstart", startIntroAudio);
+      removeIntroListeners();
       
       introCard.style.transform = "scale(0.95) translateY(-30px)";
       introCard.style.opacity = "0";
