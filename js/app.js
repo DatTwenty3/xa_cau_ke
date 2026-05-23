@@ -273,8 +273,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mapHud || !hudText) return;
 
     if (hamletName && (mode === "hover" || mode === "selected")) {
-      const color = hamletColors[hamletName] || "var(--accent-indigo)";
-      hudText.innerText = formatHamletName(hamletName);
+      const feature = hamletFeaturesByName[hamletName];
+      const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
+      const color = hamletColors[displayName] || "var(--accent-indigo)";
+      hudText.innerText = formatHamletName(displayName);
       mapHud.classList.add("inspecting");
       if (hudAccent) {
         hudAccent.style.backgroundColor = color;
@@ -283,8 +285,10 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       // Revert to general commune or selected hamlet if exists
       if (selectedHamletName) {
-        const color = hamletColors[selectedHamletName] || "var(--accent-indigo)";
-        hudText.innerText = formatHamletName(selectedHamletName);
+        const feature = hamletFeaturesByName[selectedHamletName];
+        const displayName = feature ? (feature.properties.ten || selectedHamletName) : selectedHamletName;
+        const color = hamletColors[displayName] || "var(--accent-indigo)";
+        hudText.innerText = formatHamletName(displayName);
         mapHud.classList.add("inspecting");
         if (hudAccent) {
           hudAccent.style.backgroundColor = color;
@@ -302,13 +306,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createHamletLabelMarker(hamletName, bounds) {
+    const feature = hamletFeaturesByName[hamletName];
+    const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
     const centerCoords = HAMLET_LABEL_CENTERS[hamletName] || [bounds.getCenter().lat, bounds.getCenter().lng];
     const latlng = L.latLng(centerCoords[0], centerCoords[1]);
 
     const marker = L.marker(latlng, {
       icon: L.divIcon({
         className: "hamlet-map-label-icon",
-        html: `<span class="hamlet-map-label" data-hamlet="${hamletName}">${formatHamletName(hamletName)}</span>`,
+        html: `<span class="hamlet-map-label" data-hamlet="${hamletName}">${formatHamletName(displayName)}</span>`,
       }),
       interactive: true,
       keyboard: false,
@@ -323,7 +329,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (span) {
           if (selectedHamletName === hamletName) {
             span.classList.add("selected");
-            const color = hamletColors[hamletName] || "#ffffff";
+            const color = hamletColors[displayName] || "#ffffff";
             span.style.setProperty("--label-glow-color", color);
           }
           // Gọi hàm updateOffset để áp dụng đúng font size theo mức zoom hiện tại
@@ -406,7 +412,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isHighlighted) {
       span.classList.add("hover");
-      const color = hamletColors[hamletName] || "#ffffff";
+      const feature = hamletFeaturesByName[hamletName];
+      const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
+      const color = hamletColors[displayName] || "#ffffff";
       span.style.setProperty("--label-glow-color", color);
     } else {
       span.classList.remove("hover");
@@ -444,14 +452,18 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!span) return;
 
       span.classList.add("selected");
-      const color = hamletColors[hamletName] || "#ffffff";
+      const feature = hamletFeaturesByName[hamletName];
+      const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
+      const color = hamletColors[displayName] || "#ffffff";
       span.style.setProperty("--label-glow-color", color);
     }
   }
 
 
   function getHamletHoverStyle(name) {
-    const color = hamletColors[name] || "#ff4d4d";
+    const feature = hamletFeaturesByName[name];
+    const displayName = feature ? (feature.properties.ten || name) : name;
+    const color = hamletColors[displayName] || "#ff4d4d";
     return {
       color: "#ffffff",
       weight: 3.5,
@@ -473,7 +485,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const feature = hamletFeaturesByName[hamletName];
     if (!feature) return;
 
-    const color = hamletColors[hamletName] || "#ff4d4d";
+    const displayName = feature.properties.ten || hamletName;
+    const color = hamletColors[displayName] || "#ff4d4d";
     const glowStyle = {
       color: "#ffffff",
       weight: 13,
@@ -546,7 +559,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const pathLayer = hamletFeatureLayersByName[hamletName];
     
     if (pathLayer && feature) {
-      const color = hamletColors[hamletName] || "#ff4d4d";
+      const displayName = feature.properties.ten || hamletName;
+      const color = hamletColors[displayName] || "#ff4d4d";
       
       // Set highlighting styles
       pathLayer.setStyle({
@@ -840,10 +854,12 @@ document.addEventListener("DOMContentLoaded", () => {
     if (mergerContainer) {
       mergerContainer.innerHTML = "";
       hamletNames.forEach((hName) => {
+        const feature = hamletFeaturesByName[hName];
+        const displayName = feature ? (feature.properties.ten || hName) : hName;
         const tag = document.createElement("span");
         tag.className = "merger-tag";
         tag.style.cursor = "pointer";
-        tag.innerHTML = `<i class="fas fa-location-dot"></i> ${hName}`;
+        tag.innerHTML = `<i class="fas fa-location-dot"></i> ${displayName}`;
         tag.addEventListener("click", (e) => {
           e.stopPropagation();
           const layer = hamletFeatureLayersByName[hName];
