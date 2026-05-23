@@ -253,8 +253,8 @@ document.addEventListener("DOMContentLoaded", () => {
     "Ấp Trà Kháo": [9.88626, 106.08059],
     "Ấp Bà My": [9.89267, 106.05308],
     "Ấp Giồng Lớn": [9.87799, 106.06998],
-    "Ấp Thông Thảo": [9.91009, 106.07013],
-    "Ấp Giồng Dầu": [9.90806, 106.08577],
+    "Ấp Thông Thảo": [9.90806, 106.08577],
+    "Ấp Giồng Dầu": [9.91009, 106.07013],
     "Ấp Rùm Sóc": [9.83196, 106.06385],
     "Ấp Ô Mịch": [9.84556, 106.06685],
     "Ấp Ô Tưng": [9.86507, 106.08031],
@@ -273,10 +273,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mapHud || !hudText) return;
 
     if (hamletName && (mode === "hover" || mode === "selected")) {
-      const feature = hamletFeaturesByName[hamletName];
-      const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
-      const color = hamletColors[displayName] || "var(--accent-indigo)";
-      hudText.innerText = formatHamletName(displayName);
+      const color = hamletColors[hamletName] || "var(--accent-indigo)";
+      hudText.innerText = formatHamletName(hamletName);
       mapHud.classList.add("inspecting");
       if (hudAccent) {
         hudAccent.style.backgroundColor = color;
@@ -285,10 +283,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       // Revert to general commune or selected hamlet if exists
       if (selectedHamletName) {
-        const feature = hamletFeaturesByName[selectedHamletName];
-        const displayName = feature ? (feature.properties.ten || selectedHamletName) : selectedHamletName;
-        const color = hamletColors[displayName] || "var(--accent-indigo)";
-        hudText.innerText = formatHamletName(displayName);
+        const color = hamletColors[selectedHamletName] || "var(--accent-indigo)";
+        hudText.innerText = formatHamletName(selectedHamletName);
         mapHud.classList.add("inspecting");
         if (hudAccent) {
           hudAccent.style.backgroundColor = color;
@@ -306,15 +302,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function createHamletLabelMarker(hamletName, bounds) {
-    const feature = hamletFeaturesByName[hamletName];
-    const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
     const centerCoords = HAMLET_LABEL_CENTERS[hamletName] || [bounds.getCenter().lat, bounds.getCenter().lng];
     const latlng = L.latLng(centerCoords[0], centerCoords[1]);
 
     const marker = L.marker(latlng, {
       icon: L.divIcon({
         className: "hamlet-map-label-icon",
-        html: `<span class="hamlet-map-label" data-hamlet="${hamletName}">${formatHamletName(displayName)}</span>`,
+        html: `<span class="hamlet-map-label" data-hamlet="${hamletName}">${formatHamletName(hamletName)}</span>`,
       }),
       interactive: true,
       keyboard: false,
@@ -329,7 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (span) {
           if (selectedHamletName === hamletName) {
             span.classList.add("selected");
-            const color = hamletColors[displayName] || "#ffffff";
+            const color = hamletColors[hamletName] || "#ffffff";
             span.style.setProperty("--label-glow-color", color);
           }
           // Gọi hàm updateOffset để áp dụng đúng font size theo mức zoom hiện tại
@@ -412,9 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isHighlighted) {
       span.classList.add("hover");
-      const feature = hamletFeaturesByName[hamletName];
-      const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
-      const color = hamletColors[displayName] || "#ffffff";
+      const color = hamletColors[hamletName] || "#ffffff";
       span.style.setProperty("--label-glow-color", color);
     } else {
       span.classList.remove("hover");
@@ -452,18 +444,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!span) return;
 
       span.classList.add("selected");
-      const feature = hamletFeaturesByName[hamletName];
-      const displayName = feature ? (feature.properties.ten || hamletName) : hamletName;
-      const color = hamletColors[displayName] || "#ffffff";
+      const color = hamletColors[hamletName] || "#ffffff";
       span.style.setProperty("--label-glow-color", color);
     }
   }
 
 
   function getHamletHoverStyle(name) {
-    const feature = hamletFeaturesByName[name];
-    const displayName = feature ? (feature.properties.ten || name) : name;
-    const color = hamletColors[displayName] || "#ff4d4d";
+    const color = hamletColors[name] || "#ff4d4d";
     return {
       color: "#ffffff",
       weight: 3.5,
@@ -485,8 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const feature = hamletFeaturesByName[hamletName];
     if (!feature) return;
 
-    const displayName = feature.properties.ten || hamletName;
-    const color = hamletColors[displayName] || "#ff4d4d";
+    const color = hamletColors[hamletName] || "#ff4d4d";
     const glowStyle = {
       color: "#ffffff",
       weight: 13,
@@ -559,8 +546,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const pathLayer = hamletFeatureLayersByName[hamletName];
     
     if (pathLayer && feature) {
-      const displayName = feature.properties.ten || hamletName;
-      const color = hamletColors[displayName] || "#ff4d4d";
+      const color = hamletColors[hamletName] || "#ff4d4d";
       
       // Set highlighting styles
       pathLayer.setStyle({
@@ -854,12 +840,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (mergerContainer) {
       mergerContainer.innerHTML = "";
       hamletNames.forEach((hName) => {
-        const feature = hamletFeaturesByName[hName];
-        const displayName = feature ? (feature.properties.ten || hName) : hName;
         const tag = document.createElement("span");
         tag.className = "merger-tag";
         tag.style.cursor = "pointer";
-        tag.innerHTML = `<i class="fas fa-location-dot"></i> ${displayName}`;
+        tag.innerHTML = `<i class="fas fa-location-dot"></i> ${hName}`;
         tag.addEventListener("click", (e) => {
           e.stopPropagation();
           const layer = hamletFeatureLayersByName[hName];
