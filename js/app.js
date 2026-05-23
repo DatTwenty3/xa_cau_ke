@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // 0. Welcome/Intro Loading Screen Logic
   const introOverlay = document.getElementById("intro-overlay");
   const introEnterBtn = document.getElementById("intro-enter-btn");
-  const introPlayBtn = document.getElementById("intro-play-btn");
   const introCard = introOverlay ? introOverlay.querySelector(".intro-card") : null;
 
   let introAudio = new Audio();
@@ -20,113 +19,42 @@ document.addEventListener("DOMContentLoaded", () => {
       introCard.style.transform = "scale(1) translateY(0)";
     }, 150);
 
-    // Hàm cập nhật trạng thái giao diện nút phát âm thanh
-    const updatePlayButtonUI = (isPlaying) => {
-      if (!introPlayBtn) return;
+    // Hàm cập nhật trạng thái giao diện nút Khám phá Bản đồ
+    const updateEnterButtonUI = (isPlaying) => {
+      if (!introEnterBtn) return;
       if (isPlaying) {
-        introPlayBtn.classList.add("speaking");
-        introPlayBtn.innerHTML = `
+        introEnterBtn.classList.add("speaking");
+        introEnterBtn.innerHTML = `
           <div class="audio-waves">
             <span></span>
             <span></span>
             <span></span>
             <span></span>
           </div>
-          <span>Đang Phát...</span>
+          <span>Đang giới thiệu...</span>
         `;
       } else {
-        introPlayBtn.classList.remove("speaking");
-        introPlayBtn.innerHTML = `<i class="fas fa-volume-high"></i> <span>Nghe Thuyết Minh</span>`;
+        introEnterBtn.classList.remove("speaking");
+        introEnterBtn.innerHTML = `<span>Khám phá Bản đồ</span> <i class="fas fa-arrow-right"></i>`;
       }
     };
 
-    // Lắng nghe các sự kiện của Audio để đồng bộ hóa giao diện nút phát âm thanh
+    // Lắng nghe các sự kiện của Audio để đồng bộ hóa giao diện nút
     introAudio.addEventListener("play", () => {
       isIntroPlaying = true;
-      updatePlayButtonUI(true);
+      updateEnterButtonUI(true);
     });
 
     introAudio.addEventListener("pause", () => {
       isIntroPlaying = false;
-      updatePlayButtonUI(false);
+      updateEnterButtonUI(false);
     });
-
-    // Helper to start/pause the audio dynamically
-    const toggleIntroAudio = (e) => {
-      if (e) e.stopPropagation();
-      
-      if (isIntroPlaying) {
-        introAudio.pause();
-      } else {
-        if (isPlayPending) return;
-        isPlayPending = true;
-        introAudio.play()
-          .then(() => {
-            isPlayPending = false;
-            // Dọn dẹp các sự kiện lắng nghe dự phòng khi đã phát thành công
-            removeIntroListeners();
-          })
-          .catch((err) => {
-            isPlayPending = false;
-            console.log("Autoplay fallback failed or blocked:", err);
-          });
-      }
-    };
-
-    // Hàm phụ chỉ dùng để tự động phát khi chạm màn hình ngoài nút bấm
-    const startIntroAudioOnInteraction = () => {
-      if (isIntroPlaying || isPlayPending) return;
-      isPlayPending = true;
-      introAudio.play()
-        .then(() => {
-          isPlayPending = false;
-          removeIntroListeners();
-        })
-        .catch((err) => {
-          isPlayPending = false;
-          console.log("Interactive start blocked:", err);
-        });
-    };
-
-    // Dọn dẹp các sự kiện lắng nghe dự phòng phát âm thanh trên màn hình
-    const removeIntroListeners = () => {
-      document.removeEventListener("click", startIntroAudioOnInteraction);
-      introOverlay.removeEventListener("click", startIntroAudioOnInteraction);
-      document.removeEventListener("touchstart", startIntroAudioOnInteraction);
-    };
-
-    // 1. Cố gắng tự động phát ngay lập tức khi tải trang (nếu trình duyệt hỗ trợ)
-    isPlayPending = true;
-    introAudio.play()
-      .then(() => {
-        isPlayPending = false;
-      })
-      .catch((err) => {
-        isPlayPending = false;
-        console.log("Autoplay blocked by browser policy. Registering fallback interactive touch/click gesture listeners.");
-        // 2. Nếu bị chặn tự phát, đăng ký sự kiện tương tác để kích hoạt phát âm thanh dự phòng
-        document.addEventListener("click", startIntroAudioOnInteraction);
-        introOverlay.addEventListener("click", startIntroAudioOnInteraction);
-        document.addEventListener("touchstart", startIntroAudioOnInteraction);
-      });
-
-    // Lắng nghe sự kiện click trực tiếp trên nút Nghe Thuyết Minh
-    if (introPlayBtn) {
-      // Ngăn chặn sự kiện touchstart nổi bọt lên document kích hoạt trình tương tác âm thanh dự phòng
-      introPlayBtn.addEventListener("touchstart", (e) => {
-        e.stopPropagation();
-      }, { passive: true });
-      introPlayBtn.addEventListener("click", toggleIntroAudio);
-    }
 
     // Enter Map Transition Handler
     const enterMap = () => {
       introAudio.pause();
       introAudio.currentTime = 0;
       isIntroPlaying = false;
-      
-      // Clean up fallback listeners if map is entered before audio plays
-      removeIntroListeners();
       
       introCard.style.transform = "scale(0.95) translateY(-30px)";
       introCard.style.opacity = "0";
@@ -137,17 +65,42 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 800);
     };
 
+    // Xử lý sự kiện click của nút Khám phá Bản đồ
+    const handleEnterBtnClick = (e) => {
+      if (e) e.stopPropagation();
+      
+      if (isIntroPlaying) {
+        // Nhạc đang phát, không cho phép bấm bỏ qua thuyết minh
+        return;
+      } else {
+        // Nếu nhạc chưa phát, bắt đầu phát audio
+        if (isPlayPending) return;
+        isPlayPending = true;
+        
+        introAudio.play()
+          .then(() => {
+            isPlayPending = false;
+          })
+          .catch((err) => {
+            isPlayPending = false;
+            console.log("Interactive audio play blocked:", err);
+            // Phòng hờ nếu có lỗi trình duyệt vẫn không thể phát nhạc thì cho vào thẳng bản đồ
+            enterMap();
+          });
+      }
+    };
+
     if (introEnterBtn) {
       // Ngăn chặn sự kiện touchstart nổi bọt khi nhấp vào nút Khám phá bản đồ
       introEnterBtn.addEventListener("touchstart", (e) => {
         e.stopPropagation();
       }, { passive: true });
-      introEnterBtn.addEventListener("click", enterMap);
+      introEnterBtn.addEventListener("click", handleEnterBtnClick);
     }
     
     // Auto transition to map once narration is completed
     introAudio.addEventListener("ended", () => {
-      setTimeout(enterMap, 1000);
+      setTimeout(enterMap, 800);
     });
 
     // 3. Initialize Three.js Holographic Rotating 3D Globe Background
