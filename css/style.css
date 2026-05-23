@@ -1222,49 +1222,49 @@ path.leaflet-interactive:focus {
 .hamlet-glow-ring {
   pointer-events: none !important;
   stroke: #ffffff !important;
-  stroke-width: 10px !important;
+  stroke-width: 13px !important;
   stroke-linecap: round;
   stroke-linejoin: round;
-  animation: glowPulse 2.8s infinite ease-in-out;
+  animation: glowPulse 1.8s infinite ease-in-out;
 }
 
 @keyframes glowPulse {
   0% {
-    stroke-opacity: 0.3;
-    filter: drop-shadow(0 0 4px var(--glow-color))
-            drop-shadow(0 0 10px var(--glow-color));
+    stroke-opacity: 0.4;
+    filter: drop-shadow(0 0 6px var(--glow-color))
+            drop-shadow(0 0 13px var(--glow-color));
   }
   50% {
-    stroke-opacity: 0.75;
-    filter: drop-shadow(0 0 12px var(--glow-color))
-            drop-shadow(0 0 22px var(--glow-color))
-            drop-shadow(0 0 32px var(--glow-color));
+    stroke-opacity: 0.98;
+    filter: drop-shadow(0 0 16px var(--glow-color))
+            drop-shadow(0 0 28px var(--glow-color))
+            drop-shadow(0 0 42px var(--glow-color));
   }
   100% {
-    stroke-opacity: 0.3;
-    filter: drop-shadow(0 0 4px var(--glow-color))
-            drop-shadow(0 0 10px var(--glow-color));
+    stroke-opacity: 0.4;
+    filter: drop-shadow(0 0 6px var(--glow-color))
+            drop-shadow(0 0 13px var(--glow-color));
   }
 }
 
 .hamlet-polygon.hamlet-polygon-selected {
   stroke: #ffffff !important;
-  stroke-width: 4px !important;
+  stroke-width: 5px !important;
   stroke-opacity: 0.95 !important;
   stroke-linecap: round;
   stroke-linejoin: round;
-  animation: fillPulse 2.8s infinite ease-in-out;
+  animation: fillPulse 1.8s infinite ease-in-out;
 }
 
 @keyframes fillPulse {
   0% {
-    fill-opacity: 0.25;
+    fill-opacity: 0.33;
   }
   50% {
-    fill-opacity: 0.42;
+    fill-opacity: 0.55;
   }
   100% {
-    fill-opacity: 0.25;
+    fill-opacity: 0.33;
   }
 }
 

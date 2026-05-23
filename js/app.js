@@ -476,7 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const color = hamletColors[hamletName] || "#ff4d4d";
     const glowStyle = {
       color: "#ffffff",
-      weight: 10,
+      weight: 13,
       opacity: 0.8,
       fillOpacity: 0,
       fill: false,
@@ -551,10 +551,10 @@ document.addEventListener("DOMContentLoaded", () => {
       // Set highlighting styles
       pathLayer.setStyle({
         color: "#ffffff", // Sharp white border
-        weight: 4.0,
+        weight: 5.0,
         opacity: 0.95,
         fillColor: color,
-        fillOpacity: 0.38,
+        fillOpacity: 0.49,
         className: "hamlet-polygon hamlet-polygon-selected",
       });
       pathLayer.bringToFront();
