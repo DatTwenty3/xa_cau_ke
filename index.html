@@ -67,9 +67,11 @@
       <div class="info-title-group">
         <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 4px;">
           <h1 id="commune-name" style="margin: 0;">Chọn một ấp</h1>
-          <button id="tts-btn" class="tts-speech-btn" title="Nghe giới thiệu bằng giọng nói" style="display: none;">
-            <i class="fas fa-volume-up"></i>
-          </button>
+        </div>
+        <!-- Merger info placed directly under the name -->
+        <div id="merger-sub-section" style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px; align-items: stretch; padding-bottom: 12px; border-bottom: 1px solid rgba(15, 43, 92, 0.08);">
+          <span id="merger-title" class="info-label" style="font-weight: 700; color: var(--text-primary);"><i class="fas fa-compress-arrows-alt"></i> Khu vực giáp ranh / sáp nhập:</span>
+          <div id="info-merger" class="merger-tags-container"></div>
         </div>
       </div>
       
@@ -105,13 +107,9 @@
             </span>
             <span id="stat-density" class="info-value">8.399 hộ</span>
           </div>
-          <div class="info-row">
+          <div class="info-row" style="border: none; padding-bottom: 0;">
             <span class="info-label"><i class="fas fa-chart-area"></i> Mật độ dân số:</span>
             <span id="info-density" class="info-value">— người/km²</span>
-          </div>
-          <div class="info-row" style="flex-direction: column; gap: 6px; align-items: stretch; border: none; padding-bottom: 0;">
-            <span id="merger-title" class="info-label" style="font-weight: 700; color: var(--text-primary);"><i class="fas fa-compress-arrows-alt"></i> Khu vực giáp ranh / sáp nhập:</span>
-            <div id="info-merger" class="merger-tags-container"></div>
           </div>
         </div>
       </div>
@@ -126,8 +124,8 @@
     <button class="layer-btn" data-layer="roadmap" title="Bản đồ đường đi Google Maps tiêu chuẩn">
       <i class="fas fa-road"></i> <span>Google Bản Đồ</span>
     </button>
-    <button class="layer-btn" data-layer="terrain" title="Bản đồ địa hình Google">
-      <i class="fas fa-mountain-sun"></i> <span>Google Địa Hình</span>
+    <button id="tts-global-btn" class="sound-toggle-btn disabled" title="Chọn một ấp để nghe thuyết minh">
+      <i class="fas fa-volume-xmark"></i>
     </button>
   </div>
 

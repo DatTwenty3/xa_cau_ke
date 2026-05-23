@@ -74,46 +74,110 @@ def build_merger_text(props):
     return f"Được sáp nhập từ các ấp: {names}."
 
 
+HAMLET_DETAILS = {
+    "Ấp 1": {
+        "is_merged": True,
+        "new_area": 137.95,
+        "new_households": 993,
+        "new_pop": 4045,
+        "sources": [
+            {"ten": "Ấp 1 cũ", "area": 52.09, "households": 430, "pop": 1751},
+            {"ten": "Ấp 2", "area": 29.05, "households": 304, "pop": 1234},
+            {"ten": "Ấp 3", "area": 56.80, "households": 259, "pop": 1060}
+        ]
+    },
+    "Ấp 2": {
+        "is_merged": True,
+        "new_area": 168.08,
+        "new_households": 838,
+        "new_pop": 3372,
+        "sources": [
+            {"ten": "Ấp 4", "area": 15.84, "households": 274, "pop": 1076},
+            {"ten": "Ấp 5", "area": 57.81, "households": 246, "pop": 1045},
+            {"ten": "Ấp 6", "area": 94.43, "households": 318, "pop": 1251}
+        ]
+    },
+    "Ấp Ô Tưng": {
+        "is_merged": True,
+        "new_area": 760.73,
+        "new_households": 834,
+        "new_pop": 3567,
+        "sources": [
+            {"ten": "Ấp Ô Tưng A", "area": 362.03, "households": 341, "pop": 1412},
+            {"ten": "Ấp Ô Tưng B", "area": 398.70, "households": 493, "pop": 2155}
+        ]
+    },
+    "Ấp Xóm Lớn": {
+        "is_merged": True,
+        "new_area": 677.54,
+        "new_households": 887,
+        "new_pop": 3989,
+        "sources": [
+            {"ten": "Ấp Trà Bôn", "area": 387.93, "households": 488, "pop": 2154},
+            {"ten": "Ấp Xóm Lớn cũ", "area": 289.61, "households": 399, "pop": 1835}
+        ]
+    },
+    "Ấp Trà Kháo": {"is_merged": False, "area": 376.49, "households": 686, "pop": 2780},
+    "Ấp Bà My": {"is_merged": False, "area": 543.04, "households": 705, "pop": 2910},
+    "Ấp Giồng Lớn": {"is_merged": False, "area": 393.81, "households": 601, "pop": 2494},
+    "Ấp Thông Thảo": {"is_merged": False, "area": 385.91, "households": 571, "pop": 2421},
+    "Ấp Giồng Dầu": {"is_merged": False, "area": 321.91, "households": 413, "pop": 1704},
+    "Ấp Rùm Sóc": {"is_merged": False, "area": 291.61, "households": 441, "pop": 1876},
+    "Ấp Ô Mịch": {"is_merged": False, "area": 470.98, "households": 471, "pop": 2044},
+    "Ấp Châu Hưng": {"is_merged": False, "area": 548.74, "households": 530, "pop": 2283},
+    "Ấp Ô Rồm": {"is_merged": False, "area": 334.77, "households": 429, "pop": 1848}
+}
+
+
+def find_hamlet_details(name):
+    norm_name = clean_value(name).lower().replace("ấp", "").strip()
+    for k, v in HAMLET_DETAILS.items():
+        norm_k = k.lower().replace("ấp", "").strip()
+        if norm_name == norm_k:
+            return k, v
+    return None, None
+
+
 def build_narration(props):
     loai, display_name = get_display_name(props)
     full_name = f"{loai} {display_name}" if display_name else loai
 
-    area_ha = parse_float(props.get("dien_tich_ha"), 0)
-    area_km2 = parse_float(props.get("dien_tich_km2"), 0)
-    if area_km2 <= 0 and area_ha > 0:
-        area_km2 = area_ha / 100
+    # Find matching hamlet in HAMLET_DETAILS
+    key_name, details = find_hamlet_details(full_name)
 
-    pop = parse_int(props.get("dan_so"), 0)
-    households = parse_int(props.get("so_ho"), 0)
-    density = parse_float(props.get("mat_do_km2"), 0)
-    if density <= 0 and area_km2 > 0 and pop > 0:
-        density = pop / area_km2
+    if details:
+        if details["is_merged"]:
+            sub_texts = []
+            for s in details["sources"]:
+                sub_texts.append(
+                    f"{s['ten']} có diện tích {speak_number(s['area'], 2)} héc-ta, "
+                    f"số hộ {speak_number(s['households'])} hộ, "
+                    f"số dân {speak_number(s['pop'])} dân"
+                )
+            if len(sub_texts) == 2:
+                sources_text = f" và {sub_texts[1]}"
+                sources_text = sub_texts[0] + sources_text
+            elif len(sub_texts) > 2:
+                sources_text = "; ".join(sub_texts[:-1]) + f"; và {sub_texts[-1]}"
+            else:
+                sources_text = sub_texts[0]
 
-    parts = [
-        f"Chào mừng bạn đến với {full_name}.",
-        f"Đây là đơn vị hành chính cấp ba, thuộc xã {COMMUNE}, tỉnh {PROVINCE}.",
-        f"Phân loại đơn vị: {loai}. Cấp quản lý: cấp ba.",
-    ]
-
-    if area_ha > 0:
-        parts.append(
-            f"Diện tích tự nhiên là {speak_number(area_ha, 2)} héc-ta, "
-            f"tương đương {speak_number(area_km2, 4)} kilômét vuông."
-        )
-
-    if pop > 0:
-        parts.append(f"Dân số {speak_number(pop)} người.")
-
-    if households > 0:
-        parts.append(f"Số hộ dân cư {speak_number(households)} hộ.")
-
-    if density > 0:
-        parts.append(
-            f"Mật độ dân số {speak_number(density, 2)} người trên một kilômét vuông."
-        )
-
-    parts.append(build_merger_text(props))
-    return " ".join(parts)
+            return (
+                f"{key_name} sau sáp nhập có diện tích là {speak_number(details['new_area'], 2)} héc-ta, "
+                f"số hộ là {speak_number(details['new_households'])} hộ, "
+                f"số dân là {speak_number(details['new_pop'])} dân, "
+                f"được sáp nhập từ: {sources_text}."
+            )
+        else:
+            return (
+                f"{key_name} giữ nguyên không sáp nhập, "
+                f"có diện tích là {speak_number(details['area'], 2)} héc-ta, "
+                f"số hộ là {speak_number(details['households'])} hộ, "
+                f"số dân là {speak_number(details['pop'])} dân."
+            )
+    else:
+        # Fallback if not found in HAMLET_DETAILS
+        return build_merger_text(props)
 
 
 async def generate_tts_with_retry(text: str, output_path: str, retries=5, delay=3):

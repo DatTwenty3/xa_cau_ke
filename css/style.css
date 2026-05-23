@@ -699,7 +699,7 @@ body {
   box-shadow: 0 10px 30px -5px rgba(15, 43, 92, 0.08), 0 1px 3px rgba(15, 43, 92, 0.02);
 }
 
-.layer-btn {
+.layer-btn, .sound-toggle-btn {
   background: transparent;
   border: 1px solid transparent;
   padding: 6px 14px;
@@ -714,22 +714,44 @@ body {
   transition: var(--transition-smooth);
 }
 
-.layer-btn i {
+.layer-btn i, .sound-toggle-btn i {
   font-size: 13px;
   color: var(--accent-emerald); /* Cam đậm */
   transition: var(--transition-smooth);
 }
 
-.layer-btn:hover {
+.layer-btn:hover, .sound-toggle-btn:hover {
   color: var(--accent-indigo);
   background: var(--accent-indigo-glow);
 }
 
-.layer-btn.active {
+.layer-btn.active, .sound-toggle-btn.speaking {
   background: #ffffff;
   color: var(--accent-indigo); /* Xanh dương đậm */
   border-color: var(--accent-emerald) !important; /* Viền màu cam đậm nổi bật */
   box-shadow: 0 4px 10px rgba(15, 43, 92, 0.1);
+}
+
+.sound-toggle-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sound-toggle-btn.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.sound-toggle-btn.disabled i {
+  color: var(--text-muted) !important;
+}
+
+.sound-toggle-btn.speaking {
+  animation: pulseSpeech 1.2s infinite ease-in-out;
 }
 
 /* Glowing hint panel overlay on initial load */
@@ -1082,7 +1104,7 @@ path.leaflet-interactive:focus {
     padding: 0;
   }
 
-  .layer-btn {
+  .layer-btn, .sound-toggle-btn {
     width: 44px;
     height: 44px;
     border-radius: 50%; /* Make them perfect circles */
@@ -1099,15 +1121,15 @@ path.leaflet-interactive:focus {
     transition: var(--transition-smooth);
   }
 
-  .layer-btn i {
+  .layer-btn i, .sound-toggle-btn i {
     font-size: 16px;
   }
 
-  .layer-btn span {
+  .layer-btn span, .sound-toggle-btn span {
     display: none; /* Hide text to keep it perfectly circular and minimal */
   }
 
-  .layer-btn.active {
+  .layer-btn.active, .sound-toggle-btn.speaking {
     background: #ffffff;
     color: var(--accent-indigo);
     border-color: var(--accent-emerald) !important; /* Cam đậm */

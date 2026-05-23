@@ -17,10 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
       maxZoom: 20,
       attribution: "Map data &copy;2026 Google",
     }),
-    terrain: L.tileLayer("https://mt1.google.com/vt/lyrs=t&x={x}&y={y}&z={z}", {
-      maxZoom: 20,
-      attribution: "Map data &copy;2026 Google",
-    }),
+
     satellite: L.tileLayer(
       "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
       {
@@ -814,9 +811,15 @@ document.addEventListener("DOMContentLoaded", () => {
     animateValue("stat-pop", 0, parseInt(communeProperties.dan_so), 1200, 0, " người");
     animateValue("stat-density", 0, parseInt(communeProperties.so_ho), 1500, 0, " hộ");
 
-    // Hide TTS button for the whole commune
-    const ttsBtn = document.getElementById("tts-btn");
-    if (ttsBtn) ttsBtn.style.display = "none";
+    // Disable global TTS button for the whole commune
+    const globalTtsBtn = document.getElementById("tts-global-btn");
+    if (globalTtsBtn) {
+      globalTtsBtn.classList.add("disabled");
+      globalTtsBtn.classList.remove("speaking");
+      globalTtsBtn.title = "Chọn một ấp để nghe thuyết minh";
+      const icon = globalTtsBtn.querySelector("i");
+      if (icon) icon.className = "fas fa-volume-xmark";
+    }
 
     // Admin table updates
     document.getElementById("info-type").innerText = "Xã";
@@ -912,9 +915,12 @@ document.addEventListener("DOMContentLoaded", () => {
     animateValue("stat-pop", 0, popVal, 1200, 0, " người");
     animateValue("stat-density", 0, hoVal, 1500, 0, " hộ");
 
-    // Show TTS button dynamically when selected
-    const ttsBtn = document.getElementById("tts-btn");
-    if (ttsBtn) ttsBtn.style.display = "flex";
+    // Enable global TTS button dynamically when selected
+    const globalTtsBtn = document.getElementById("tts-global-btn");
+    if (globalTtsBtn) {
+      globalTtsBtn.classList.remove("disabled");
+      globalTtsBtn.title = "Bật/Tắt âm thanh thuyết minh";
+    }
 
     // Admin table updates
     document.getElementById("info-type").innerText = "Ấp";
@@ -946,10 +952,13 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAudio.currentTime = 0;
       currentAudio = null;
     }
-    const ttsBtn = document.getElementById("tts-btn");
-    if (ttsBtn) {
-      ttsBtn.classList.remove("speaking");
-      ttsBtn.style.display = "none"; // Hide TTS button when sidebar is closed
+    const globalTtsBtn = document.getElementById("tts-global-btn");
+    if (globalTtsBtn) {
+      globalTtsBtn.classList.remove("speaking");
+      globalTtsBtn.classList.add("disabled");
+      globalTtsBtn.title = "Chọn một ấp để nghe thuyết minh";
+      const icon = globalTtsBtn.querySelector("i");
+      if (icon) icon.className = "fas fa-volume-xmark";
     }
 
     map.closePopup();
@@ -1166,7 +1175,13 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAudio.pause();
       currentAudio.currentTime = 0;
       currentAudio = null;
-      document.querySelectorAll(".tts-speech-btn, .popup-tts-btn").forEach(btn => btn.classList.remove("speaking"));
+      document.querySelectorAll(".tts-speech-btn, .popup-tts-btn, .sound-toggle-btn").forEach(btn => {
+        btn.classList.remove("speaking");
+        if (btn.id === "tts-global-btn") {
+          const icon = btn.querySelector("i");
+          if (icon) icon.className = "fas fa-volume-xmark";
+        }
+      });
     }
 
     currentProperties = props; // Lưu trữ để phát lại thủ công nếu cần
@@ -1176,42 +1191,69 @@ document.addEventListener("DOMContentLoaded", () => {
     
     currentAudio = new Audio(audioPath);
     
-    const activeBtn = buttonEl || document.getElementById("tts-btn");
+    const activeBtn = buttonEl || document.getElementById("tts-global-btn");
 
     currentAudio.addEventListener("play", () => {
-      if (activeBtn) activeBtn.classList.add("speaking");
+      if (activeBtn) {
+        activeBtn.classList.add("speaking");
+        if (activeBtn.id === "tts-global-btn") {
+          const icon = activeBtn.querySelector("i");
+          if (icon) icon.className = "fas fa-volume-high";
+        }
+      }
     });
 
     currentAudio.addEventListener("ended", () => {
-      if (activeBtn) activeBtn.classList.remove("speaking");
+      if (activeBtn) {
+        activeBtn.classList.remove("speaking");
+        if (activeBtn.id === "tts-global-btn") {
+          const icon = activeBtn.querySelector("i");
+          if (icon) icon.className = "fas fa-volume-xmark";
+        }
+      }
       currentAudio = null;
     });
 
     currentAudio.addEventListener("error", (e) => {
       console.error("Lỗi tải/phát âm thanh thuyết minh:", e);
-      if (activeBtn) activeBtn.classList.remove("speaking");
+      if (activeBtn) {
+        activeBtn.classList.remove("speaking");
+        if (activeBtn.id === "tts-global-btn") {
+          const icon = activeBtn.querySelector("i");
+          if (icon) icon.className = "fas fa-volume-xmark";
+        }
+      }
       currentAudio = null;
     });
 
     currentAudio.play().catch((err) => {
       console.warn("Trình duyệt chặn tự động phát âm thanh:", err);
-      if (activeBtn) activeBtn.classList.remove("speaking");
+      if (activeBtn) {
+        activeBtn.classList.remove("speaking");
+        if (activeBtn.id === "tts-global-btn") {
+          const icon = activeBtn.querySelector("i");
+          if (icon) icon.className = "fas fa-volume-xmark";
+        }
+      }
     });
   }
 
   // Thiết lập trình bắt sự kiện click cho nút loa phát thanh điều khiển thủ công
-  const ttsBtn = document.getElementById("tts-btn");
-  if (ttsBtn) {
-    ttsBtn.addEventListener("click", (e) => {
+  const globalTtsBtn = document.getElementById("tts-global-btn");
+  if (globalTtsBtn) {
+    globalTtsBtn.addEventListener("click", (e) => {
       e.stopPropagation();
+      if (globalTtsBtn.classList.contains("disabled")) return;
 
       if (currentAudio && !currentAudio.paused) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
-        ttsBtn.classList.remove("speaking");
+        globalTtsBtn.classList.remove("speaking");
+        const icon = globalTtsBtn.querySelector("i");
+        if (icon) icon.className = "fas fa-volume-xmark";
       } else if (currentProperties) {
-        speakCommuneInfo(currentProperties);
+        speakCommuneInfo(currentProperties, globalTtsBtn);
       }
     });
   }
