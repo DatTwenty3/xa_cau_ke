@@ -138,46 +138,81 @@ def find_hamlet_details(name):
     return None, None
 
 
+HAMLET_AUDIO_TEXTS = {
+    "Ấp 1": {
+        "text": "Ấp 1 (mới): Dự kiến được sáp nhập từ Ấp 1 (cũ) có diện tích 52,09 ha, số hộ 430 hộ, dân số 1.751 dân; Ấp 2 có diện tích 29,05 ha, số hộ 304 hộ, dân số 1.234 dân; và Ấp 3 có diện tích 56,80 ha, số hộ 259 hộ, dân số 1.060 dân. Sau khi sáp nhập, Ấp 1 (mới) có tổng diện tích là 137,95 ha, tổng số hộ là 993 hộ và tổng dân số là 4.045 dân.",
+        "tts": "Ấp 1 mới: Dự kiến được sáp nhập từ Ấp 1 cũ có diện tích 52,09 héc-ta, số hộ 430 hộ, dân số 1751 dân; Ấp 2 có diện tích 29,05 héc-ta, số hộ 304 hộ, dân số 1234 dân; và Ấp 3 có diện tích 56,80 héc-ta, số hộ 259 hộ, dân số 1060 dân. Sau khi sáp nhập, Ấp 1 mới có tổng diện tích là 137,95 héc-ta, tổng số hộ là 993 hộ và tổng dân số là 4045 dân."
+    },
+    "Ấp 2": {
+        "text": "Ấp 2 (mới): Dự kiến được sáp nhập từ Ấp 4 có diện tích 15,84 ha, số hộ 274 hộ, dân số 1.076 dân; Ấp 5 có diện tích 57,81 ha, số hộ 246 hộ, dân số 1.045 dân; và Ấp 6 có diện tích 94,43 ha, số hộ 318 hộ, dân số 1.251 dân. Sau khi sáp nhập, Ấp 2 (mới) có tổng diện tích là 168,08 ha, tổng số hộ là 838 hộ và tổng dân số là 3.372 dân.",
+        "tts": "Ấp 2 mới: Dự kiến được sáp nhập từ Ấp 4 có diện tích 15,84 héc-ta, số hộ 274 hộ, dân số 1076 dân; Ấp 5 có diện tích 57,81 héc-ta, số hộ 246 hộ, dân số 1045 dân; và Ấp 6 có diện tích 94,43 héc-ta, số hộ 318 hộ, dân số 1251 dân. Sau khi sáp nhập, Ấp 2 mới có tổng diện tích là 168,08 héc-ta, tổng số hộ là 838 hộ và tổng dân số là 3372 dân."
+    },
+    "Ấp Trà Kháo": {
+        "text": "Ấp Trà Kháo: Là ấp giữ nguyên không sáp nhập, có diện tích 376,49 ha, số hộ 686 hộ, dân số 2.780 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Trà Kháo vẫn giữ nguyên diện tích là 376,49 ha, số hộ là 686 hộ và dân số là 2.780 dân.",
+        "tts": "Ấp Trà Kháo: Là ấp giữ nguyên không sáp nhập, có diện tích 376,49 héc-ta, số hộ 686 hộ, dân số 2780 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Trà Kháo vẫn giữ nguyên diện tích là 376,49 héc-ta, số hộ là 686 hộ và dân số là 2780 dân."
+    },
+    "Ấp Bà My": {
+        "text": "Ấp Bà My: Là ấp giữ nguyên không sáp nhập, có diện tích 543,04 ha, số hộ 705 hộ, dân số 2.910 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Bà My vẫn giữ nguyên diện tích là 543,04 ha, số hộ là 705 hộ và dân số là 2.910 dân.",
+        "tts": "Ấp Bà My: Là ấp giữ nguyên không sáp nhập, có diện tích 543,04 héc-ta, số hộ 705 hộ, dân số 2910 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Bà My vẫn giữ nguyên diện tích là 543,04 héc-ta, số hộ là 705 hộ và dân số là 2910 dân."
+    },
+    "Ấp Giồng Lớn": {
+        "text": "Ấp Giồng Lớn: Là ấp giữ nguyên không sáp nhập, có diện tích 393,81 ha, số hộ 601 hộ, dân số 2.494 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Giồng Lớn vẫn giữ nguyên diện tích là 393,81 ha, số hộ là 601 hộ và dân số là 2.494 dân.",
+        "tts": "Ấp Giồng Lớn: Là ấp giữ nguyên không sáp nhập, có diện tích 393,81 héc-ta, số hộ 601 hộ, dân số 2494 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Giồng Lớn vẫn giữ nguyên diện tích là 393,81 héc-ta, số hộ là 601 hộ và dân số là 2494 dân."
+    },
+    "Ấp Thông Thảo": {
+        "text": "Ấp Thông Thảo: Là ấp giữ nguyên không sáp nhập, có diện tích 385,91 ha, số hộ 571 hộ, dân số 2.421 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Thông Thảo vẫn giữ nguyên diện tích là 385,91 ha, số hộ là 571 hộ và dân số là 2.421 dân.",
+        "tts": "Ấp Thông Thảo: Là ấp giữ nguyên không sáp nhập, có diện tích 385,91 héc-ta, số hộ 571 hộ, dân số 2421 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Thông Thảo vẫn giữ nguyên diện tích là 385,91 héc-ta, số hộ là 571 hộ và dân số là 2421 dân."
+    },
+    "Ấp Giồng Dầu": {
+        "text": "Ấp Giồng Dầu: Là ấp giữ nguyên không sáp nhập, có diện tích 321,91 ha, số hộ 413 hộ, dân số 1.704 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Giồng Dầu vẫn giữ nguyên diện tích là 321,91 ha, số hộ là 413 hộ và dân số là 1.704 dân.",
+        "tts": "Ấp Giồng Dầu: Là ấp giữ nguyên không sáp nhập, có diện tích 321,91 héc-ta, số hộ 413 hộ, dân số 1704 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Giồng Dầu vẫn giữ nguyên diện tích là 321,91 héc-ta, số hộ là 413 hộ và dân số là 1704 dân."
+    },
+    "Ấp Rùm Sóc": {
+        "text": "Ấp Rùm Sóc: Là ấp giữ nguyên không sáp nhập, có diện tích 291,61 ha, số hộ 441 hộ, dân số 1.876 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Rùm Sóc vẫn giữ nguyên diện tích là 291,61 ha, số hộ là 441 hộ và dân số là 1.876 dân.",
+        "tts": "Ấp Rùm Sóc: Là ấp giữ nguyên không sáp nhập, có diện tích 291,61 héc-ta, số hộ 441 hộ, dân số 1876 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Rùm Sóc vẫn giữ nguyên diện tích là 291,61 héc-ta, số hộ là 441 hộ và dân số là 1876 dân."
+    },
+    "Ấp Ô Mịch": {
+        "text": "Ấp Ô Mịch: Là ấp giữ nguyên không sáp nhập, có diện tích 470,98 ha, số hộ 471 hộ, dân số 2.044 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Ô Mịch vẫn giữ nguyên diện tích là 470,98 ha, số hộ là 471 hộ và dân số là 2.044 dân.",
+        "tts": "Ấp Ô Mịch: Là ấp giữ nguyên không sáp nhập, có diện tích 470,98 héc-ta, số hộ 471 hộ, dân số 2044 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Ô Mịch vẫn giữ nguyên diện tích là 470,98 héc-ta, số hộ là 471 hộ và dân số là 2044 dân."
+    },
+    "Ấp Ô Tưng": {
+        "text": "Ấp Ô Tưng (mới): Dự kiến được sáp nhập từ Ấp Ô Tưng A có diện tích 362,03 ha, số hộ 341 hộ, dân số 1.412 dân; và Ấp Ô Tưng B có diện tích 398,70 ha, số hộ 493 hộ, dân số 2.155 dân. Sau khi sáp nhập, Ấp Ô Tưng (mới) có tổng diện tích là 760,73 ha, tổng số hộ là 834 hộ và tổng dân số là 3.567 dân.",
+        "tts": "Ấp Ô Tưng mới: Dự kiến được sáp nhập từ Ấp Ô Tưng A có diện tích 362,03 héc-ta, số hộ 341 hộ, dân số 1412 dân; và Ấp Ô Tưng B có diện tích 398,70 héc-ta, số hộ 493 hộ, dân số 2155 dân. Sau khi sáp nhập, Ấp Ô Tưng mới có tổng diện tích là 760,73 héc-ta, tổng số hộ là 834 hộ và tổng dân số là 3567 dân."
+    },
+    "Ấp Châu Hưng": {
+        "text": "Ấp Châu Hưng: Là ấp giữ nguyên không sáp nhập, có diện tích 548,74 ha, số hộ 530 hộ, dân số 2.283 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Châu Hưng vẫn giữ nguyên diện tích là 548,74 ha, số hộ là 530 hộ và dân số là 2.283 dân.",
+        "tts": "Ấp Châu Hưng: Là ấp giữ nguyên không sáp nhập, có diện tích 548,74 héc-ta, số hộ 530 hộ, dân số 2283 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Châu Hưng vẫn giữ nguyên diện tích là 548,74 héc-ta, số hộ là 530 hộ và dân số là 2283 dân."
+    },
+    "Ấp Ô Rồm": {
+        "text": "Ấp Ô Rồm: Là ấp giữ nguyên không sáp nhập, có diện tích 334,77 ha, số hộ 429 hộ, dân số 1.848 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Ô Rồm vẫn giữ nguyên diện tích là 334,77 ha, số hộ là 429 hộ và dân số là 1.848 dân.",
+        "tts": "Ấp Ô Rồm: Là ấp giữ nguyên không sáp nhập, có diện tích 334,77 héc-ta, số hộ 429 hộ, dân số 1848 dân. Sau khi sắp xếp tổ chức hành chính, Ấp Ô Rồm vẫn giữ nguyên diện tích là 334,77 héc-ta, số hộ là 429 hộ và dân số là 1848 dân."
+    },
+    "Ấp Xóm Lớn": {
+        "text": "Ấp Xóm Lớn (mới): Dự kiến được sáp nhập từ Ấp Trà Bôn có diện tích 387,93 ha, số hộ 488 hộ, dân số 2.154 dân; và Ấp Xóm Lớn (cũ) có diện tích 289,61 ha, số hộ 399 hộ, dân số 1.835 dân. Sau khi sáp nhập, Ấp Xóm Lớn (mới) có tổng diện tích là 677,54 ha, tổng số hộ là 887 hộ và tổng dân số là 3.989 dân.",
+        "tts": "Ấp Xóm Lớn mới: Dự kiến được sáp nhập từ Ấp Trà Bôn có diện tích 387,93 héc-ta, số hộ 488 hộ, dân số 2154 dân; và Ấp Xóm Lớn cũ có diện tích 289,61 héc-ta, số hộ 399 hộ, dân số 1835 dân. Sau khi sáp nhập, Ấp Xóm Lớn mới có tổng diện tích là 677,54 héc-ta, tổng số hộ là 887 hộ và tổng dân số là 3989 dân."
+    }
+}
+
+
 def build_narration(props):
     loai, display_name = get_display_name(props)
     full_name = f"{loai} {display_name}" if display_name else loai
 
-    # Find matching hamlet in HAMLET_DETAILS
-    key_name, details = find_hamlet_details(full_name)
+    # Find matching hamlet in HAMLET_AUDIO_TEXTS new
+    norm_name = clean_value(full_name).lower().replace("ấp", "").strip()
+    matched_key = None
+    for k in HAMLET_AUDIO_TEXTS.keys():
+        norm_k = k.lower().replace("ấp", "").strip()
+        if norm_name == norm_k:
+            matched_key = k
+            break
 
-    if details:
-        if details["is_merged"]:
-            sub_texts = []
-            for s in details["sources"]:
-                sub_texts.append(
-                    f"{s['ten']} có diện tích {speak_number(s['area'], 2)} héc-ta, "
-                    f"số hộ {speak_number(s['households'])} hộ, "
-                    f"số dân {speak_number(s['pop'])} dân"
-                )
-            if len(sub_texts) == 2:
-                sources_text = f" và {sub_texts[1]}"
-                sources_text = sub_texts[0] + sources_text
-            elif len(sub_texts) > 2:
-                sources_text = "; ".join(sub_texts[:-1]) + f"; và {sub_texts[-1]}"
-            else:
-                sources_text = sub_texts[0]
+    if matched_key:
+        # Return optimized TTS text
+        return HAMLET_AUDIO_TEXTS[matched_key]["tts"]
 
-            return (
-                f"{key_name} sau sáp nhập có diện tích là {speak_number(details['new_area'], 2)} héc-ta, "
-                f"số hộ là {speak_number(details['new_households'])} hộ, "
-                f"số dân là {speak_number(details['new_pop'])} dân, "
-                f"được sáp nhập từ: {sources_text}."
-            )
-        else:
-            return (
-                f"{key_name} giữ nguyên không sáp nhập, "
-                f"có diện tích là {speak_number(details['area'], 2)} héc-ta, "
-                f"số hộ là {speak_number(details['households'])} hộ, "
-                f"số dân là {speak_number(details['pop'])} dân."
-            )
-    else:
-        # Fallback if not found in HAMLET_DETAILS
-        return build_merger_text(props)
+    # Fallback if not found
+    return build_merger_text(props)
 
 
 async def generate_tts_with_retry(text: str, output_path: str, retries=5, delay=3):
