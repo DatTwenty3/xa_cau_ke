@@ -859,7 +859,7 @@ path.leaflet-interactive:focus {
   letter-spacing: 0.4px;
   white-space: nowrap;
   box-shadow: 0 4px 12px rgba(15, 43, 92, 0.12) !important;
-  pointer-events: none; /* Rê chuột xuyên qua text vào marker icon */
+  pointer-events: auto !important; /* Bật tương tác click và hover trực tiếp trên nhãn ấp mới */
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform, box-shadow, border-color, opacity;
 }
@@ -871,6 +871,7 @@ path.leaflet-interactive:focus {
   color: #ffffff !important;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
   opacity: 0.85;
+  pointer-events: none !important; /* Đảm bảo nhãn ấp cũ không cản trở việc click vào bản đồ/nhãn mới */
 }
 
 /* Hiệu ứng di chuột (hover) trên nhãn */

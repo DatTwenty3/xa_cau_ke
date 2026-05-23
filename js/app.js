@@ -3,7 +3,20 @@ document.addEventListener("DOMContentLoaded", () => {
   const defaultCenter = [9.914, 106.08];
   const map = L.map("map", {
     zoomControl: false, // Disabling default zoom control to position custom styled one
+    tap: false,         // Disables Leaflet's custom tap handler to restore reliable native click handling on mobile
   }).setView(defaultCenter, 13);
+
+  // Tạo các pane bản đồ tùy chỉnh để kiểm soát thứ tự hiển thị (z-index) nghiêm ngặt
+  map.createPane("oldHamletsPane");
+  map.getPane("oldHamletsPane").style.zIndex = "350"; // Dưới các lớp phủ thông thường (mặc định overlayPane là 400)
+  map.getPane("oldHamletsPane").style.pointerEvents = "none"; // Tránh cản trở tương tác click
+
+  map.createPane("newHamletsPane");
+  map.getPane("newHamletsPane").style.zIndex = "400"; // Ngang cấp lớp phủ chuẩn
+
+  map.createPane("glowPane");
+  map.getPane("glowPane").style.zIndex = "410"; // Nằm trên ranh giới ấp mới một chút
+  map.getPane("glowPane").style.pointerEvents = "none";
 
 
 
@@ -487,6 +500,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     
     hamletGlowLayer = L.geoJSON(feature, {
+      pane: "glowPane",
       interactive: false,
       style: () => glowStyle,
     });
@@ -586,6 +600,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const geojsonLayers = [];
       results.forEach(({ name: hamletName, data }) => {
         const layer = L.geoJSON(data, {
+          pane: "newHamletsPane",
           style: getHamletStyle,
           onEachFeature: (feature, featureLayer) => {
             hamletFeaturesByName[hamletName] = feature;
@@ -651,6 +666,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .then((res) => res.json())
       .then((data) => {
         const geojsonLayer = L.geoJSON(data, {
+          pane: "oldHamletsPane",
           style: {
             color: "#ffffff",
             weight: 2.2,
