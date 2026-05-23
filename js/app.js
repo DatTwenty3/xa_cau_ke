@@ -103,27 +103,27 @@ document.addEventListener("DOMContentLoaded", () => {
         const sphereSegments = isMobileDevice ? 18 : 24;
         const geometry = new THREE.SphereGeometry(3, sphereSegments, sphereSegments);
         
-        // Wireframe grid lines (electric blue)
+        // Wireframe grid lines (electric deep blue)
         const wireframeMaterial = new THREE.MeshBasicMaterial({
-          color: 0x0a84ff,
+          color: 0x0f2b5c,
           wireframe: true,
           transparent: true,
-          opacity: 0.15
+          opacity: 0.14
         });
         const globeWire = new THREE.Mesh(geometry, wireframeMaterial);
         scene.add(globeWire);
 
-        // Grid star nodes (radiant cyan)
+        // Grid star nodes (radiant dark orange)
         const pointsMaterial = new THREE.PointsMaterial({
-          color: 0x00e5ff,
-          size: 0.08,
+          color: 0xcf4d03,
+          size: 0.09,
           transparent: true,
-          opacity: 0.7
+          opacity: 0.85
         });
         const globePoints = new THREE.Points(geometry, pointsMaterial);
         scene.add(globePoints);
 
-        // Outer glow atmosphere (coral orange)
+        // Outer glow atmosphere (coral dark orange aura)
         const outerGeometry = new THREE.SphereGeometry(3.08, 12, 12);
         const outerMaterial = new THREE.MeshBasicMaterial({
           color: 0xcf4d03,
@@ -134,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const outerGlobe = new THREE.Mesh(outerGeometry, outerMaterial);
         scene.add(outerGlobe);
 
-        // 1. Drifting Space Starfield (150 Stars)
+        // 1. Drifting Space Starfield (150 Deep Blue Stars)
         const starsGeometry = new THREE.BufferGeometry();
         const starsCount = 150;
         const starPositions = new Float32Array(starsCount * 3);
@@ -150,10 +150,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         starsGeometry.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
         const starsMaterial = new THREE.PointsMaterial({
-          color: 0xffffff,
+          color: 0x0f2b5c,
           size: 0.05,
           transparent: true,
-          opacity: 0.4
+          opacity: 0.25
         });
         const starfield = new THREE.Points(starsGeometry, starsMaterial);
         scene.add(starfield);
@@ -164,23 +164,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const ringGeom = new THREE.RingGeometry(3.4, 3.415, 50);
         
-        // Orbit Path 1 (electric cyan)
+        // Orbit Path 1 (deep blue)
         const ringMat1 = new THREE.MeshBasicMaterial({
-          color: 0x00e5ff,
+          color: 0x0f2b5c,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.22
+          opacity: 0.18
         });
         const orbit1 = new THREE.Mesh(ringGeom, ringMat1);
         orbit1.rotation.x = Math.PI / 3;
         orbitsGroup.add(orbit1);
 
-        // Orbit Path 2 (rose neon)
+        // Orbit Path 2 (dark orange)
         const ringMat2 = new THREE.MeshBasicMaterial({
-          color: 0xff375f,
+          color: 0xcf4d03,
           side: THREE.DoubleSide,
           transparent: true,
-          opacity: 0.18
+          opacity: 0.16
         });
         const orbit2 = new THREE.Mesh(ringGeom, ringMat2);
         orbit2.rotation.x = -Math.PI / 4;
@@ -189,7 +189,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Blinking tech satellite node on Orbit 1
         const satGeom = new THREE.SphereGeometry(0.09, 8, 8);
-        const satMat = new THREE.MeshBasicMaterial({ color: 0xffffd6 });
+        const satMat = new THREE.MeshBasicMaterial({ color: 0xff7a00 });
         const satellite = new THREE.Mesh(satGeom, satMat);
         satellite.position.x = 3.4; // Anchor onto Orbit 1 radius
         orbit1.add(satellite);
