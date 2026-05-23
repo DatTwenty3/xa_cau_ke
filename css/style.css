@@ -1598,14 +1598,14 @@ path.leaflet-interactive:focus {
 @media (min-width: 769px) {
   #sidebar.minimized {
     width: 320px !important;
-    max-height: 105px !important;
+    max-height: 160px !important;
     border-radius: 18px !important;
     box-shadow: 0 15px 35px -10px rgba(15, 23, 42, 0.08) !important;
     overflow: hidden !important;
   }
   
   #sidebar.minimized .sidebar-content {
-    max-height: 55px !important;
+    max-height: 110px !important;
     padding: 8px 16px !important;
     overflow: hidden !important;
   }
@@ -1614,6 +1614,11 @@ path.leaflet-interactive:focus {
   #sidebar.minimized .info-section,
   #sidebar.minimized .back-to-commune-btn {
     display: none !important;
+  }
+
+  #sidebar.minimized #merger-sub-section {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
   }
   
   #sidebar.minimized .info-title-group {
@@ -1638,7 +1643,7 @@ path.leaflet-interactive:focus {
 /* Trên Mobile (Điện thoại) */
 @media (max-width: 768px) {
   #sidebar.minimized {
-    height: 95px !important;
+    height: 150px !important;
     bottom: 12px !important;
     left: 12px !important;
     right: 12px !important;
@@ -1668,6 +1673,11 @@ path.leaflet-interactive:focus {
   #sidebar.minimized .info-section,
   #sidebar.minimized .back-to-commune-btn {
     display: none !important;
+  }
+
+  #sidebar.minimized #merger-sub-section {
+    border-bottom: none !important;
+    padding-bottom: 0 !important;
   }
   
   #sidebar.minimized .info-title-group {
