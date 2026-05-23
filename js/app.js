@@ -1,4 +1,256 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // 0. Welcome/Intro Loading Screen Logic
+  const introOverlay = document.getElementById("intro-overlay");
+  const introEnterBtn = document.getElementById("intro-enter-btn");
+  const introCard = introOverlay ? introOverlay.querySelector(".intro-card") : null;
+
+  let introAudio = new Audio("audio/intro.mp3");
+  let isIntroPlaying = false;
+
+  if (introOverlay && introCard) {
+    // Show intro overlay with smooth entry scale and fade-in animation
+    setTimeout(() => {
+      introCard.style.opacity = "1";
+      introCard.style.transform = "scale(1) translateY(0)";
+    }, 150);
+
+    // Helper to start the audio dynamically
+    const startIntroAudio = () => {
+      if (introAudio.paused && !isIntroPlaying) {
+        introAudio.play()
+          .then(() => {
+            isIntroPlaying = true;
+            // Clean up fallback listeners once it successfully plays
+            document.removeEventListener("click", startIntroAudio);
+            introOverlay.removeEventListener("click", startIntroAudio);
+            document.removeEventListener("touchstart", startIntroAudio);
+          })
+          .catch((err) => console.log("Autoplay fallback failed or blocked:", err));
+      }
+    };
+
+    // 1. First, attempt to play automatically immediately
+    introAudio.play()
+      .then(() => {
+        isIntroPlaying = true;
+      })
+      .catch((err) => {
+        console.log("Autoplay blocked by browser policy. Registering fallback interactive touch/click gesture listeners.");
+        // 2. If blocked, register one-shot listeners to play audio on first user touch/click interaction
+        document.addEventListener("click", startIntroAudio, { once: true });
+        introOverlay.addEventListener("click", startIntroAudio, { once: true });
+        document.addEventListener("touchstart", startIntroAudio, { once: true });
+      });
+
+    // Enter Map Transition Handler
+    const enterMap = () => {
+      introAudio.pause();
+      introAudio.currentTime = 0;
+      isIntroPlaying = false;
+      
+      // Clean up fallback listeners if map is entered before audio plays
+      document.removeEventListener("click", startIntroAudio);
+      introOverlay.removeEventListener("click", startIntroAudio);
+      document.removeEventListener("touchstart", startIntroAudio);
+      
+      introCard.style.transform = "scale(0.95) translateY(-30px)";
+      introCard.style.opacity = "0";
+      introOverlay.style.opacity = "0";
+      
+      setTimeout(() => {
+        introOverlay.style.display = "none";
+      }, 800);
+    };
+
+    introEnterBtn.addEventListener("click", enterMap);
+    
+    // Auto transition to map once narration is completed
+    introAudio.addEventListener("ended", () => {
+      setTimeout(enterMap, 1000);
+    });
+
+    // 3. Initialize Three.js Holographic Rotating 3D Globe Background
+    if (typeof THREE !== "undefined") {
+      const globeContainer = document.getElementById("globe-canvas-container");
+      if (globeContainer) {
+        const isMobileDevice = window.innerWidth <= 768;
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(60, globeContainer.clientWidth / globeContainer.clientHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+
+        renderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileDevice ? 1.5 : 2.0)); // Optimize pixel ratio on mobile for battery and heat
+        globeContainer.appendChild(renderer.domElement);
+
+        // Create Holographic Wireframe Globe (Optimized segments on mobile)
+        const sphereSegments = isMobileDevice ? 18 : 24;
+        const geometry = new THREE.SphereGeometry(3, sphereSegments, sphereSegments);
+        
+        // Wireframe grid lines (electric blue)
+        const wireframeMaterial = new THREE.MeshBasicMaterial({
+          color: 0x0a84ff,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.15
+        });
+        const globeWire = new THREE.Mesh(geometry, wireframeMaterial);
+        scene.add(globeWire);
+
+        // Grid star nodes (radiant cyan)
+        const pointsMaterial = new THREE.PointsMaterial({
+          color: 0x00e5ff,
+          size: 0.08,
+          transparent: true,
+          opacity: 0.7
+        });
+        const globePoints = new THREE.Points(geometry, pointsMaterial);
+        scene.add(globePoints);
+
+        // Outer glow atmosphere (coral orange)
+        const outerGeometry = new THREE.SphereGeometry(3.08, 12, 12);
+        const outerMaterial = new THREE.MeshBasicMaterial({
+          color: 0xcf4d03,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.08
+        });
+        const outerGlobe = new THREE.Mesh(outerGeometry, outerMaterial);
+        scene.add(outerGlobe);
+
+        // 1. Drifting Space Starfield (150 Stars)
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsCount = 150;
+        const starPositions = new Float32Array(starsCount * 3);
+        for (let i = 0; i < starsCount * 3; i += 3) {
+          const u = Math.random();
+          const v = Math.random();
+          const theta = u * 2.0 * Math.PI;
+          const phi = Math.acos(2.0 * v - 1.0);
+          const r = 8.5 + Math.random() * 3.5; // Place stars between radius 8.5 and 12
+          starPositions[i] = r * Math.sin(phi) * Math.cos(theta);
+          starPositions[i+1] = r * Math.sin(phi) * Math.sin(theta);
+          starPositions[i+2] = r * Math.cos(phi);
+        }
+        starsGeometry.setAttribute("position", new THREE.BufferAttribute(starPositions, 3));
+        const starsMaterial = new THREE.PointsMaterial({
+          color: 0xffffff,
+          size: 0.05,
+          transparent: true,
+          opacity: 0.4
+        });
+        const starfield = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(starfield);
+
+        // 2. Futuristic Orbital Satellite Tracks (GIS Constellations)
+        const orbitsGroup = new THREE.Group();
+        scene.add(orbitsGroup);
+
+        const ringGeom = new THREE.RingGeometry(3.4, 3.415, 50);
+        
+        // Orbit Path 1 (electric cyan)
+        const ringMat1 = new THREE.MeshBasicMaterial({
+          color: 0x00e5ff,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.22
+        });
+        const orbit1 = new THREE.Mesh(ringGeom, ringMat1);
+        orbit1.rotation.x = Math.PI / 3;
+        orbitsGroup.add(orbit1);
+
+        // Orbit Path 2 (rose neon)
+        const ringMat2 = new THREE.MeshBasicMaterial({
+          color: 0xff375f,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.18
+        });
+        const orbit2 = new THREE.Mesh(ringGeom, ringMat2);
+        orbit2.rotation.x = -Math.PI / 4;
+        orbit2.rotation.y = Math.PI / 6;
+        orbitsGroup.add(orbit2);
+
+        // Blinking tech satellite node on Orbit 1
+        const satGeom = new THREE.SphereGeometry(0.09, 8, 8);
+        const satMat = new THREE.MeshBasicMaterial({ color: 0xffffd6 });
+        const satellite = new THREE.Mesh(satGeom, satMat);
+        satellite.position.x = 3.4; // Anchor onto Orbit 1 radius
+        orbit1.add(satellite);
+
+        camera.position.z = isMobileDevice ? 8.2 : 6; // Move camera back on mobile to fit the globe beautifully in portrait aspect ratio
+
+        let animationFrameId;
+        let time = 0;
+        const animateGlobe = () => {
+          animationFrameId = requestAnimationFrame(animateGlobe);
+          time += 0.012;
+
+          // Rotate Globe core
+          globeWire.rotation.y += 0.0015;
+          globeWire.rotation.x += 0.0004;
+          globePoints.rotation.y += 0.0015;
+          globePoints.rotation.x += 0.0004;
+
+          // Rotate satellite orbit tracks at differing speeds
+          orbit1.rotation.z += 0.0025;
+          orbit2.rotation.z -= 0.0035;
+          orbitsGroup.rotation.y += 0.0006;
+
+          // Rotate starfield slowly to show cosmic movement
+          starfield.rotation.y += 0.0002;
+          starfield.rotation.x += 0.0001;
+
+          // Breathes the outer atmospheric forcefield (pulsing Sine wave)
+          const pulse = 1.0 + Math.sin(time) * 0.025;
+          outerGlobe.scale.setScalar(pulse);
+          outerGlobe.rotation.y -= 0.0008;
+
+          renderer.render(scene, camera);
+        };
+        animateGlobe();
+
+        // Responsive resizing
+        const onGlobeResize = () => {
+          const isMobileNow = window.innerWidth <= 768;
+          camera.aspect = globeContainer.clientWidth / globeContainer.clientHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(globeContainer.clientWidth, globeContainer.clientHeight);
+          camera.position.z = isMobileNow ? 8.2 : 6; // Dynamically adjust on screen rotate / resize
+        };
+        window.addEventListener("resize", onGlobeResize);
+
+        // Smart performance cleanup observer
+        const destroyObserver = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.attributeName === "style" && introOverlay.style.display === "none") {
+              cancelAnimationFrame(animationFrameId);
+              
+              // Thorough memory cleanup of geometries and materials to avoid WebGL memory leaks
+              geometry.dispose();
+              wireframeMaterial.dispose();
+              pointsMaterial.dispose();
+              outerGeometry.dispose();
+              outerMaterial.dispose();
+              starsGeometry.dispose();
+              starsMaterial.dispose();
+              ringGeom.dispose();
+              ringMat1.dispose();
+              ringMat2.dispose();
+              satGeom.dispose();
+              satMat.dispose();
+
+              renderer.dispose();
+              window.removeEventListener("resize", onGlobeResize);
+              destroyObserver.disconnect();
+              globeContainer.remove();
+            }
+          });
+        });
+        destroyObserver.observe(introOverlay, { attributes: true });
+      }
+    }
+  }
+
   // 1. Initialize Map
   const defaultCenter = [9.914, 106.08];
   const map = L.map("map", {

@@ -21,8 +21,60 @@
   
   <!-- Leaflet JS (loaded in head for faster layout initialization) -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Three.js (for beautiful 3D rotating globe background) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+
+  <!-- Welcome/Intro Overlay (Glassmorphism & Interactive) -->
+  <div id="intro-overlay" class="intro-overlay">
+    <!-- 3D Globe Background Container -->
+    <div id="globe-canvas-container" class="globe-canvas-container"></div>
+    
+    <div class="intro-card">
+      <!-- High-tech HUD Scanline & Corners -->
+      <div class="intro-scanline"></div>
+      <div class="intro-card-corners">
+        <div class="corner corner-tl"></div>
+        <div class="corner corner-tr"></div>
+        <div class="corner corner-bl"></div>
+        <div class="corner corner-br"></div>
+      </div>
+      
+      <div class="intro-glow"></div>
+      
+      <div class="intro-brand-logo">
+        <img src="AULAC.png" alt="Công ty Âu Lạc Logo" class="intro-logo-img">
+      </div>
+      
+      <div class="intro-header">
+        <div class="intro-brand-icon">
+          <i class="fas fa-map-location-dot"></i>
+        </div>
+        <div class="intro-brand-text">
+          <h2>Hệ Thống GIS</h2>
+          <p>Bản Đồ Số Tương Tác Xã Cầu Kè</p>
+        </div>
+      </div>
+
+      <div class="intro-content">
+        <h1 class="intro-title">Chào Mừng Quý Đại Biểu</h1>
+        <p class="intro-text">
+          Chào mừng quý vị và các bạn đến với Bản đồ số tương tác xã Cầu Kè, huyện Cầu Kè, tỉnh Vĩnh Long. Đây là sản phẩm công nghệ số do <strong style="color: var(--accent-emerald);">CÔNG TY ÂU LẠC</strong> thực hiện vào tháng 5 năm 2026. Hệ thống dữ liệu này sẽ được cập nhật liên tục nhằm nâng cao hiệu quả cho công tác quản lý hành chính tại địa phương. Xin trân trọng cảm ơn.
+        </p>
+      </div>
+
+      <div class="intro-actions">
+        <button id="intro-enter-btn" class="intro-btn primary-btn" title="Vào trực tiếp bản đồ" style="margin: 0 auto; min-width: 220px;">
+          <span>Khám phá Bản đồ</span> <i class="fas fa-arrow-right"></i>
+        </button>
+      </div>
+      
+      <div class="intro-footer">
+        <p>&copy; 2026 Bản quyền thuộc về Công ty Âu Lạc & UBND Xã Cầu Kè</p>
+      </div>
+    </div>
+  </div>
 
   <!-- Floating Sidebar Toggle Button -->
   <button id="sidebar-toggle" class="sidebar-toggle-btn" title="Mở danh mục thông tin">
