@@ -112,6 +112,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Lắng nghe sự kiện click trực tiếp trên nút Nghe Thuyết Minh
     if (introPlayBtn) {
+      // Ngăn chặn sự kiện touchstart nổi bọt lên document kích hoạt trình tương tác âm thanh dự phòng
+      introPlayBtn.addEventListener("touchstart", (e) => {
+        e.stopPropagation();
+      }, { passive: true });
       introPlayBtn.addEventListener("click", toggleIntroAudio);
     }
 
@@ -133,7 +137,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }, 800);
     };
 
-    introEnterBtn.addEventListener("click", enterMap);
+    if (introEnterBtn) {
+      // Ngăn chặn sự kiện touchstart nổi bọt khi nhấp vào nút Khám phá bản đồ
+      introEnterBtn.addEventListener("touchstart", (e) => {
+        e.stopPropagation();
+      }, { passive: true });
+      introEnterBtn.addEventListener("click", enterMap);
+    }
     
     // Auto transition to map once narration is completed
     introAudio.addEventListener("ended", () => {
