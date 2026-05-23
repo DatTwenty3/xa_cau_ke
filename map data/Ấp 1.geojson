@@ -24,15 +24,15 @@
         ],
         "so_ho_sau_sap_nhap": 993,
         "so_dan_sau_sap_nhap": 4045,
-        "dien_tich_sau_sap_nhap_ha": 420.62,
+        "dien_tich_sau_sap_nhap_ha": 137.95,
         "ma": "3005001",
         "ten": "Ấp 1",
         "loai": "Ấp",
-        "dien_tich_km2": "4.2062",
-        "dien_tich_ha": "420.62",
+        "dien_tich_km2": "1.3795",
+        "dien_tich_ha": "137.95",
         "dan_so": "4045",
         "so_ho": "993",
-        "mat_do_km2": "961.68"
+        "mat_do_km2": "2932.22"
       },
       "geometry": {
         "type": "Polygon",
