@@ -864,7 +864,7 @@ path.leaflet-interactive:focus {
   will-change: transform, box-shadow, border-color, opacity;
 }
 
-/* Nhãn ranh giới ấp cũ (nhỏ hơn 20%, viền nét đứt màu trắng và nền sẫm kính mờ) */
+/* Nhãn ranh giới ấp cũ (kích thước bằng nhãn mới, viền nét đứt màu trắng và nền sẫm kính mờ) */
 .old-hamlet-map-label {
   background: rgba(15, 23, 42, 0.75) !important;
   border: 1px dashed rgba(255, 255, 255, 0.6) !important;
@@ -1712,5 +1712,45 @@ path.leaflet-interactive:focus {
     height: 26px !important;
     font-size: 12px !important;
   }
+}
+
+/* Tinh chỉnh thanh danh sách ấp / giáp ranh khi thu gọn để vuốt ngang (Scroll X) cực mượt */
+#sidebar.minimized .merger-tags-container {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  padding-bottom: 6px !important;
+  gap: 8px !important;
+  width: 100% !important;
+  -webkit-overflow-scrolling: touch !important;
+  scrollbar-width: thin !important;
+}
+
+#sidebar.minimized .merger-tags-container::-webkit-scrollbar {
+  height: 4px !important;
+}
+
+#sidebar.minimized .merger-tags-container::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+#sidebar.minimized .merger-tags-container::-webkit-scrollbar-thumb {
+  background: rgba(15, 43, 92, 0.15) !important;
+  border-radius: 4px !important;
+}
+
+#sidebar.minimized .merger-tags-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 43, 92, 0.25) !important;
+}
+
+#sidebar.minimized .merger-tag {
+  font-size: 11px !important;
+  padding: 3px 8px !important;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+}
+
+#sidebar.minimized #merger-title {
+  font-size: 11.5px !important;
 }
 

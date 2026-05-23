@@ -749,7 +749,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Tự động thu phóng/ẩn nhãn ấp cũ theo mức độ zoom (nhỏ hơn 20%)
+    // Tự động thu phóng/ẩn nhãn ấp cũ theo mức độ zoom (kích thước bằng nhãn mới)
     oldHamletLabelMarkers.forEach((marker) => {
       if (!marker) return;
       const element = marker.getElement();
@@ -759,27 +759,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (zoom < 12) {
         span.style.opacity = "0";
-        span.style.transform = "translate(-50%, -50%) scale(0.4)";
+        span.style.transform = "translate(-50%, -50%) scale(0.5)";
       } else if (zoom === 12) {
-        span.style.opacity = "0.6";
-        span.style.fontSize = "4px";
-        span.style.padding = "1px 2px";
-        span.style.transform = "translate(-50%, -50%) scale(0.64)";
+        span.style.opacity = "0.7";
+        span.style.fontSize = "5px";
+        span.style.padding = "1.5px 3px";
+        span.style.transform = "translate(-50%, -50%) scale(0.8)";
       } else if (zoom === 13) {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "4.8px" : "6.4px";
-        span.style.padding = isMobile ? "1.6px 3.2px" : "2px 4.8px";
-        span.style.transform = "translate(-50%, -50%) scale(0.8)";
+        span.style.fontSize = isMobile ? "6px" : "8px";
+        span.style.padding = isMobile ? "2px 4px" : "2.5px 6px";
+        span.style.transform = "translate(-50%, -50%) scale(1)";
       } else if (zoom === 14) {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "5.2px" : "6.4px";
-        span.style.padding = isMobile ? "1.6px 4px" : "2.4px 5.6px";
-        span.style.transform = "translate(-50%, -50%) scale(0.84)";
+        span.style.fontSize = isMobile ? "6.5px" : "8px";
+        span.style.padding = isMobile ? "2px 5px" : "3px 7px";
+        span.style.transform = "translate(-50%, -50%) scale(1.05)";
       } else {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "5.6px" : "7.2px";
-        span.style.padding = isMobile ? "2px 4.8px" : "3.2px 6.4px";
-        span.style.transform = "translate(-50%, -50%) scale(0.88)";
+        span.style.fontSize = isMobile ? "7px" : "9px";
+        span.style.padding = isMobile ? "2.5px 6px" : "4px 8px";
+        span.style.transform = "translate(-50%, -50%) scale(1.1)";
       }
     });
   }
@@ -857,6 +857,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
+    sidebar.classList.add("is-commune");
+    sidebar.classList.remove("is-hamlet");
     if (isMobile) {
       sidebar.classList.add("minimized");
       if (backdrop) backdrop.classList.remove("active");
@@ -957,6 +959,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const isMobile = window.innerWidth <= 768;
     sidebar.classList.add("active");
+    sidebar.classList.add("is-hamlet");
+    sidebar.classList.remove("is-commune");
     if (isMobile) {
       sidebar.classList.add("minimized");
       if (backdrop) backdrop.classList.remove("active");
@@ -1055,6 +1059,7 @@ document.addEventListener("DOMContentLoaded", () => {
     clearHamletSelection();
     sidebar.classList.remove("active");
     sidebar.classList.remove("minimized");
+    sidebar.classList.remove("is-commune", "is-hamlet");
     updateMinimizeButtonState();
     if (backdrop) {
       backdrop.classList.remove("active");
