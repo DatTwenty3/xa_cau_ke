@@ -494,27 +494,16 @@ body {
 
 /* Info Section Block */
 .info-section {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 16px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   margin-bottom: 16px;
-  box-shadow: 0 4px 15px -3px rgba(15, 23, 42, 0.02);
+  box-shadow: none;
 }
 
 .section-title {
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: var(--text-primary);
-  letter-spacing: 0.8px;
-  margin-bottom: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.03);
-  padding-bottom: 8px;
-  width: 100%;
+  display: none !important;
 }
 
 .section-title i {
@@ -618,15 +607,15 @@ body {
 .info-table {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
 }
 
 .info-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(15, 43, 92, 0.08);
 }
 
 .info-row:last-child {
@@ -1028,8 +1017,8 @@ path.leaflet-interactive:focus {
 
   /* Section cards padding */
   .info-section {
-    padding: 20px;
-    border-radius: 16px;
+    padding: 0;
+    border-radius: 0;
     margin-bottom: 18px;
   }
 
