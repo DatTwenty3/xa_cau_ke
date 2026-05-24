@@ -554,14 +554,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const HAMLET_LABEL_CENTERS = {
     "Ấp 1": [9.87591, 106.05837],
     "Ấp 2": [9.86528, 106.06498],
-    "Ấp Trà Kháo": [9.88626, 106.08059],
+    "Ấp Trà Kháo": [9.88802536295747, 106.08187575906044],
     "Ấp Bà My": [9.89267, 106.05308],
     "Ấp Giồng Lớn": [9.87799, 106.06998],
     "Ấp Thông Thảo": [9.90806, 106.08577],
     "Ấp Giồng Dầu": [9.91009, 106.07013],
     "Ấp Rùm Sóc": [9.83196, 106.06385],
     "Ấp Ô Mịch": [9.84556, 106.06685],
-    "Ấp Ô Tưng": [9.86507, 106.08031],
+    "Ấp Ô Tưng": [9.866846294767543, 106.08977285938694],
     "Ấp Châu Hưng": [9.89199, 106.10055],
     "Ấp Ô Rồm": [9.86559, 106.11447],
     "Ấp Xóm Lớn": [9.88916, 106.12291]
@@ -1008,7 +1008,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } else if (name === "Ấp Trà Bôn") {
             offsetLatlng = L.latLng(latlng.lat + 0.001, latlng.lng - 0.001);
           } else if (name === "Ấp Ô Tưng B") {
-            offsetLatlng = L.latLng(latlng.lat - 0.001, latlng.lng + 0.001);
+            offsetLatlng = L.latLng(9.875091778009866, 106.09127801518837);
           }
 
           const labelText = `${formatHamletName(name)} (ẤP CŨ)`;
@@ -1035,7 +1035,7 @@ document.addEventListener("DOMContentLoaded", () => {
      { name: "Ấp 2", coords: [9.873355, 106.057854] },
      { name: "Ấp 3", coords: [9.877462, 106.060203] },
      { name: "Ấp 4", coords: [9.866009, 106.059419] },
-     { name: "Ấp 5", coords: [9.864547, 106.064689] },
+     { name: "Ấp 5", coords: [9.861951613913636, 106.06539862361909] },
      { name: "Ấp 6", coords: [9.865034, 106.069959] }
    ];
  
