@@ -994,6 +994,31 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((err) => console.error(`Lỗi khi tải ranh giới ấp cũ ${name}:`, err));
   });
 
+  // Thêm nhãn tên các ấp cũ của ấp 1 mới và ấp 2 mới (đã kéo gần vào nhãn mới 30% để khoảng cách gom tụ gọn gàng, đẹp mắt)
+  const manualOldHamlets = [
+    { name: "Ấp 1 (cũ)", coords: [9.875409, 106.054330] },
+    { name: "Ấp 2", coords: [9.873355, 106.057854] },
+    { name: "Ấp 3", coords: [9.877462, 106.060203] },
+    { name: "Ấp 4", coords: [9.866009, 106.059419] },
+    { name: "Ấp 5", coords: [9.864547, 106.064689] },
+    { name: "Ấp 6", coords: [9.865034, 106.069959] }
+  ];
+
+  manualOldHamlets.forEach((item) => {
+    const labelText = `${formatHamletName(item.name)} (ẤP CŨ)`;
+    const marker = L.marker(L.latLng(item.coords[0], item.coords[1]), {
+      icon: L.divIcon({
+        className: "hamlet-map-label-icon",
+        html: `<span class="hamlet-map-label old-hamlet-map-label">${labelText}</span>`,
+      }),
+      interactive: false,
+      keyboard: false,
+      zIndexOffset: 500
+    }).addTo(hamletLabelsLayerGroup);
+
+    oldHamletLabelMarkers.push(marker);
+  });
+
   // Tự động thu phóng/ẩn nhãn theo mức độ zoom để bản đồ luôn thoáng đạt
   function updateOffsetHamletLabels() {
     const zoom = map.getZoom();
