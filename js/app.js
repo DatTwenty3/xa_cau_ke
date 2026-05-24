@@ -1035,8 +1035,8 @@ document.addEventListener("DOMContentLoaded", () => {
      { name: "Ấp 2", coords: [9.873355, 106.057854] },
      { name: "Ấp 3", coords: [9.877462, 106.060203] },
      { name: "Ấp 4", coords: [9.866009, 106.059419] },
-     { name: "Ấp 5", coords: [9.861951613913636, 106.06539862361909] },
-     { name: "Ấp 6", coords: [9.865034, 106.069959] }
+     { name: "Ấp 5", coords: [9.865034, 106.069959] },
+     { name: "Ấp 6", coords: [9.861951613913636, 106.06539862361909] }
    ];
  
    manualOldHamlets.forEach((item) => {
