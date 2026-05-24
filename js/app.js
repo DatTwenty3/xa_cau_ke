@@ -304,6 +304,10 @@ document.addEventListener("DOMContentLoaded", () => {
   map.getPane("glowPane").style.zIndex = "410"; // Nằm trên ranh giới ấp mới một chút
   map.getPane("glowPane").style.pointerEvents = "none";
 
+  map.createPane("connectingLinesPane");
+  map.getPane("connectingLinesPane").style.zIndex = "420"; // Nằm trên ranh giới ấp mới và vòng phát sáng
+  map.getPane("connectingLinesPane").style.pointerEvents = "none";
+
 
 
   // 2. Define Google Map Layers
@@ -394,6 +398,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const hamletFeatureLayersByName = {};
   let zoomToHamletTimer = null;
   let oldHamletLabelMarkers = [];
+  const oldHamletCenters = {};
+  let connectingLinesLayerGroup = L.layerGroup().addTo(map);
 
   function getHamletMapPadding() {
     const isMobile = window.innerWidth <= 768;
@@ -803,6 +809,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function clearHamletSelection() {
     stopHamletHighlight();
+    connectingLinesLayerGroup.clearLayers();
     const prev = selectedHamletName;
     
     // Đồng bộ nhãn chữ về trạng thái thường
@@ -869,6 +876,33 @@ document.addEventListener("DOMContentLoaded", () => {
       
       if (hamletGlowLayer) {
         hamletGlowLayer.bringToFront();
+      }
+
+      // Vẽ đường nét đứt phát sáng động kết nối từ nhãn cũ tới nhãn mới
+      connectingLinesLayerGroup.clearLayers();
+      const mergedHamletSources = {
+        "Ấp 1": ["Ấp 1 (cũ)", "Ấp 2", "Ấp 3"],
+        "Ấp 2": ["Ấp 4", "Ấp 5", "Ấp 6"],
+        "Ấp Ô Tưng": ["Ấp Ô Tưng A", "Ấp Ô Tưng B"],
+        "Ấp Xóm Lớn": ["Ấp Trà Bôn", "Ấp Xóm Lớn"]
+      };
+
+      if (mergedHamletSources[hamletName]) {
+        const newHamletCenter = HAMLET_LABEL_CENTERS[hamletName] || pathLayer.getBounds().getCenter();
+        const sources = mergedHamletSources[hamletName];
+        sources.forEach((sourceName) => {
+          const oldCoords = oldHamletCenters[sourceName];
+          if (oldCoords) {
+            const polyline = L.polyline([oldCoords, newHamletCenter], {
+              color: "#ffffff",
+              weight: 3.5,
+              opacity: 0.98,
+              dashArray: "8, 6",
+              className: "connecting-glowing-line",
+              pane: "connectingLinesPane"
+            }).addTo(connectingLinesLayerGroup);
+          }
+        });
       }
     }
   }
@@ -988,36 +1022,39 @@ document.addEventListener("DOMContentLoaded", () => {
             zIndexOffset: 500
           }).addTo(hamletLabelsLayerGroup);
 
-          oldHamletLabelMarkers.push(marker);
-        }
-      })
-      .catch((err) => console.error(`Lỗi khi tải ranh giới ấp cũ ${name}:`, err));
-  });
-
-  // Thêm nhãn tên các ấp cũ của ấp 1 mới và ấp 2 mới (đã kéo gần vào nhãn mới 30% để khoảng cách gom tụ gọn gàng, đẹp mắt)
-  const manualOldHamlets = [
-    { name: "Ấp 1 (cũ)", coords: [9.875409, 106.054330] },
-    { name: "Ấp 2", coords: [9.873355, 106.057854] },
-    { name: "Ấp 3", coords: [9.877462, 106.060203] },
-    { name: "Ấp 4", coords: [9.866009, 106.059419] },
-    { name: "Ấp 5", coords: [9.864547, 106.064689] },
-    { name: "Ấp 6", coords: [9.865034, 106.069959] }
-  ];
-
-  manualOldHamlets.forEach((item) => {
-    const labelText = `${formatHamletName(item.name)} (ẤP CŨ)`;
-    const marker = L.marker(L.latLng(item.coords[0], item.coords[1]), {
-      icon: L.divIcon({
-        className: "hamlet-map-label-icon",
-        html: `<span class="hamlet-map-label old-hamlet-map-label">${labelText}</span>`,
-      }),
-      interactive: false,
-      keyboard: false,
-      zIndexOffset: 500
-    }).addTo(hamletLabelsLayerGroup);
-
-    oldHamletLabelMarkers.push(marker);
-  });
+           oldHamletLabelMarkers.push(marker);
+           oldHamletCenters[name] = offsetLatlng;
+         }
+       })
+       .catch((err) => console.error(`Lỗi khi tải ranh giới ấp cũ ${name}:`, err));
+   });
+ 
+   // Thêm nhãn tên các ấp cũ của ấp 1 mới và ấp 2 mới (đã kéo gần vào nhãn mới 30% để khoảng cách gom tụ gọn gàng, đẹp mắt)
+   const manualOldHamlets = [
+     { name: "Ấp 1 (cũ)", coords: [9.875409, 106.054330] },
+     { name: "Ấp 2", coords: [9.873355, 106.057854] },
+     { name: "Ấp 3", coords: [9.877462, 106.060203] },
+     { name: "Ấp 4", coords: [9.866009, 106.059419] },
+     { name: "Ấp 5", coords: [9.864547, 106.064689] },
+     { name: "Ấp 6", coords: [9.865034, 106.069959] }
+   ];
+ 
+   manualOldHamlets.forEach((item) => {
+     const labelText = `${formatHamletName(item.name)} (ẤP CŨ)`;
+     const latlng = L.latLng(item.coords[0], item.coords[1]);
+     const marker = L.marker(latlng, {
+       icon: L.divIcon({
+         className: "hamlet-map-label-icon",
+         html: `<span class="hamlet-map-label old-hamlet-map-label">${labelText}</span>`,
+       }),
+       interactive: false,
+       keyboard: false,
+       zIndexOffset: 500
+     }).addTo(hamletLabelsLayerGroup);
+ 
+     oldHamletLabelMarkers.push(marker);
+     oldHamletCenters[item.name] = latlng;
+   });
 
   // Tự động thu phóng/ẩn nhãn theo mức độ zoom để bản đồ luôn thoáng đạt
   function updateOffsetHamletLabels() {

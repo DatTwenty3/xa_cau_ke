@@ -2219,3 +2219,19 @@ path.leaflet-interactive:focus {
   filter: none; /* Ultra sharp holographic lines */
 }
 
+/* Animated glowing line connecting old and new hamlets */
+.connecting-glowing-line {
+  stroke-dasharray: 8, 6;
+  animation: flowDash 1.0s infinite linear;
+  filter: drop-shadow(0 0 3px #ffffff) 
+          drop-shadow(0 0 8px #ffffff) 
+          drop-shadow(0 0 15px #ffffff);
+  transition: stroke 0.3s ease;
+}
+
+@keyframes flowDash {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
