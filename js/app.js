@@ -1123,27 +1123,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (zoom < 12) {
         span.style.opacity = "0";
-        span.style.transform = "translate(-50%, -50%) scale(0.5)";
+        span.style.transform = "translate(-50%, -50%) scale(0.4)";
       } else if (zoom === 12) {
         span.style.opacity = "0.7";
-        span.style.fontSize = "5px";
-        span.style.padding = "1.5px 3px";
-        span.style.transform = "translate(-50%, -50%) scale(0.8)";
+        span.style.fontSize = "4px";
+        span.style.padding = "1px 2px";
+        span.style.transform = "translate(-50%, -50%) scale(0.64)";
       } else if (zoom === 13) {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "6px" : "8px";
-        span.style.padding = isMobile ? "2px 4px" : "2.5px 6px";
-        span.style.transform = "translate(-50%, -50%) scale(1)";
+        span.style.fontSize = isMobile ? "5px" : "6.5px";
+        span.style.padding = isMobile ? "1.5px 3px" : "2px 4.5px";
+        span.style.transform = "translate(-50%, -50%) scale(0.8)";
       } else if (zoom === 14) {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "6.5px" : "8px";
-        span.style.padding = isMobile ? "2px 5px" : "3px 7px";
-        span.style.transform = "translate(-50%, -50%) scale(1.05)";
+        span.style.fontSize = isMobile ? "5px" : "6.5px";
+        span.style.padding = isMobile ? "1.5px 4px" : "2.5px 5.5px";
+        span.style.transform = "translate(-50%, -50%) scale(0.84)";
       } else {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "7px" : "9px";
-        span.style.padding = isMobile ? "2.5px 6px" : "4px 8px";
-        span.style.transform = "translate(-50%, -50%) scale(1.1)";
+        span.style.fontSize = isMobile ? "5.5px" : "7px";
+        span.style.padding = isMobile ? "2px 4.5px" : "3px 6px";
+        span.style.transform = "translate(-50%, -50%) scale(0.88)";
       }
     });
   }
