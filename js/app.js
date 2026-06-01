@@ -1219,7 +1219,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function resetSidebarPosition() {
+    sidebar.style.top = "";
+    sidebar.style.left = "";
+    sidebar.style.right = "";
+    sidebar.style.bottom = "";
+    sidebar.style.transform = "";
+    sidebar.style.transition = "";
+  }
+
   function openCommuneSidebar() {
+    resetSidebarPosition();
     selectedHamletProperties = null;
     clearHamletSelection();
 
@@ -1322,6 +1332,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function openHamletSidebar(props) {
+    resetSidebarPosition();
     selectedHamletProperties = props;
     currentProperties = props;
 
@@ -1406,6 +1417,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function closeSidebar() {
+    resetSidebarPosition();
     const wasActive = sidebar.classList.contains("active");
 
     // Dừng phát âm thanh giới thiệu khi đóng bảng thông tin
@@ -1539,6 +1551,81 @@ document.addEventListener("DOMContentLoaded", () => {
       updateSidebarToggleButton();
     }
   }
+
+  // --- DESKTOP DRAGGABLE SIDEBAR LOGIC ---
+  (function initDesktopDraggableSidebar() {
+    let isDesktopDragging = false;
+    let startX = 0;
+    let startY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
+
+    const sidebarHeaderEl = document.querySelector("#sidebar .sidebar-header");
+    if (!sidebarHeaderEl) return;
+
+    sidebarHeaderEl.style.cursor = "move"; // Change cursor to indicate draggability
+
+    sidebarHeaderEl.addEventListener("mousedown", (e) => {
+      // Only drag on desktop screen sizes
+      if (window.innerWidth <= 768) return;
+
+      // Don't drag if we click interactive controls like buttons
+      if (e.target.closest("button") || e.target.closest("a") || e.target.closest(".sound-toggle-btn")) {
+        return;
+      }
+
+      isDesktopDragging = true;
+      sidebar.classList.add("desktop-dragging");
+
+      const rect = sidebar.getBoundingClientRect();
+
+      // Force absolute top/left and reset bottom/right
+      sidebar.style.right = "auto";
+      sidebar.style.bottom = "auto";
+      sidebar.style.left = rect.left + "px";
+      sidebar.style.top = rect.top + "px";
+      
+      // Clear transitions and transform while dragging
+      sidebar.style.transform = "none";
+      sidebar.style.transition = "none";
+
+      startX = e.clientX;
+      startY = e.clientY;
+      initialLeft = rect.left;
+      initialTop = rect.top;
+
+      e.preventDefault();
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (!isDesktopDragging) return;
+
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      let newLeft = initialLeft + dx;
+      let newTop = initialTop + dy;
+
+      // Constrain dragging within the viewport boundaries
+      const rect = sidebar.getBoundingClientRect();
+      const maxX = window.innerWidth - rect.width;
+      const maxY = window.innerHeight - rect.height;
+
+      newLeft = Math.max(0, Math.min(newLeft, maxX));
+      newTop = Math.max(0, Math.min(newTop, maxY));
+
+      sidebar.style.left = newLeft + "px";
+      sidebar.style.top = newTop + "px";
+    });
+
+    document.addEventListener("mouseup", () => {
+      if (isDesktopDragging) {
+        isDesktopDragging = false;
+        sidebar.classList.remove("desktop-dragging");
+        sidebar.style.transition = ""; // Restore original CSS transition properties
+      }
+    });
+  })();
 
   // 7. Bộ lắng nghe cảm ứng vuốt chạm (Swipe Gesture) kéo Bottom Sheet xuống để đóng
   let startY = 0;
