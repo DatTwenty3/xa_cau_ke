@@ -1031,16 +1031,20 @@ document.addEventListener("DOMContentLoaded", () => {
  
    // Thêm nhãn tên các ấp cũ của ấp 1 mới và ấp 2 mới (đã kéo gần vào nhãn mới 30% để khoảng cách gom tụ gọn gàng, đẹp mắt)
    const manualOldHamlets = [
-     { name: "Ấp 1 (cũ)", coords: [9.875409, 106.054330] },
+     { name: "Ấp 1 (cũ)", coords: [9.877462, 106.060203] },
      { name: "Ấp 2", coords: [9.873355, 106.057854] },
-     { name: "Ấp 3", coords: [9.877462, 106.060203] },
+     { name: "Ấp 3", coords: [9.875409, 106.054330] },
      { name: "Ấp 4", coords: [9.869623275479848, 106.05553514929952] },
      { name: "Ấp 5", coords: [9.865034, 106.069959] },
      { name: "Ấp 6", coords: [9.865501822996094, 106.05952900941217] }
    ];
  
    manualOldHamlets.forEach((item) => {
-     const labelText = `${formatHamletName(item.name)} (ẤP CŨ)`;
+     let displayName = item.name;
+     if (displayName.includes("(cũ)")) {
+       displayName = displayName.replace(/\s*\(cũ\)/g, "");
+     }
+     const labelText = `${formatHamletName(displayName)} (ẤP CŨ)`;
      const latlng = L.latLng(item.coords[0], item.coords[1]);
      const marker = L.marker(latlng, {
        icon: L.divIcon({
