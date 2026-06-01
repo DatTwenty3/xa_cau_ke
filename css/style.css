@@ -76,7 +76,7 @@ body {
   backdrop-filter: blur(4px);
   color: var(--text-muted) !important;
   border-top-left-radius: 8px;
-  font-size: 10px !important;
+  font-size: 13px !important;
 }
 
 /* Sidebar Backdrop for Mobile focus & dimming */
@@ -238,7 +238,7 @@ body {
   background: rgba(15, 23, 42, 0.02);
   border: 1px solid rgba(15, 23, 42, 0.04);
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 16.9px;
   cursor: pointer;
   transition: var(--transition-smooth);
   width: 30px;
@@ -286,11 +286,11 @@ body {
 
 .brand-icon i {
   color: #fff;
-  font-size: 20px;
+  font-size: 26px;
 }
 
 .brand-text h2 {
-  font-size: 16px;
+  font-size: 20.8px;
   font-weight: 800;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -301,7 +301,7 @@ body {
 }
 
 .brand-text p {
-  font-size: 13px;
+  font-size: 16.9px;
   color: var(--text-secondary);
   font-weight: 600;
   letter-spacing: 1px;
@@ -316,7 +316,7 @@ body {
   color: var(--accent-emerald);
   padding: 4px 10px;
   border-radius: 20px;
-  font-size: 13px;
+  font-size: 16.9px;
   font-weight: 700;
 }
 
@@ -337,7 +337,7 @@ body {
 }
 
 .tts-speech-btn i {
-  font-size: 16px;
+  font-size: 20.8px;
 }
 
 .tts-speech-btn:hover {
@@ -396,7 +396,7 @@ body {
 }
 
 .info-title-group h1 {
-  font-size: 28px;
+  font-size: 36.4px;
   font-weight: 750;
   color: var(--text-primary);
   margin-bottom: 6px;
@@ -407,7 +407,7 @@ body {
 }
 
 .info-title-group .commune-code {
-  font-size: 15px;
+  font-size: 19.5px;
   color: var(--text-secondary);
 }
 
@@ -449,7 +449,7 @@ body {
   width: 32px;
   height: 32px;
   margin: 0 auto 6px;
-  font-size: 13px;
+  font-size: 16.9px;
   border-radius: 9px;
   display: flex;
   align-items: center;
@@ -476,7 +476,7 @@ body {
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 23.4px;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 2px;
@@ -485,7 +485,7 @@ body {
 }
 
 .stat-label {
-  font-size: 9.5px;
+  font-size: 12.35px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -540,7 +540,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 700;
   color: #fff;
   box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
@@ -561,7 +561,7 @@ body {
 }
 
 .leader-role {
-  font-size: 13px;
+  font-size: 16.9px;
   color: var(--text-muted);
   font-weight: 700;
   text-transform: uppercase;
@@ -569,7 +569,7 @@ body {
 }
 
 .leader-name {
-  font-size: 16px;
+  font-size: 20.8px;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -624,7 +624,7 @@ body {
 }
 
 .info-label {
-  font-size: 13px;
+  font-size: 16.9px;
   color: var(--text-secondary);
   font-weight: 600;
   display: inline-flex;
@@ -634,11 +634,11 @@ body {
 
 .info-label i {
   color: var(--accent-emerald); /* Cam đậm */
-  font-size: 13px;
+  font-size: 16.9px;
 }
 
 .info-value {
-  font-size: 13px;
+  font-size: 16.9px;
   font-weight: 700;
   color: var(--text-primary);
   text-align: right;
@@ -664,7 +664,7 @@ body {
   color: var(--accent-indigo);
   padding: 4px 10px;
   border-radius: 20px;
-  font-size: 12px;
+  font-size: 15.6px;
   font-weight: 650;
   box-shadow: 0 2px 5px rgba(15, 43, 92, 0.02);
   transition: var(--transition-smooth);
@@ -680,7 +680,7 @@ body {
 }
 
 .merger-tag i {
-  font-size: 11px;
+  font-size: 14.3px;
   opacity: 0.8;
 }
 
@@ -705,7 +705,7 @@ body {
   padding: 6px 14px;
   border-radius: 26px;
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 16.9px;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -715,7 +715,7 @@ body {
 }
 
 .layer-btn i, .sound-toggle-btn i {
-  font-size: 13px;
+  font-size: 16.9px;
   color: var(--accent-emerald); /* Cam đậm */
   transition: var(--transition-smooth);
 }
@@ -778,12 +778,12 @@ body {
 
 .map-hint-overlay i {
   color: var(--accent-emerald);
-  font-size: 16px;
+  font-size: 20.8px;
   animation: bounceHint 1.5s infinite ease-in-out;
 }
 
 .map-hint-overlay span {
-  font-size: 15px;
+  font-size: 19.5px;
   font-weight: 600;
   color: var(--text-primary);
   letter-spacing: 0.5px;
@@ -854,7 +854,7 @@ path.leaflet-interactive:focus {
   border: 1px solid var(--accent-emerald) !important; /* Cam đậm */
   color: var(--accent-indigo) !important; /* Xanh dương đậm */
   font-family: "Plus Jakarta Sans", sans-serif;
-  font-size: 8px;
+  font-size: 12.48px;
   font-weight: 800;
   letter-spacing: 0.4px;
   white-space: nowrap;
@@ -899,7 +899,7 @@ path.leaflet-interactive:focus {
 
 @media (max-width: 768px) {
   .hamlet-map-label {
-    font-size: 6px;
+    font-size: 9.36px;
     padding: 2px 4px;
     border-radius: 3px;
   }
@@ -922,7 +922,7 @@ path.leaflet-interactive:focus {
   border-radius: 10px !important;
   box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.3) !important;
   font-family: inherit !important;
-  font-size: 14px !important;
+  font-size: 18.2px !important;
 }
 
 .custom-map-tooltip::before {
@@ -1000,11 +1000,11 @@ path.leaflet-interactive:focus {
   }
 
   .brand-icon i {
-    font-size: 15px;
+    font-size: 19.5px;
   }
 
   .brand-text h2 {
-    font-size: 12px;
+    font-size: 15.6px;
     letter-spacing: 1px;
   }
 
@@ -1018,7 +1018,7 @@ path.leaflet-interactive:focus {
   }
 
   .info-title-group h1 {
-    font-size: 28px;
+    font-size: 36.4px;
   }
 
   /* Stat cards spacing */
@@ -1036,15 +1036,15 @@ path.leaflet-interactive:focus {
     width: 38px;
     height: 38px;
     margin-bottom: 10px;
-    font-size: 18px;
+    font-size: 23.4px;
   }
 
   .stat-value {
-    font-size: 17px;
+    font-size: 22.1px;
   }
 
   .stat-label {
-    font-size: 11px;
+    font-size: 14.3px;
   }
 
   /* Section cards padding */
@@ -1063,23 +1063,23 @@ path.leaflet-interactive:focus {
   .leader-avatar {
     width: 40px;
     height: 40px;
-    font-size: 16px;
+    font-size: 20.8px;
     border-radius: 10px;
   }
 
   .leader-name {
-    font-size: 13px;
+    font-size: 16.9px;
   }
 
   .leader-role {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .leader-call-btn {
     width: 40px;
     height: 40px;
     border-radius: 10px;
-    font-size: 15px;
+    font-size: 19.5px;
   }
 
   /* Info table row sizing */
@@ -1088,15 +1088,15 @@ path.leaflet-interactive:focus {
   }
 
   .info-label, .info-value {
-    font-size: 14px;
+    font-size: 18.2px;
   }
 
   .info-label i {
-    font-size: 14px;
+    font-size: 18.2px;
   }
 
   .merger-tag {
-    font-size: 14px;
+    font-size: 18.2px;
     padding: 7px 12px;
   }
 
@@ -1127,12 +1127,12 @@ path.leaflet-interactive:focus {
     align-items: center;
     justify-content: center;
     padding: 0;
-    font-size: 14px;
+    font-size: 18.2px;
     transition: var(--transition-smooth);
   }
 
   .layer-btn i, .sound-toggle-btn i {
-    font-size: 16px;
+    font-size: 20.8px;
   }
 
   .layer-btn span, .sound-toggle-btn span {
@@ -1156,7 +1156,7 @@ path.leaflet-interactive:focus {
     height: 46px !important;
     padding: 0 24px !important;
     border-radius: 30px !important;
-    font-size: 13px !important;
+    font-size: 16.9px !important;
     font-weight: 700 !important;
     display: flex !important;
     align-items: center !important;
@@ -1188,7 +1188,7 @@ path.leaflet-interactive:focus {
     padding: 10px 16px;
   }
   .map-hint-overlay span {
-    font-size: 12px;
+    font-size: 15.6px;
   }
 }
 
@@ -1199,7 +1199,7 @@ path.leaflet-interactive:focus {
   color: var(--accent-indigo);
   padding: 8px 14px;
   border-radius: 12px;
-  font-size: 13px;
+  font-size: 16.9px;
   font-weight: 700;
   cursor: pointer;
   display: inline-flex;
@@ -1220,7 +1220,7 @@ path.leaflet-interactive:focus {
 }
 
 .back-to-commune-btn i {
-  font-size: 12px;
+  font-size: 15.6px;
   color: var(--accent-emerald); /* Cam đậm */
 }
 
@@ -1322,7 +1322,7 @@ path.leaflet-interactive:focus {
 
 .glass-map-popup .leaflet-popup-close-button {
   color: rgba(15, 43, 92, 0.5) !important;
-  font-size: 20px !important;
+  font-size: 26px !important;
   padding: 16px 16px 0 0 !important;
   transition: all 0.3s ease;
 }
@@ -1343,7 +1343,7 @@ path.leaflet-interactive:focus {
 }
 
 .popup-title {
-  font-size: 30px;
+  font-size: 39px;
   font-weight: 800;
   margin: 0;
   letter-spacing: -0.5px;
@@ -1353,7 +1353,7 @@ path.leaflet-interactive:focus {
 }
 
 .popup-badge {
-  font-size: 11px;
+  font-size: 14.3px;
   font-weight: 700;
   padding: 3px 10px;
   border-radius: 20px;
@@ -1415,19 +1415,19 @@ path.leaflet-interactive:focus {
 }
 
 .popup-stat-icon {
-  font-size: 24px;
+  font-size: 31.2px;
   margin-bottom: 8px;
 }
 
 .popup-stat-value {
-  font-size: 20px;
+  font-size: 26px;
   font-weight: 800;
   margin-bottom: 4px;
   white-space: nowrap;
 }
 
 .popup-stat-label {
-  font-size: 13px;
+  font-size: 16.9px;
   color: #475569;
   font-weight: 700;
   text-transform: uppercase;
@@ -1446,7 +1446,7 @@ path.leaflet-interactive:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 16px;
+  font-size: 20.8px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(15, 43, 92, 0.05);
   margin-bottom: 10px;
@@ -1462,20 +1462,20 @@ path.leaflet-interactive:focus {
 .popup-info-label {
   color: #475569;
   font-weight: 600;
-  font-size: 16px;
+  font-size: 20.8px;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .popup-info-label i {
-  font-size: 17px;
+  font-size: 22.1px;
 }
 
 .popup-info-value {
   color: #0f172a;
   font-weight: 700;
-  font-size: 17px;
+  font-size: 22.1px;
   text-align: right;
   line-height: 1.35;
 }
@@ -1488,7 +1488,7 @@ path.leaflet-interactive:focus {
 }
 
 .popup-merger-tag {
-  font-size: 15px;
+  font-size: 19.5px;
   font-weight: 700;
   padding: 6px 12px;
   border-radius: 8px;
@@ -1525,7 +1525,7 @@ path.leaflet-interactive:focus {
 .popup-tts-btn {
   width: 46px;
   height: 46px;
-  font-size: 18px;
+  font-size: 23.4px;
   border-radius: 50%;
   background: var(--accent-emerald-glow);
   border: 1px solid rgba(207, 77, 3, 0.3);
@@ -1627,7 +1627,7 @@ path.leaflet-interactive:focus {
   }
   
   #sidebar.minimized .info-title-group h1 {
-    font-size: 20px !important;
+    font-size: 26px !important;
     margin: 0 !important;
   }
   
@@ -1637,7 +1637,7 @@ path.leaflet-interactive:focus {
   }
   
   #sidebar.minimized .tts-speech-btn i {
-    font-size: 13px !important;
+    font-size: 16.9px !important;
   }
 }
 
@@ -1686,7 +1686,7 @@ path.leaflet-interactive:focus {
   }
   
   #sidebar.minimized .info-title-group h1 {
-    font-size: 20px !important;
+    font-size: 26px !important;
   }
   
   #sidebar.minimized .tts-speech-btn {
@@ -1695,7 +1695,7 @@ path.leaflet-interactive:focus {
   }
   
   #sidebar.minimized .tts-speech-btn i {
-    font-size: 14px !important;
+    font-size: 18.2px !important;
   }
   
   #sidebar.minimized .close-sidebar-btn {
@@ -1703,7 +1703,7 @@ path.leaflet-interactive:focus {
     right: 16px !important;
     width: 26px !important;
     height: 26px !important;
-    font-size: 12px !important;
+    font-size: 15.6px !important;
   }
   
   #sidebar.minimized .minimize-sidebar-btn {
@@ -1711,7 +1711,7 @@ path.leaflet-interactive:focus {
     right: 48px !important;
     width: 26px !important;
     height: 26px !important;
-    font-size: 12px !important;
+    font-size: 15.6px !important;
   }
 }
 
@@ -1745,14 +1745,14 @@ path.leaflet-interactive:focus {
 }
 
 #sidebar.minimized .merger-tag {
-  font-size: 11px !important;
+  font-size: 14.3px !important;
   padding: 3px 8px !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
 }
 
 #sidebar.minimized #merger-title {
-  font-size: 11.5px !important;
+  font-size: 14.95px !important;
 }
 
 /* ==========================================
@@ -1913,11 +1913,11 @@ path.leaflet-interactive:focus {
 
 .intro-brand-icon i {
   color: #ffffff;
-  font-size: 16px;
+  font-size: 20.8px;
 }
 
 .intro-brand-text h2 {
-  font-size: 15px; /* Smaller brand title */
+  font-size: 19.5px; /* Smaller brand title */
   font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
@@ -1928,7 +1928,7 @@ path.leaflet-interactive:focus {
 }
 
 .intro-brand-text p {
-  font-size: 11.5px;
+  font-size: 14.95px;
   color: var(--text-muted);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -1942,7 +1942,7 @@ path.leaflet-interactive:focus {
 }
 
 .intro-title {
-  font-size: 21px; /* Smaller welcome title */
+  font-size: 27.3px; /* Smaller welcome title */
   font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 8px;
@@ -1951,7 +1951,7 @@ path.leaflet-interactive:focus {
 }
 
 .intro-text {
-  font-size: 15.5px; /* Tăng 20% cho dễ đọc */
+  font-size: 20.15px; /* Tăng 20% cho dễ đọc */
   line-height: 1.6;
   color: var(--text-secondary);
   text-align: center; /* Clean elegant centered text alignment */
@@ -1977,7 +1977,7 @@ path.leaflet-interactive:focus {
   gap: 10px;
   padding: 14px 28px;
   border-radius: 20px;
-  font-size: 14.5px;
+  font-size: 18.85px;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
@@ -2094,7 +2094,7 @@ path.leaflet-interactive:focus {
 .intro-footer {
   position: relative;
   z-index: 1;
-  font-size: 11px;
+  font-size: 14.3px;
   color: var(--text-muted);
   font-weight: 600;
   letter-spacing: 0.3px;
@@ -2166,25 +2166,25 @@ path.leaflet-interactive:focus {
   }
   
   .intro-brand-icon i {
-    font-size: 13px;
+    font-size: 16.9px;
   }
   
   .intro-brand-text h2 {
-    font-size: 12px;
+    font-size: 15.6px;
     letter-spacing: 0.5px;
   }
   
   .intro-brand-text p {
-    font-size: 9.5px;
+    font-size: 12.35px;
   }
   
   .intro-title {
-    font-size: 17px; /* Slimmer title */
+    font-size: 22.1px; /* Slimmer title */
     margin-bottom: 6px;
   }
   
   .intro-text {
-    font-size: 13.8px; /* Tăng 20% cho dễ đọc */
+    font-size: 17.94px; /* Tăng 20% cho dễ đọc */
     line-height: 1.5;
     padding: 10px 14px;
     border-radius: 10px;
@@ -2201,7 +2201,7 @@ path.leaflet-interactive:focus {
     width: 100%;
     min-width: 0;
     padding: 9px 16px; /* Slender buttons */
-    font-size: 12px;
+    font-size: 15.6px;
     border-radius: 12px;
   }
 }

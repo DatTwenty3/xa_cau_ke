@@ -1034,9 +1034,9 @@ document.addEventListener("DOMContentLoaded", () => {
      { name: "Ấp 1 (cũ)", coords: [9.875409, 106.054330] },
      { name: "Ấp 2", coords: [9.873355, 106.057854] },
      { name: "Ấp 3", coords: [9.877462, 106.060203] },
-     { name: "Ấp 4", coords: [9.866009, 106.059419] },
+     { name: "Ấp 4", coords: [9.869623275479848, 106.05553514929952] },
      { name: "Ấp 5", coords: [9.865034, 106.069959] },
-     { name: "Ấp 6", coords: [9.861951613913636, 106.06539862361909] }
+     { name: "Ấp 6", coords: [9.863886264291564, 106.05732677538964] }
    ];
  
    manualOldHamlets.forEach((item) => {
@@ -1077,7 +1077,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (zoom === 12) {
         // Bắt đầu hiển thị rất nhỏ
         span.style.opacity = "0.7";
-        span.style.fontSize = "5px";
+        span.style.fontSize = "7.8px";
         span.style.padding = "1.5px 3px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
@@ -1086,7 +1086,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (zoom === 13) {
         // Zoom mặc định chuẩn
         span.style.opacity = "1";
-        span.style.fontSize = isMobile ? "6px" : "8px";
+        span.style.fontSize = isMobile ? "9.36px" : "12.48px";
         span.style.padding = isMobile ? "2px 4px" : "2.5px 6px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
@@ -1095,7 +1095,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (zoom === 14) {
         // Phóng to nhẹ khi bắt đầu cận cảnh
         span.style.opacity = "1";
-        span.style.fontSize = isMobile ? "6.5px" : "8px";
+        span.style.fontSize = isMobile ? "10.14px" : "12.48px";
         span.style.padding = isMobile ? "2px 5px" : "3px 7px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
@@ -1104,7 +1104,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         // Zoom cận cảnh tối đa
         span.style.opacity = "1";
-        span.style.fontSize = isMobile ? "7px" : "9px";
+        span.style.fontSize = isMobile ? "10.92px" : "14.04px";
         span.style.padding = isMobile ? "2.5px 6px" : "4px 8px";
         span.style.pointerEvents = "auto";
         if (!span.classList.contains("hover") && !span.classList.contains("selected")) {
@@ -1126,23 +1126,23 @@ document.addEventListener("DOMContentLoaded", () => {
         span.style.transform = "translate(-50%, -50%) scale(0.4)";
       } else if (zoom === 12) {
         span.style.opacity = "0.7";
-        span.style.fontSize = "4px";
-        span.style.padding = "1px 2px";
+        span.style.fontSize = "7.49px";
+        span.style.padding = "1.2px 2.4px";
         span.style.transform = "translate(-50%, -50%) scale(0.64)";
       } else if (zoom === 13) {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "5px" : "6.5px";
-        span.style.padding = isMobile ? "1.5px 3px" : "2px 4.5px";
+        span.style.fontSize = isMobile ? "9.36px" : "12.17px";
+        span.style.padding = isMobile ? "1.8px 3.6px" : "2.4px 5.4px";
         span.style.transform = "translate(-50%, -50%) scale(0.8)";
       } else if (zoom === 14) {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "5px" : "6.5px";
-        span.style.padding = isMobile ? "1.5px 4px" : "2.5px 5.5px";
+        span.style.fontSize = isMobile ? "9.36px" : "12.17px";
+        span.style.padding = isMobile ? "1.8px 4.8px" : "3px 6.6px";
         span.style.transform = "translate(-50%, -50%) scale(0.84)";
       } else {
         span.style.opacity = "0.85";
-        span.style.fontSize = isMobile ? "5.5px" : "7px";
-        span.style.padding = isMobile ? "2px 4.5px" : "3px 6px";
+        span.style.fontSize = isMobile ? "10.3px" : "13.1px";
+        span.style.padding = isMobile ? "2.4px 5.4px" : "3.6px 7.2px";
         span.style.transform = "translate(-50%, -50%) scale(0.88)";
       }
     });
