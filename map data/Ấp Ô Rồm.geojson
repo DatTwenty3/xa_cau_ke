@@ -26,11 +26,12 @@
         "ma": "3005012",
         "ten": "Ấp Ô Rồm",
         "loai": "Ấp",
-        "dien_tich_km2": "3.3477",
+        "dien_tich_km2": "3.35",
         "dien_tich_ha": "334.77",
         "dan_so": "1848",
         "so_ho": "429",
-        "mat_do_km2": "552.02"
+        "mat_do_km2": "551.64",
+        "audio": "audio/O Rom.mp3"
       },
       "geometry": {
         "type": "Polygon",

@@ -1,0 +1,757 @@
+{
+  "province_name": "Vĩnh Long",
+  "commune_name": "Cầu Kè",
+  "company_name": "CÔNG TY ÂU LẠC",
+  "year": "2026",
+  "month": "6",
+  "defaultCenter": [
+    9.876705952122512,
+    106.078229553819
+  ],
+  "defaultZoom": 13,
+  "intro_audio": "audio/intro.mp3",
+  "area_unit": "ha",
+  "communeProperties": {
+    "ten": "Cầu Kè",
+    "loai": "Xã",
+    "cap": "2",
+    "dien_tich_ha": "5416.18",
+    "dien_tich_km2": "54.16",
+    "dan_so": "35333",
+    "so_ho": "8399",
+    "mat_do_km2": "652.38",
+    "area_auto": true
+  },
+  "hamlets": [
+    {
+      "name": "Ấp 1",
+      "ma": "3005002",
+      "file": "Ấp 1.geojson",
+      "center": [
+        9.86991,
+        106.06266
+      ],
+      "color": "#ff4d4d",
+      "audio": "audio/1.mp3",
+      "properties": {
+        "ten": "Ấp 1",
+        "ma": "3005002",
+        "loai": "Ấp",
+        "dien_tich_ha": "109.97",
+        "dien_tich_km2": "1.10",
+        "dan_so": "2796",
+        "so_ho": "676",
+        "mat_do_km2": "2542.51",
+        "sap_nhap_tu": [
+          "Ấp 1",
+          "Ấp 5"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp 1",
+          "center": [
+            9.872413865370733,
+            106.06220483779909
+          ],
+          "visible": true,
+          "showLine": true
+        },
+        {
+          "name": "Ấp 5",
+          "center": [
+            9.865236782044112,
+            106.06849193573
+          ],
+          "visible": true,
+          "showLine": true
+        }
+      ]
+    },
+    {
+      "name": "Ấp 2",
+      "ma": "3005001",
+      "file": "Ấp 2.geojson",
+      "center": [
+        9.87587,
+        106.05714
+      ],
+      "color": "#ff9f0a",
+      "audio": "audio/2.mp3",
+      "properties": {
+        "ten": "Ấp 2",
+        "ma": "3005001",
+        "loai": "Ấp",
+        "dien_tich_ha": "87.38",
+        "dien_tich_km2": "0.87",
+        "dan_so": "2294",
+        "so_ho": "563",
+        "mat_do_km2": "2625.31",
+        "sap_nhap_tu": [
+          "Ấp 2",
+          "Ấp 3"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp 2",
+          "center": [
+            9.873777387819556,
+            106.05765581130983
+          ],
+          "visible": true,
+          "showLine": true
+        },
+        {
+          "name": "Ấp 3",
+          "center": [
+            9.87652555543596,
+            106.05452299118043
+          ],
+          "visible": true,
+          "showLine": true
+        }
+      ]
+    },
+    {
+      "name": "Ấp 3",
+      "ma": "3005002",
+      "file": "Ấp 3.geojson",
+      "center": [
+        9.86564,
+        106.06248
+      ],
+      "color": "#30d158",
+      "audio": "audio/3.mp3",
+      "properties": {
+        "ten": "Ấp 3",
+        "ma": "3005002",
+        "loai": "Ấp",
+        "dien_tich_ha": "113.30",
+        "dien_tich_km2": "1.13",
+        "dan_so": "2327",
+        "so_ho": "592",
+        "mat_do_km2": "2053.84",
+        "sap_nhap_tu": [
+          "Ấp 4",
+          "Ấp 6"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp 4",
+          "center": [
+            9.86885176845291,
+            106.05480194091798
+          ],
+          "visible": true,
+          "showLine": true
+        },
+        {
+          "name": "Ấp 6",
+          "center": [
+            9.864729412356136,
+            106.05896472930908
+          ],
+          "visible": true,
+          "showLine": true
+        }
+      ]
+    },
+    {
+      "name": "Ấp Bà My",
+      "ma": "3005004",
+      "file": "Ấp Bà My.geojson",
+      "center": [
+        9.8958,
+        106.05755
+      ],
+      "color": "#0a84ff",
+      "audio": "audio/Ba My.mp3",
+      "properties": {
+        "ten": "Ấp Bà My",
+        "ma": "3005004",
+        "loai": "Ấp",
+        "dien_tich_ha": "543.04",
+        "dien_tich_km2": "5.43",
+        "dan_so": "2910",
+        "so_ho": "705",
+        "mat_do_km2": "535.87",
+        "sap_nhap_tu": [
+          "Ấp Bà My"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Bà My",
+          "center": [
+            9.892665763151104,
+            106.05307627092715
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Châu Hưng",
+      "ma": "3005011",
+      "file": "Ấp Châu Hưng.geojson",
+      "center": [
+        9.88676,
+        106.10407
+      ],
+      "color": "#5e5ce6",
+      "audio": "audio/Chau Hung.mp3",
+      "properties": {
+        "ten": "Ấp Châu Hưng",
+        "ma": "3005011",
+        "loai": "Ấp",
+        "dien_tich_ha": "548.74",
+        "dien_tich_km2": "5.49",
+        "dan_so": "2283",
+        "so_ho": "530",
+        "mat_do_km2": "416.04",
+        "sap_nhap_tu": [
+          "Ấp Châu Hưng"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Châu Hưng",
+          "center": [
+            9.89199242395373,
+            106.10054503335806
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Giồng Dầu",
+      "ma": "3005006",
+      "file": "Ấp Giồng Dầu.geojson",
+      "center": [
+        9.90891,
+        106.07051
+      ],
+      "color": "#bf5af2",
+      "audio": "audio/Giong Dau.mp3",
+      "properties": {
+        "ten": "Ấp Giồng Dầu",
+        "ma": "3005006",
+        "loai": "Ấp",
+        "dien_tich_ha": "321.91",
+        "dien_tich_km2": "3.22",
+        "dan_so": "1704",
+        "so_ho": "413",
+        "mat_do_km2": "529.34",
+        "sap_nhap_tu": [
+          "Ấp Giồng Dầu"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Giồng Dầu",
+          "center": [
+            9.910086531733748,
+            106.07013136157822
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Giồng Lớn",
+      "ma": "3005005",
+      "file": "Ấp Giồng Lớn.geojson",
+      "center": [
+        9.87822,
+        106.07094
+      ],
+      "color": "#30d158",
+      "audio": "audio/Giong Lon.mp3",
+      "properties": {
+        "ten": "Ấp Giồng Lớn",
+        "ma": "3005005",
+        "loai": "Ấp",
+        "dien_tich_ha": "393.81",
+        "dien_tich_km2": "3.94",
+        "dan_so": "2494",
+        "so_ho": "601",
+        "mat_do_km2": "633.30",
+        "sap_nhap_tu": [
+          "Ấp Giồng Lớn"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Giồng Lớn",
+          "center": [
+            9.877994216869556,
+            106.06997725261137
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Rùm Sóc",
+      "ma": "3005008",
+      "file": "Ấp Rùm Sóc.geojson",
+      "center": [
+        9.83196,
+        106.06385
+      ],
+      "color": "#64d2ff",
+      "audio": "audio/Rum Soc.mp3",
+      "properties": {
+        "ten": "Ấp Rùm Sóc",
+        "ma": "3005008",
+        "loai": "Ấp",
+        "dien_tich_ha": "291.61",
+        "dien_tich_km2": "2.92",
+        "dan_so": "1876",
+        "so_ho": "441",
+        "mat_do_km2": "643.32",
+        "sap_nhap_tu": [
+          "Ấp Rùm Sóc"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Rùm Sóc",
+          "center": [
+            9.831962107311739,
+            106.06385238125425
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Thông Thảo",
+      "ma": "3005007",
+      "file": "Ấp Thông Thảo.geojson",
+      "center": [
+        9.90587,
+        106.08536
+      ],
+      "color": "#ffd60a",
+      "audio": "audio/Thong Thao.mp3",
+      "properties": {
+        "ten": "Ấp Thông Thảo",
+        "ma": "3005007",
+        "loai": "Ấp",
+        "dien_tich_ha": "385.91",
+        "dien_tich_km2": "3.86",
+        "dan_so": "2421",
+        "so_ho": "571",
+        "mat_do_km2": "627.35",
+        "sap_nhap_tu": [
+          "Ấp Thông Thảo"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Thông Thảo",
+          "center": [
+            9.908059506754535,
+            106.08576635970822
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Trà Kháo",
+      "ma": "3005003",
+      "file": "Ấp Trà Kháo.geojson",
+      "center": [
+        9.88786,
+        106.08132
+      ],
+      "color": "#00e5ff",
+      "audio": "audio/Tra Khao.mp3",
+      "properties": {
+        "ten": "Ấp Trà Kháo",
+        "ma": "3005003",
+        "loai": "Ấp",
+        "dien_tich_ha": "376.49",
+        "dien_tich_km2": "3.76",
+        "dan_so": "2780",
+        "so_ho": "686",
+        "mat_do_km2": "738.40",
+        "sap_nhap_tu": [
+          "Ấp Trà Kháo"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Trà Kháo",
+          "center": [
+            9.886259858680443,
+            106.08058880003243
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Xóm Lớn",
+      "ma": "3005013",
+      "file": "Ấp Xóm Lớn.geojson",
+      "center": [
+        9.89018,
+        106.12317
+      ],
+      "color": "#a78bfa",
+      "audio": "audio/Xom Lon.mp3",
+      "properties": {
+        "ten": "Ấp Xóm Lớn",
+        "ma": "3005013",
+        "loai": "Ấp",
+        "dien_tich_ha": "677.54",
+        "dien_tich_km2": "6.78",
+        "dan_so": "3989",
+        "so_ho": "887",
+        "mat_do_km2": "588.75",
+        "sap_nhap_tu": [
+          "Ấp Xóm Lớn",
+          "Ấp Trà Bôn"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Xóm Lớn",
+          "center": [
+            9.896692175236737,
+            106.12166404724123
+          ],
+          "visible": true,
+          "showLine": true
+        },
+        {
+          "name": "Ấp Trà Bôn",
+          "center": [
+            9.881810428651448,
+            106.12638473510744
+          ],
+          "visible": true,
+          "showLine": true
+        }
+      ]
+    },
+    {
+      "name": "Ấp Ô Mịch",
+      "ma": "3005009",
+      "file": "Ấp Ô Mịch.geojson",
+      "center": [
+        9.84422,
+        106.06982
+      ],
+      "color": "#34d399",
+      "audio": "audio/O Mich.mp3",
+      "properties": {
+        "ten": "Ấp Ô Mịch",
+        "ma": "3005009",
+        "loai": "Ấp",
+        "dien_tich_ha": "470.98",
+        "dien_tich_km2": "4.71",
+        "dan_so": "2044",
+        "so_ho": "471",
+        "mat_do_km2": "433.99",
+        "sap_nhap_tu": [
+          "Ấp Ô Mịch"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Ô Mịch",
+          "center": [
+            9.845555836877669,
+            106.06684552676572
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Ô Rồm",
+      "ma": "3005012",
+      "file": "Ấp Ô Rồm.geojson",
+      "center": [
+        9.8693,
+        106.1148
+      ],
+      "color": "#f43f5e",
+      "audio": "audio/O Rom.mp3",
+      "properties": {
+        "ten": "Ấp Ô Rồm",
+        "ma": "3005012",
+        "loai": "Ấp",
+        "dien_tich_ha": "334.77",
+        "dien_tich_km2": "3.35",
+        "dan_so": "1848",
+        "so_ho": "429",
+        "mat_do_km2": "552.02",
+        "sap_nhap_tu": [
+          "Ấp Ô Rồm"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Ô Rồm",
+          "center": [
+            9.865590292238922,
+            106.11446629791456
+          ],
+          "visible": false,
+          "showLine": false
+        }
+      ]
+    },
+    {
+      "name": "Ấp Ô Tưng",
+      "ma": "3005010",
+      "file": "Ấp Ô Tưng.geojson",
+      "center": [
+        9.86689,
+        106.09072
+      ],
+      "color": "#e28743",
+      "audio": "audio/O Tung.mp3",
+      "properties": {
+        "ten": "Ấp Ô Tưng",
+        "ma": "3005010",
+        "loai": "Ấp",
+        "dien_tich_ha": "760.73",
+        "dien_tich_km2": "7.61",
+        "dan_so": "3567",
+        "so_ho": "834",
+        "mat_do_km2": "468.89",
+        "sap_nhap_tu": [
+          "Ấp Ô Tưng B",
+          "Ấp Ô Tưng A"
+        ]
+      },
+      "subHamlets": [
+        {
+          "name": "Ấp Ô Tưng B",
+          "center": [
+            9.87119831734123,
+            106.0887908935547
+          ],
+          "visible": true,
+          "showLine": true
+        },
+        {
+          "name": "Ấp Ô Tưng A",
+          "center": [
+            9.86117780266644,
+            106.09132289886476
+          ],
+          "visible": true,
+          "showLine": true
+        }
+      ]
+    }
+  ],
+  "oldHamlets": [
+    {
+      "name": "Ấp Ô Tưng A",
+      "file": "Ấp Ô Tưng A.geojson",
+      "center": [
+        9.86117780266644,
+        106.09132289886476
+      ]
+    },
+    {
+      "name": "Ấp Ô Tưng B",
+      "file": "Ấp Ô Tưng B.geojson",
+      "center": [
+        9.87119831734123,
+        106.0887908935547
+      ]
+    },
+    {
+      "name": "Ấp Trà Bôn",
+      "file": "Ấp Trà Bôn.geojson",
+      "center": [
+        9.881810428651448,
+        106.12638473510744
+      ]
+    },
+    {
+      "name": "Ấp Xóm Lớn",
+      "file": "Ấp Xóm Lớn.geojson",
+      "center": [
+        9.896692175236737,
+        106.12166404724123
+      ]
+    }
+  ],
+  "manualOldHamlets": [
+    {
+      "name": "Ấp 1",
+      "coords": [
+        9.872413865370733,
+        106.06220483779909
+      ]
+    },
+    {
+      "name": "Ấp 5",
+      "coords": [
+        9.865236782044112,
+        106.06849193573
+      ]
+    },
+    {
+      "name": "Ấp 2",
+      "coords": [
+        9.873777387819556,
+        106.05765581130983
+      ]
+    },
+    {
+      "name": "Ấp 3",
+      "coords": [
+        9.87652555543596,
+        106.05452299118043
+      ]
+    },
+    {
+      "name": "Ấp 4",
+      "coords": [
+        9.86885176845291,
+        106.05480194091798
+      ]
+    },
+    {
+      "name": "Ấp 6",
+      "coords": [
+        9.864729412356136,
+        106.05896472930908
+      ]
+    },
+    {
+      "name": "Ấp Bà My",
+      "coords": [
+        9.892665763151104,
+        106.05307627092715
+      ]
+    },
+    {
+      "name": "Ấp Châu Hưng",
+      "coords": [
+        9.89199242395373,
+        106.10054503335806
+      ]
+    },
+    {
+      "name": "Ấp Giồng Dầu",
+      "coords": [
+        9.910086531733748,
+        106.07013136157822
+      ]
+    },
+    {
+      "name": "Ấp Giồng Lớn",
+      "coords": [
+        9.877994216869556,
+        106.06997725261137
+      ]
+    },
+    {
+      "name": "Ấp Rùm Sóc",
+      "coords": [
+        9.831962107311739,
+        106.06385238125425
+      ]
+    },
+    {
+      "name": "Ấp Thông Thảo",
+      "coords": [
+        9.908059506754535,
+        106.08576635970822
+      ]
+    },
+    {
+      "name": "Ấp Trà Kháo",
+      "coords": [
+        9.886259858680443,
+        106.08058880003243
+      ]
+    },
+    {
+      "name": "Ấp Ô Mịch",
+      "coords": [
+        9.845555836877669,
+        106.06684552676572
+      ]
+    },
+    {
+      "name": "Ấp Ô Rồm",
+      "coords": [
+        9.865590292238922,
+        106.11446629791456
+      ]
+    }
+  ],
+  "mergedHamletSources": {
+    "Ấp 1": [
+      "Ấp 1",
+      "Ấp 5"
+    ],
+    "Ấp 2": [
+      "Ấp 2",
+      "Ấp 3"
+    ],
+    "Ấp 3": [
+      "Ấp 4",
+      "Ấp 6"
+    ],
+    "Ấp Bà My": [
+      "Ấp Bà My"
+    ],
+    "Ấp Châu Hưng": [
+      "Ấp Châu Hưng"
+    ],
+    "Ấp Giồng Dầu": [
+      "Ấp Giồng Dầu"
+    ],
+    "Ấp Giồng Lớn": [
+      "Ấp Giồng Lớn"
+    ],
+    "Ấp Rùm Sóc": [
+      "Ấp Rùm Sóc"
+    ],
+    "Ấp Thông Thảo": [
+      "Ấp Thông Thảo"
+    ],
+    "Ấp Trà Kháo": [
+      "Ấp Trà Kháo"
+    ],
+    "Ấp Xóm Lớn": [
+      "Ấp Xóm Lớn",
+      "Ấp Trà Bôn"
+    ],
+    "Ấp Ô Mịch": [
+      "Ấp Ô Mịch"
+    ],
+    "Ấp Ô Rồm": [
+      "Ấp Ô Rồm"
+    ],
+    "Ấp Ô Tưng": [
+      "Ấp Ô Tưng B",
+      "Ấp Ô Tưng A"
+    ]
+  }
+}

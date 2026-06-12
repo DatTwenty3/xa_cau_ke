@@ -1,0 +1,11 @@
+{
+  "commune_name": "Cầu Kè",
+  "province_name": "Vĩnh Long",
+  "year": "2026",
+  "month": "6",
+  "company_name": "CÔNG TY ÂU LẠC",
+  "voice": "vi-VN-HoaiMyNeural",
+  "tts_rate": "+15%",
+  "default_zoom": 13,
+  "intro_audio": "audio/intro.mp3"
+}

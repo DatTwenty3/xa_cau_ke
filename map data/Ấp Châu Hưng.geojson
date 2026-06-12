@@ -26,11 +26,12 @@
         "ma": "3005011",
         "ten": "Ấp Châu Hưng",
         "loai": "Ấp",
-        "dien_tich_km2": "5.4874",
+        "dien_tich_km2": "5.49",
         "dien_tich_ha": "548.74",
         "dan_so": "2283",
         "so_ho": "530",
-        "mat_do_km2": "416.04"
+        "mat_do_km2": "415.85",
+        "audio": "audio/Chau Hung.mp3"
       },
       "geometry": {
         "type": "Polygon",

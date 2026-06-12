@@ -26,11 +26,12 @@
         "ma": "3005008",
         "ten": "Ấp Rùm Sóc",
         "loai": "Ấp",
-        "dien_tich_km2": "2.9161",
+        "dien_tich_km2": "2.92",
         "dien_tich_ha": "291.61",
         "dan_so": "1876",
         "so_ho": "441",
-        "mat_do_km2": "643.32"
+        "mat_do_km2": "642.47",
+        "audio": "audio/Rum Soc.mp3"
       },
       "geometry": {
         "type": "Polygon",

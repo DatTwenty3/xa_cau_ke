@@ -26,11 +26,12 @@
         "ma": "3005003",
         "ten": "Ấp Trà Kháo",
         "loai": "Ấp",
-        "dien_tich_km2": "3.7649",
+        "dien_tich_km2": "3.76",
         "dien_tich_ha": "376.49",
         "dan_so": "2780",
         "so_ho": "686",
-        "mat_do_km2": "738.40"
+        "mat_do_km2": "739.36",
+        "audio": "audio/Tra Khao.mp3"
       },
       "geometry": {
         "type": "Polygon",

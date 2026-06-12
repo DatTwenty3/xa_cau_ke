@@ -286,11 +286,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 1. Initialize Map
-  const defaultCenter = [9.914, 106.08];
+  let defaultCenter = [9.914, 106.08];
+  let defaultZoom = 13;
   const map = L.map("map", {
     zoomControl: false, // Disabling default zoom control to position custom styled one
     tap: false,         // Disables Leaflet's custom tap handler to restore reliable native click handling on mobile
-  }).setView(defaultCenter, 13);
+  }).setView(defaultCenter, defaultZoom);
 
   // Tạo các pane bản đồ tùy chỉnh để kiểm soát thứ tự hiển thị (z-index) nghiêm ngặt
   map.createPane("oldHamletsPane");
@@ -352,39 +353,16 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 4. Curated list of hamlets and their files
-  const hamletNames = [
-    "Ấp 1",
-    "Ấp 2",
-    "Ấp Trà Kháo",
-    "Ấp Bà My",
-    "Ấp Giồng Lớn",
-    "Ấp Thông Thảo",
-    "Ấp Giồng Dầu",
-    "Ấp Rùm Sóc",
-    "Ấp Ô Mịch",
-    "Ấp Ô Tưng",
-    "Ấp Châu Hưng",
-    "Ấp Ô Rồm",
-    "Ấp Xóm Lớn"
-  ];
-
-  const hamletColors = {
-    "Ấp 1": "#ff4d4d",      // Neon Coral Red
-    "Ấp 2": "#ff9f0a",      // Neon Gold
-    "Ấp Trà Kháo": "#30d158", // Bright Lime Green
-    "Ấp Bà My": "#0a84ff",    // Vibrant Blue
-    "Ấp Giồng Lớn": "#5e5ce6", // Electric Indigo
-    "Ấp Thông Thảo": "#bf5af2", // Electric Purple
-    "Ấp Giồng Dầu": "#ff375f", // Vivid Rose Pink
-    "Ấp Rùm Sóc": "#64d2ff",   // Bright Sky Blue
-    "Ấp Ô Mịch": "#ffd60a",   // Vibrant Yellow
-    "Ấp Ô Tưng": "#00e5ff",   // Radiant Cyan
-    "Ấp Châu Hưng": "#a78bfa", // Soft Lavender
-    "Ấp Ô Rồm": "#34d399",    // Vibrant Emerald Green
-    "Ấp Xóm Lớn": "#f43f5e"    // Vibrant Pink-Red
-  };
-
+  // 4. Declare configuration variables dynamically
+  let globalConfig = null;
+  let hamletNames = [];
+  let hamletColors = {};
+  let HAMLET_LABEL_CENTERS = {};
+  let oldHamletNames = [];
+  let manualOldHamlets = [];
+  let mergedHamletSources = {};
+  let communeProperties = {};
+  let areaUnit = null; // "ha" | "km2"; null = giữ hiển thị mặc định cũ
   let oldHamletsLayerGroup = L.layerGroup().addTo(map);
   let hamletsLayerGroup = L.layerGroup().addTo(map);
   let hamletGlowLayerGroup = L.layerGroup().addTo(map);
@@ -397,9 +375,119 @@ document.addEventListener("DOMContentLoaded", () => {
   const hamletFeaturesByName = {};
   const hamletFeatureLayersByName = {};
   let zoomToHamletTimer = null;
-  let oldHamletLabelMarkers = [];
+  // Map of parentHamletName -> array of old hamlet label markers (hidden by default, shown on selection)
+  const oldHamletLabelsByParent = {};
   const oldHamletCenters = {};
   let connectingLinesLayerGroup = L.layerGroup().addTo(map);
+
+  // Audio thuyết minh ấp — theo phương án xa_dai_an: new Audio(audio/{ma}.mp3) khi click chọn ấp
+  let currentAudio = null;
+  let currentProperties = null;
+
+  function setTtsButtonState(state, btnEl) {
+    const btn = btnEl || document.getElementById("tts-global-btn");
+    if (!btn || btn.id !== "tts-global-btn") return;
+    const icon = btn.querySelector("i");
+    btn.classList.remove("speaking");
+    if (state === "disabled") {
+      btn.classList.add("disabled");
+      if (icon) icon.className = "fas fa-volume-xmark";
+      btn.title = "Chọn một ấp để nghe thuyết minh";
+    } else if (state === "ready") {
+      btn.classList.remove("disabled");
+      if (icon) icon.className = "fas fa-volume-high";
+      btn.title = "Bật/Tắt âm thanh thuyết minh";
+    } else if (state === "playing") {
+      btn.classList.remove("disabled");
+      btn.classList.add("speaking");
+      if (icon) icon.className = "fas fa-volume-high";
+      btn.title = "Bật/Tắt âm thanh thuyết minh";
+    }
+  }
+
+  function normalizeAudioFilename(filename) {
+    if (!filename) return filename;
+    const base = String(filename).trim().split("/").pop();
+    return base.toLowerCase().endsWith(".mp3") ? base : `${base}.mp3`;
+  }
+
+  function normalizeAudioPath(path) {
+    if (!path) return path;
+    const name = path.startsWith("audio/") ? path.slice(6) : path;
+    return `audio/${normalizeAudioFilename(name)}`;
+  }
+
+  function getAudioPathCandidates(audioPath) {
+    const normalized = normalizeAudioPath(audioPath);
+    const candidates = [normalized];
+    if (normalized.endsWith(".mp3")) {
+      candidates.push(normalized.slice(0, -4));
+    }
+    return [...new Set(candidates)];
+  }
+
+  function resolveHamletAudioPath(props) {
+    if (!props) return null;
+    if (props.audio) return normalizeAudioPath(props.audio);
+    if (props.ma) return normalizeAudioPath(`audio/${props.ma}`);
+    if (props.ten && globalConfig?.hamlets) {
+      const h = globalConfig.hamlets.find((x) => x.name === props.ten);
+      if (h?.audio) return normalizeAudioPath(h.audio);
+      if (h?.ma) return normalizeAudioPath(`audio/${h.ma}`);
+    }
+    return normalizeAudioPath(`audio/${props.ma || "30050"}`);
+  }
+
+  function speakCommuneInfo(props, buttonEl = null) {
+    if (currentAudio) {
+      currentAudio.pause();
+      currentAudio.currentTime = 0;
+      currentAudio = null;
+      setTtsButtonState("ready");
+    }
+
+    currentProperties = props;
+    const audioPath = resolveHamletAudioPath(props);
+    if (!audioPath) return;
+
+    const activeBtn = buttonEl || document.getElementById("tts-global-btn");
+    const candidates = getAudioPathCandidates(audioPath);
+    let candidateIndex = 0;
+
+    const tryPlayCandidate = () => {
+      if (candidateIndex >= candidates.length) {
+        console.error("Lỗi tải/phát âm thanh thuyết minh:", audioPath);
+        setTtsButtonState("ready", activeBtn);
+        currentAudio = null;
+        return;
+      }
+
+      const path = candidates[candidateIndex++];
+      const player = new Audio(path);
+      currentAudio = player;
+
+      player.addEventListener("play", () => {
+        setTtsButtonState("playing", activeBtn);
+      });
+
+      player.addEventListener("ended", () => {
+        setTtsButtonState("ready", activeBtn);
+        currentAudio = null;
+      });
+
+      player.addEventListener("error", () => {
+        player.pause();
+        tryPlayCandidate();
+      });
+
+      player.play().catch(() => {
+        player.pause();
+        tryPlayCandidate();
+      });
+    };
+
+    tryPlayCandidate();
+  }
 
   function getHamletMapPadding() {
     const isMobile = window.innerWidth <= 768;
@@ -482,7 +570,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatHamletName(name) {
     if (!name) return "";
-    return String(name).toLocaleUpperCase("vi-VN");
+    const cleanName = String(name).trim().replace(/^(ấp\s+)/i, "");
+    return "ẤP " + cleanName.toLocaleUpperCase("vi-VN");
   }
 
   function normalizeHamletName(name) {
@@ -524,7 +613,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function formatPopulationDensity(props) {
     const pop = parseInt(props.dan_so || 0, 10);
-    const km2 = parseFloat(String(props.dien_tich_km2 || 0).replace(",", "."));
+    let km2 = 0;
+    if (props.dien_tich_ha) {
+      km2 = parseFloat(String(props.dien_tich_ha).replace(",", ".")) / 100.0;
+    } else {
+      km2 = parseFloat(String(props.dien_tich_km2 || 0).replace(",", "."));
+    }
     const density =
       km2 > 0
         ? pop / km2
@@ -532,8 +626,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!density || Number.isNaN(density)) return "—";
     return (
       density.toLocaleString("vi-VN", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
       }) + " người/km²"
     );
   }
@@ -551,21 +645,43 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  const HAMLET_LABEL_CENTERS = {
-    "Ấp 1": [9.87591, 106.05837],
-    "Ấp 2": [9.86528, 106.06498],
-    "Ấp Trà Kháo": [9.88802536295747, 106.08187575906044],
-    "Ấp Bà My": [9.89267, 106.05308],
-    "Ấp Giồng Lớn": [9.87799, 106.06998],
-    "Ấp Thông Thảo": [9.90806, 106.08577],
-    "Ấp Giồng Dầu": [9.91009, 106.07013],
-    "Ấp Rùm Sóc": [9.83196, 106.06385],
-    "Ấp Ô Mịch": [9.84556, 106.06685],
-    "Ấp Ô Tưng": [9.866846294767543, 106.08977285938694],
-    "Ấp Châu Hưng": [9.89199, 106.10055],
-    "Ấp Ô Rồm": [9.86559, 106.11447],
-    "Ấp Xóm Lớn": [9.88916, 106.12291]
-  };
+  // --- Nhãn ấp cũ: ẩn mặc định, chỉ hiện khi chọn ấp mới tương ứng ---
+
+  function hideAllOldHamletLabels() {
+    Object.values(oldHamletLabelsByParent).forEach(markers => {
+      markers.forEach(marker => {
+        const el = marker.getElement();
+        if (el) {
+          el.classList.add("old-hamlet-label-hidden");
+        }
+      });
+    });
+  }
+
+  function showOldHamletLabelsFor(hamletName) {
+    // Ẩn hết trước
+    hideAllOldHamletLabels();
+    // Chỉ hiện nhãn của ấp mới được chọn, với hiệu ứng fade-in
+    const markers = oldHamletLabelsByParent[hamletName] || [];
+    markers.forEach(marker => {
+      const el = marker.getElement();
+      if (el) {
+        el.classList.remove("old-hamlet-label-hidden");
+        // Kích hoạt lại animation mỗi lần hiện
+        const span = el.querySelector(".old-hamlet-map-label");
+        if (span) {
+          span.style.animation = "none";
+          // Force reflow để animation chạy lại
+          void span.offsetWidth;
+          span.style.animation = "";
+        }
+      }
+    });
+    // Áp dụng scale theo zoom hiện tại cho nhãn vừa hiện
+    updateOffsetHamletLabels();
+  }
+
+
   const hamletLabelMarkersByName = {};
 
   // HUD (Heads-Up Display) controller
@@ -595,7 +711,10 @@ document.addEventListener("DOMContentLoaded", () => {
           hudAccent.style.boxShadow = `0 0 12px ${color}`;
         }
       } else {
-        hudText.innerText = "XÃ CẦU KÈ";
+        const communeDisplayName = (communeProperties && communeProperties.ten)
+          ? ("XÃ " + String(communeProperties.ten).toLocaleUpperCase("vi-VN"))
+          : "BẢN ĐỒ XÃ";
+        hudText.innerText = communeDisplayName;
         mapHud.classList.remove("inspecting");
         if (hudAccent) {
           hudAccent.style.backgroundColor = "var(--accent-emerald)";
@@ -815,6 +934,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Đồng bộ nhãn chữ về trạng thái thường
     selectLabel(null, false);
 
+    // Ẩn toàn bộ nhãn ấp cũ khi bỏ chọn
+    hideAllOldHamletLabels();
+
     if (!prev) return;
     const feature = hamletFeaturesByName[prev];
     const pathLayer = hamletFeatureLayersByName[prev];
@@ -848,6 +970,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // Đồng bộ nhãn chữ sang trạng thái được chọn
     selectLabel(hamletName, true);
 
+    // Hiện nhãn ấp cũ thuộc ấp mới vừa được chọn
+    showOldHamletLabelsFor(hamletName);
+
     const feature = hamletFeaturesByName[hamletName];
     const pathLayer = hamletFeatureLayersByName[hamletName];
     
@@ -880,141 +1005,246 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Vẽ đường nét đứt phát sáng động kết nối từ nhãn cũ tới nhãn mới
       connectingLinesLayerGroup.clearLayers();
-      const mergedHamletSources = {
-        "Ấp 1": ["Ấp 1 (cũ)", "Ấp 2", "Ấp 3"],
-        "Ấp 2": ["Ấp 4", "Ấp 5", "Ấp 6"],
-        "Ấp Ô Tưng": ["Ấp Ô Tưng A", "Ấp Ô Tưng B"],
-        "Ấp Xóm Lớn": ["Ấp Trà Bôn", "Ấp Xóm Lớn"]
-      };
 
-      if (mergedHamletSources[hamletName]) {
-        const newHamletCenter = HAMLET_LABEL_CENTERS[hamletName] || pathLayer.getBounds().getCenter();
-        const sources = mergedHamletSources[hamletName];
-        sources.forEach((sourceName) => {
-          const oldCoords = oldHamletCenters[sourceName];
-          if (oldCoords) {
-            const polyline = L.polyline([oldCoords, newHamletCenter], {
-              color: "#ffffff",
-              weight: 3.5,
-              opacity: 0.98,
-              dashArray: "8, 6",
-              className: "connecting-glowing-line",
-              pane: "connectingLinesPane"
-            }).addTo(connectingLinesLayerGroup);
-          }
-        });
+      if (globalConfig) {
+        const currentHamlet = globalConfig.hamlets.find(h => h.name === hamletName);
+        if (currentHamlet && currentHamlet.subHamlets) {
+          const newHamletCenter = HAMLET_LABEL_CENTERS[hamletName] || pathLayer.getBounds().getCenter();
+          currentHamlet.subHamlets.forEach((sub) => {
+            if (sub.visible !== false && sub.showLine !== false) {
+              // Use composite key first to avoid collision when two new hamlets share a sub-hamlet name
+              const compositeKey = hamletName + "||" + sub.name;
+              const oldCoords = oldHamletCenters[compositeKey] || oldHamletCenters[sub.name];
+              if (oldCoords) {
+                const polyline = L.polyline([oldCoords, newHamletCenter], {
+                  color: "#ffffff",
+                  weight: 3.5,
+                  opacity: 0.98,
+                  dashArray: "8, 6",
+                  className: "connecting-glowing-line",
+                  pane: "connectingLinesPane"
+                }).addTo(connectingLinesLayerGroup);
+              }
+            }
+          });
+        }
       }
     }
   }
 
-  // 5. Setup Boundaries and Loading
-  // Load Hamlet layers
-  Promise.all(
-    hamletNames.map((name) =>
-      fetch(`map data/${name}.geojson`)
-        .then((res) => res.json())
-        .then((data) => ({ name, data }))
-    )
-  )
-    .then((results) => {
-      const geojsonLayers = [];
-      results.forEach(({ name: hamletName, data }) => {
-        const layer = L.geoJSON(data, {
-          pane: "newHamletsPane",
-          style: getHamletStyle,
-          onEachFeature: (feature, featureLayer) => {
-            hamletFeaturesByName[hamletName] = feature;
-            hamletFeatureLayersByName[hamletName] = featureLayer;
+  // 5. Setup Boundaries and Loading from Config
+  fetch("map data/compiled-config.json")
+    .then((res) => res.json())
+    .then((config) => {
+      // Store to globalConfig
+      globalConfig = config;
 
-            // Hover effects
-            featureLayer.on("mouseover", (e) => {
-              if (selectedHamletName === hamletName) return;
-              clearAllHoverStates();
-              const l = e.target;
-              l.setStyle(getHamletHoverStyle(hamletName));
-              l.bringToFront();
-              highlightLabel(hamletName, true);
-              updateMapHUD(hamletName, "hover");
-            });
+      // Update intro audio if a custom one is configured
+      if (config.intro_audio) {
+        introAudio.src = config.intro_audio;
+        introAudio.load();
+      }
 
-            featureLayer.on("mouseout", (e) => {
-              if (selectedHamletName === hamletName) return;
-              e.target.setStyle(getHamletStyle(feature));
-              highlightLabel(hamletName, false);
-              updateMapHUD(null, "hover");
-            });
+      // Initialize dynamic configuration
+      hamletNames = config.hamlets.map(h => h.name);
+      config.hamlets.forEach((h, idx) => {
+        hamletColors[h.name] = h.color || "#ff4d4d";
+        HAMLET_LABEL_CENTERS[h.name] = h.center;
+        
+        // Pre-fill oldHamletCenters coordinates from config using composite key to avoid
+        // name collision when two different new hamlets share a sub-hamlet name.
+        if (h.subHamlets) {
+          h.subHamlets.forEach(sub => {
+            // Composite key: parentHamletName + separator + subName
+            const compositeKey = h.name + "||" + sub.name;
+            oldHamletCenters[compositeKey] = L.latLng(sub.center[0], sub.center[1]);
+            // Also set plain key only if not already set (first-writer wins for backward compat)
+            if (!oldHamletCenters[sub.name]) {
+              oldHamletCenters[sub.name] = L.latLng(sub.center[0], sub.center[1]);
+            }
+          });
+        }
+      });
+      oldHamletNames = config.oldHamlets ? config.oldHamlets.map(oh => oh.name) : [];
+      manualOldHamlets = config.manualOldHamlets || [];
+      mergedHamletSources = config.mergedHamletSources || {};
+      areaUnit = config.area_unit || null;
+      communeProperties = config.communeProperties || {
+        ten: config.commune_name || "",
+        loai: "Xã",
+        cap: "2",
+        dien_tich_km2: "0",
+        dan_so: "0",
+        so_ho: "0",
+        mat_do_km2: "0"
+      };
 
-            // Click event: Mở thông tin Ấp
-            featureLayer.on("click", () => {
-              map.closePopup();
-              selectHamlet(hamletName);
-              openHamletSidebar(feature.properties);
-              scheduleZoomToHamlet(hamletName);
+      // Set map default center & zoom
+      const center = config.defaultCenter || [9.914, 106.08];
+      const zoom = config.defaultZoom || 13;
+      map.setView(center, zoom);
+
+      // Load Hamlet layers
+      const geojsonPromises = config.hamlets.map((h) =>
+        fetch(`map data/${h.file}`)
+          .then((res) => res.json())
+          .then((data) => ({ name: h.name, data }))
+      );
+
+      Promise.all(geojsonPromises)
+        .then((results) => {
+          const geojsonLayers = [];
+          results.forEach(({ name: hamletName, data }) => {
+            const layer = L.geoJSON(data, {
+              pane: "newHamletsPane",
+              style: getHamletStyle,
+              onEachFeature: (feature, featureLayer) => {
+                // Đồng bộ mã ấp & đường dẫn audio từ config vào GeoJSON properties
+                const hConfig = config.hamlets.find(h => h.name === hamletName);
+                if (hConfig) {
+                  if (hConfig.ma) feature.properties.ma = String(hConfig.ma);
+                  if (hConfig.audio) {
+                    feature.properties.audio = normalizeAudioPath(hConfig.audio);
+                  } else if (hConfig.ma) {
+                    feature.properties.audio = normalizeAudioPath(`audio/${hConfig.ma}`);
+                  }
+                }
+
+                hamletFeaturesByName[hamletName] = feature;
+                hamletFeatureLayersByName[hamletName] = featureLayer;
+
+                // Hover effects
+                featureLayer.on("mouseover", (e) => {
+                  if (selectedHamletName === hamletName) return;
+                  clearAllHoverStates();
+                  const l = e.target;
+                  l.setStyle(getHamletHoverStyle(hamletName));
+                  l.bringToFront();
+                  highlightLabel(hamletName, true);
+                  updateMapHUD(hamletName, "hover");
+                });
+
+                featureLayer.on("mouseout", (e) => {
+                  if (selectedHamletName === hamletName) return;
+                  e.target.setStyle(getHamletStyle(feature));
+                  highlightLabel(hamletName, false);
+                  updateMapHUD(null, "hover");
+                });
+
+                // Click event: Mở thông tin Ấp
+                featureLayer.on("click", () => {
+                  map.closePopup();
+                  selectHamlet(hamletName);
+                  openHamletSidebar(feature.properties);
+                  scheduleZoomToHamlet(hamletName);
+                });
+
+              },
             });
-          },
-        });
-        layer.addTo(hamletsLayerGroup);
-        hamletLayersByName[hamletName] = layer;
-        const bounds = layer.getBounds();
-        hamletBoundsByName[hamletName] = bounds;
-        createHamletLabelMarker(hamletName, bounds).addTo(hamletLabelsLayerGroup);
-        geojsonLayers.push(layer);
+            layer.addTo(hamletsLayerGroup);
+            hamletLayersByName[hamletName] = layer;
+            const bounds = layer.getBounds();
+            hamletBoundsByName[hamletName] = bounds;
+            createHamletLabelMarker(hamletName, bounds).addTo(hamletLabelsLayerGroup);
+            geojsonLayers.push(layer);
+          });
+
+          // Fit bounds of map to all hamlets combined at start
+          if (geojsonLayers.length > 0) {
+            const bounds = L.latLngBounds();
+            geojsonLayers.forEach(l => bounds.extend(l.getBounds()));
+            map.fitBounds(bounds, {
+              padding: window.innerWidth < 768 ? [30, 30] : [80, 80],
+            });
+            map.once("moveend", updateOffsetHamletLabels);
+          }
+        })
+        .catch((err) => console.error("Lỗi khi tải danh sách các ấp:", err));
+
+      // Load Old Hamlet Boundaries (shown underneath new hamlets)
+      oldHamletNames.forEach((name) => {
+        fetch(`map data/ranh gioi ap cu/${encodeURIComponent(name)}.geojson`)
+          .then((res) => res.json())
+          .then((data) => {
+            const geojsonLayer = L.geoJSON(data, {
+              pane: "oldHamletsPane",
+              style: {
+                color: "#ffffff",
+                weight: 2.2,
+                opacity: 0.95,
+                fill: false,
+                interactive: false
+              }
+            }).addTo(oldHamletsLayerGroup);
+
+            // Check if visible from config
+            let isVisible = true;
+            for (const h of config.hamlets) {
+              if (h.subHamlets) {
+                const sub = h.subHamlets.find(sh => sh.name === name);
+                if (sub && sub.visible === false) {
+                  isVisible = false;
+                  break;
+                }
+              }
+            }
+
+            // Tạo nhãn tên cho ranh giới ấp cũ
+            const bounds = geojsonLayer.getBounds();
+            if (bounds.isValid()) {
+              const latlng = bounds.getCenter();
+              
+              // Dịch chuyển nhẹ tọa độ nhãn để tránh đè trực tiếp lên nhãn mới
+              const ohConf = config.oldHamlets.find(oh => oh.name === name);
+              const offsetLatlng = ohConf && ohConf.center ? L.latLng(ohConf.center[0], ohConf.center[1]) : latlng;
+
+              oldHamletCenters[name] = offsetLatlng;
+
+              // Also update composite key entries for all parent hamlets that own this old hamlet
+              config.hamlets.forEach(h => {
+                if (h.subHamlets && h.subHamlets.some(sh => sh.name === name)) {
+                  const compositeKey = h.name + "||" + name;
+                  oldHamletCenters[compositeKey] = offsetLatlng;
+                }
+              });
+            }
+          })
+          .catch((err) => console.error(`Lỗi khi tải ranh giới ấp cũ ${name}:`, err));
       });
 
-      // Fit bounds of map to all hamlets combined at start
-      if (geojsonLayers.length > 0) {
-        const bounds = L.latLngBounds();
-        geojsonLayers.forEach(l => bounds.extend(l.getBounds()));
-        map.fitBounds(bounds, {
-          padding: window.innerWidth < 768 ? [30, 30] : [80, 80],
+      // Thêm nhãn tên các ấp cũ của ấp 1 mới và ấp 2 mới từ config (được phân bổ tự động / chỉnh thủ công)
+      manualOldHamlets.forEach((item) => {
+        let isVisible = true;
+        for (const h of config.hamlets) {
+          if (h.subHamlets) {
+            const sub = h.subHamlets.find(sh => sh.name === item.name);
+            if (sub && sub.visible === false) {
+              isVisible = false;
+              break;
+            }
+          }
+        }
+
+        const latlng = L.latLng(item.coords[0], item.coords[1]);
+        oldHamletCenters[item.name] = latlng;
+
+        // Also update composite key entries for all parent hamlets that own this old hamlet
+        config.hamlets.forEach(h => {
+          if (h.subHamlets && h.subHamlets.some(sh => sh.name === item.name)) {
+            const compositeKey = h.name + "||" + item.name;
+            oldHamletCenters[compositeKey] = latlng;
+          }
         });
-        map.once("moveend", updateOffsetHamletLabels);
-      }
-    })
-    .catch((err) => console.error("Lỗi khi tải danh sách các ấp:", err));
 
-  // Load Old Hamlet Boundaries (shown underneath new hamlets)
-  const oldHamletNames = [
-    "Ấp Trà Bôn",
-    "Ấp Xóm Lớn",
-    "Ấp Ô Tưng A",
-    "Ấp Ô Tưng B"
-  ];
-
-  oldHamletNames.forEach((name) => {
-    fetch(`map data/ranh gioi ap cu/${encodeURIComponent(name)}.geojson`)
-      .then((res) => res.json())
-      .then((data) => {
-        const geojsonLayer = L.geoJSON(data, {
-          pane: "oldHamletsPane",
-          style: {
-            color: "#ffffff",
-            weight: 2.2,
-            opacity: 0.95,
-            fill: false,
-            interactive: false
+        if (isVisible) {
+          let displayName = item.name;
+          if (displayName.includes("(cũ)")) {
+            displayName = displayName.replace(/\s*\(cũ\)/g, "");
           }
-        }).addTo(oldHamletsLayerGroup);
-
-        // Tạo nhãn tên cho ranh giới ấp cũ
-        const bounds = geojsonLayer.getBounds();
-        if (bounds.isValid()) {
-          const latlng = bounds.getCenter();
-          
-          // Dịch chuyển nhẹ tọa độ nhãn để tránh đè trực tiếp lên nhãn mới
-          let offsetLatlng = latlng;
-          if (name === "Ấp Xóm Lớn") {
-            offsetLatlng = L.latLng(latlng.lat - 0.002, latlng.lng + 0.001);
-          } else if (name === "Ấp Trà Bôn") {
-            offsetLatlng = L.latLng(latlng.lat + 0.001, latlng.lng - 0.001);
-          } else if (name === "Ấp Ô Tưng B") {
-            offsetLatlng = L.latLng(9.875091778009866, 106.09127801518837);
-          }
-
-          const labelText = `${formatHamletName(name)} (ẤP CŨ)`;
-          const marker = L.marker(offsetLatlng, {
+          const labelText = `${formatHamletName(displayName)} (ẤP CŨ)`;
+          const marker = L.marker(latlng, {
             icon: L.divIcon({
-              className: "hamlet-map-label-icon",
+              className: "hamlet-map-label-icon old-hamlet-label-hidden",
               html: `<span class="hamlet-map-label old-hamlet-map-label">${labelText}</span>`,
             }),
             interactive: false,
@@ -1022,47 +1252,33 @@ document.addEventListener("DOMContentLoaded", () => {
             zIndexOffset: 500
           }).addTo(hamletLabelsLayerGroup);
 
-           oldHamletLabelMarkers.push(marker);
-           oldHamletCenters[name] = offsetLatlng;
-         }
-       })
-       .catch((err) => console.error(`Lỗi khi tải ranh giới ấp cũ ${name}:`, err));
-   });
- 
-   // Thêm nhãn tên các ấp cũ của ấp 1 mới và ấp 2 mới (đã kéo gần vào nhãn mới 30% để khoảng cách gom tụ gọn gàng, đẹp mắt)
-   const manualOldHamlets = [
-     { name: "Ấp 1 (cũ)", coords: [9.877462, 106.060203] },
-     { name: "Ấp 2", coords: [9.873355, 106.057854] },
-     { name: "Ấp 3", coords: [9.875409, 106.054330] },
-     { name: "Ấp 4", coords: [9.869623275479848, 106.05553514929952] },
-     { name: "Ấp 5", coords: [9.865034, 106.069959] },
-     { name: "Ấp 6", coords: [9.865501822996094, 106.05952900941217] }
-   ];
- 
-   manualOldHamlets.forEach((item) => {
-     let displayName = item.name;
-     if (displayName.includes("(cũ)")) {
-       displayName = displayName.replace(/\s*\(cũ\)/g, "");
-     }
-     const labelText = `${formatHamletName(displayName)} (ẤP CŨ)`;
-     const latlng = L.latLng(item.coords[0], item.coords[1]);
-     const marker = L.marker(latlng, {
-       icon: L.divIcon({
-         className: "hamlet-map-label-icon",
-         html: `<span class="hamlet-map-label old-hamlet-map-label">${labelText}</span>`,
-       }),
-       interactive: false,
-       keyboard: false,
-       zIndexOffset: 500
-     }).addTo(hamletLabelsLayerGroup);
- 
-     oldHamletLabelMarkers.push(marker);
-     oldHamletCenters[item.name] = latlng;
-   });
+          // Lưu marker theo cha mẹ
+          config.hamlets.forEach(h => {
+            if (h.subHamlets && h.subHamlets.some(sh => sh.name === item.name)) {
+              if (!oldHamletLabelsByParent[h.name]) oldHamletLabelsByParent[h.name] = [];
+              oldHamletLabelsByParent[h.name].push(marker);
+            }
+          });
+        }
+      });
+
+      // Initial setup: Open commune sidebar on desktop, keep closed on mobile
+      const isMobile = window.innerWidth <= 768;
+      if (!isMobile) {
+        openCommuneSidebar();
+      } else {
+        if (sidebarToggle) {
+          sidebarToggle.style.display = "flex";
+          updateSidebarToggleButton();
+        }
+      }
+    })
+    .catch((err) => console.error("Lỗi khi tải cấu hình bản đồ:", err));
 
   // Tự động thu phóng/ẩn nhãn theo mức độ zoom để bản đồ luôn thoáng đạt
   function updateOffsetHamletLabels() {
     const zoom = map.getZoom();
+    const isMobile = window.innerWidth <= 768;
     Object.keys(hamletLabelMarkersByName).forEach((hamletName) => {
       const marker = hamletLabelMarkersByName[hamletName];
       if (!marker) return;
@@ -1070,8 +1286,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!element) return;
       const span = element.querySelector(".hamlet-map-label");
       if (!span) return;
-
-      const isMobile = window.innerWidth <= 768;
 
       if (zoom < 12) {
         // Thu nhỏ hoàn toàn và ẩn đi khi zoom quá xa
@@ -1117,11 +1331,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Tự động thu phóng/ẩn nhãn ấp cũ theo mức độ zoom (kích thước bằng nhãn mới)
-    oldHamletLabelMarkers.forEach((marker) => {
+    // Tự động thu phóng nhãn ấp cũ theo mức độ zoom — chỉ áp dụng cho nhãn đang hiển thị
+    const allOldMarkers = Object.values(oldHamletLabelsByParent).flat();
+    allOldMarkers.forEach((marker) => {
       if (!marker) return;
       const element = marker.getElement();
       if (!element) return;
+      // Bỏ qua nhãn đang bị ẩn
+      if (element.classList.contains("old-hamlet-label-hidden")) return;
       const span = element.querySelector(".old-hamlet-map-label");
       if (!span) return;
 
@@ -1183,15 +1400,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const minimizeSidebarBtn = document.getElementById("minimize-sidebar");
   const backdrop = document.getElementById("sidebar-backdrop");
 
-  const communeProperties = {
-    ten: "Cầu Kè",
-    loai: "Xã",
-    cap: "2",
-    dien_tich_km2: "54.12",
-    dan_so: "35491",
-    so_ho: "8399",
-    mat_do_km2: "655.78"
-  };
+
 
   function updateSidebarToggleButton() {
     if (!sidebarToggle) return;
@@ -1254,7 +1463,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (backBtn) backBtn.style.display = "none";
 
     // Header updates
-    document.getElementById("commune-name").innerText = "XÃ CẦU KÈ";
+    const communeNameDisplay = communeProperties && communeProperties.ten
+      ? ("XÃ " + String(communeProperties.ten).toLocaleUpperCase("vi-VN"))
+      : "BẢNG THÔNG TIN XÃ";
+    document.getElementById("commune-name").innerText = communeNameDisplay;
     document.getElementById("commune-badge-text").innerText = "Đơn vị cấp Xã";
     
     // Style badge for Commune
@@ -1277,18 +1489,25 @@ document.addEventListener("DOMContentLoaded", () => {
       if (densityIconI) densityIconI.className = "fas fa-house-chimney";
     }
 
-    animateValue("stat-area", 0, parseFloat(communeProperties.dien_tich_km2), 1000, 2, " km²");
+    const communeAreaKm2 = parseFloat(String(communeProperties.dien_tich_km2 || 0).replace(",", ".")) || 0;
+    const communeAreaHa = communeProperties.dien_tich_ha
+      ? (parseFloat(String(communeProperties.dien_tich_ha).replace(",", ".")) || 0)
+      : communeAreaKm2 * 100.0;
+    if (areaUnit === "ha") {
+      animateValue("stat-area", 0, communeAreaHa, 1000, 2, " ha");
+    } else {
+      animateValue("stat-area", 0, communeAreaKm2, 1000, 2, " km²");
+    }
     animateValue("stat-pop", 0, parseInt(communeProperties.dan_so), 1200, 0, " người");
     animateValue("stat-density", 0, parseInt(communeProperties.so_ho), 1500, 0, " hộ");
 
-    // Disable global TTS button for the whole commune
-    const globalTtsBtn = document.getElementById("tts-global-btn");
-    if (globalTtsBtn) {
-      globalTtsBtn.classList.add("disabled");
-      globalTtsBtn.classList.remove("speaking");
-      globalTtsBtn.title = "Chọn một ấp để nghe thuyết minh";
-      const icon = globalTtsBtn.querySelector("i");
-      if (icon) icon.className = "fas fa-volume-xmark";
+    setTtsButtonState("disabled");
+
+    // Clear audio name label
+    const audioNameEl = document.getElementById("tts-audio-name");
+    if (audioNameEl) {
+      audioNameEl.textContent = "";
+      audioNameEl.style.display = "none";
     }
 
     // Admin table updates
@@ -1312,7 +1531,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const mergerContainer = document.getElementById("info-merger");
     if (mergerContainer) {
       mergerContainer.innerHTML = "";
-      hamletNames.forEach((hName) => {
+      // Sắp xếp A-Z theo bảng chữ cái tiếng Việt trước khi hiển thị
+      const sortedHamletNames = [...hamletNames].sort((a, b) =>
+        a.localeCompare(b, "vi-VN", { sensitivity: "base" })
+      );
+      sortedHamletNames.forEach((hName) => {
         const tag = document.createElement("span");
         tag.className = "merger-tag";
         tag.style.cursor = "pointer";
@@ -1384,15 +1607,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const popVal = parseInt(props.dan_so || 0);
     const hoVal = parseInt(props.so_ho || 0);
 
-    animateValue("stat-area", 0, areaHa, 1000, 2, " ha");
+    if (areaUnit === "km2") {
+      animateValue("stat-area", 0, areaHa / 100.0, 1000, 2, " km²");
+    } else {
+      animateValue("stat-area", 0, areaHa, 1000, 2, " ha");
+    }
     animateValue("stat-pop", 0, popVal, 1200, 0, " người");
     animateValue("stat-density", 0, hoVal, 1500, 0, " hộ");
 
-    // Enable global TTS button dynamically when selected
-    const globalTtsBtn = document.getElementById("tts-global-btn");
-    if (globalTtsBtn) {
-      globalTtsBtn.classList.remove("disabled");
-      globalTtsBtn.title = "Bật/Tắt âm thanh thuyết minh";
+    setTtsButtonState("ready");
+
+    // Show audio file name label next to the TTS button
+    const audioNameEl = document.getElementById("tts-audio-name");
+    if (audioNameEl) {
+      const rawAudio = props.audio || `audio/${props.ma || ""}.mp3`;
+      // Extract just the filename portion
+      const audioFilename = rawAudio.split("/").pop();
+      audioNameEl.textContent = audioFilename;
+      audioNameEl.style.display = "inline";
     }
 
     // Admin table updates
@@ -1426,13 +1658,13 @@ document.addEventListener("DOMContentLoaded", () => {
       currentAudio.currentTime = 0;
       currentAudio = null;
     }
-    const globalTtsBtn = document.getElementById("tts-global-btn");
-    if (globalTtsBtn) {
-      globalTtsBtn.classList.remove("speaking");
-      globalTtsBtn.classList.add("disabled");
-      globalTtsBtn.title = "Chọn một ấp để nghe thuyết minh";
-      const icon = globalTtsBtn.querySelector("i");
-      if (icon) icon.className = "fas fa-volume-xmark";
+    setTtsButtonState("disabled");
+
+    // Clear audio name label
+    const audioNameElClose = document.getElementById("tts-audio-name");
+    if (audioNameElClose) {
+      audioNameElClose.textContent = "";
+      audioNameElClose.style.display = "none";
     }
 
     map.closePopup();
@@ -1541,16 +1773,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Initial setup: Open commune sidebar on desktop, keep closed on mobile
-  const isMobile = window.innerWidth <= 768;
-  if (!isMobile) {
-    openCommuneSidebar();
-  } else {
-    if (sidebarToggle) {
-      sidebarToggle.style.display = "flex";
-      updateSidebarToggleButton();
-    }
-  }
+
 
   // --- DESKTOP DRAGGABLE SIDEBAR LOGIC ---
   (function initDesktopDraggableSidebar() {
@@ -1723,80 +1946,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.requestAnimationFrame(step);
   }
 
-  // 8. Text-to-Speech (TTS) Voice Introduction for the Commune
-  let currentAudio = null;
-  let currentProperties = null;
-
-  function speakCommuneInfo(props, buttonEl = null) {
-    // Dừng phát âm thanh hiện tại nếu có
-    if (currentAudio) {
-      currentAudio.pause();
-      currentAudio.currentTime = 0;
-      currentAudio = null;
-      document.querySelectorAll(".tts-speech-btn, .popup-tts-btn, .sound-toggle-btn").forEach(btn => {
-        btn.classList.remove("speaking");
-        if (btn.id === "tts-global-btn") {
-          const icon = btn.querySelector("i");
-          if (icon) icon.className = "fas fa-volume-xmark";
-        }
-      });
-    }
-
-    currentProperties = props; // Lưu trữ để phát lại thủ công nếu cần
-
-    const ma = props.ma || "30050";
-    const audioPath = `audio/${ma}.mp3`;
-    
-    currentAudio = new Audio(audioPath);
-    
-    const activeBtn = buttonEl || document.getElementById("tts-global-btn");
-
-    currentAudio.addEventListener("play", () => {
-      if (activeBtn) {
-        activeBtn.classList.add("speaking");
-        if (activeBtn.id === "tts-global-btn") {
-          const icon = activeBtn.querySelector("i");
-          if (icon) icon.className = "fas fa-volume-high";
-        }
-      }
-    });
-
-    currentAudio.addEventListener("ended", () => {
-      if (activeBtn) {
-        activeBtn.classList.remove("speaking");
-        if (activeBtn.id === "tts-global-btn") {
-          const icon = activeBtn.querySelector("i");
-          if (icon) icon.className = "fas fa-volume-xmark";
-        }
-      }
-      currentAudio = null;
-    });
-
-    currentAudio.addEventListener("error", (e) => {
-      console.error("Lỗi tải/phát âm thanh thuyết minh:", e);
-      if (activeBtn) {
-        activeBtn.classList.remove("speaking");
-        if (activeBtn.id === "tts-global-btn") {
-          const icon = activeBtn.querySelector("i");
-          if (icon) icon.className = "fas fa-volume-xmark";
-        }
-      }
-      currentAudio = null;
-    });
-
-    currentAudio.play().catch((err) => {
-      console.warn("Trình duyệt chặn tự động phát âm thanh:", err);
-      if (activeBtn) {
-        activeBtn.classList.remove("speaking");
-        if (activeBtn.id === "tts-global-btn") {
-          const icon = activeBtn.querySelector("i");
-          if (icon) icon.className = "fas fa-volume-xmark";
-        }
-      }
-    });
-  }
-
-  // Thiết lập trình bắt sự kiện click cho nút loa phát thanh điều khiển thủ công
+  // 8. Text-to-Speech (TTS) — nút loa điều khiển thủ công (theo xa_dai_an)
   const globalTtsBtn = document.getElementById("tts-global-btn");
   if (globalTtsBtn) {
     globalTtsBtn.addEventListener("click", (e) => {
@@ -1807,9 +1957,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentAudio.pause();
         currentAudio.currentTime = 0;
         currentAudio = null;
-        globalTtsBtn.classList.remove("speaking");
-        const icon = globalTtsBtn.querySelector("i");
-        if (icon) icon.className = "fas fa-volume-xmark";
+        setTtsButtonState("ready", globalTtsBtn);
       } else if (currentProperties) {
         speakCommuneInfo(currentProperties, globalTtsBtn);
       }

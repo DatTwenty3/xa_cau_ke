@@ -18,8 +18,8 @@
         "EntityHandle": "2BFA06",
         "Text": "ANSI31",
         "sap_nhap_tu": [
-          "Ấp Trà Bôn",
-          "Ấp Xóm Lớn"
+          "Ấp Xóm Lớn",
+          "Ấp Trà Bôn"
         ],
         "so_ho_sau_sap_nhap": 887,
         "so_dan_sau_sap_nhap": 3989,
@@ -27,11 +27,12 @@
         "ma": "3005013",
         "ten": "Ấp Xóm Lớn",
         "loai": "Ấp",
-        "dien_tich_km2": "6.7754",
+        "dien_tich_km2": "6.78",
         "dien_tich_ha": "677.54",
         "dan_so": "3989",
         "so_ho": "887",
-        "mat_do_km2": "588.75"
+        "mat_do_km2": "588.35",
+        "audio": "audio/Xom Lon.mp3"
       },
       "geometry": {
         "type": "Polygon",

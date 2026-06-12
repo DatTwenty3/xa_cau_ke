@@ -26,11 +26,12 @@
         "ma": "3005004",
         "ten": "Ấp Bà My",
         "loai": "Ấp",
-        "dien_tich_km2": "5.4304",
+        "dien_tich_km2": "5.43",
         "dien_tich_ha": "543.04",
         "dan_so": "2910",
         "so_ho": "705",
-        "mat_do_km2": "535.87"
+        "mat_do_km2": "535.91",
+        "audio": "audio/Ba My.mp3"
       },
       "geometry": {
         "type": "Polygon",
