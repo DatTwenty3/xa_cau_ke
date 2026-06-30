@@ -25,14 +25,14 @@
         "so_dan_sau_sap_nhap": 3989,
         "dien_tich_sau_sap_nhap_ha": 677.54,
         "ma": "3005013",
-        "ten": "Ấp Xóm Lớn",
+        "ten": "Ấp Tà Ốt",
         "loai": "Ấp",
         "dien_tich_km2": "6.78",
         "dien_tich_ha": "677.54",
         "dan_so": "3989",
         "so_ho": "887",
         "mat_do_km2": "588.35",
-        "audio": "audio/Xom Lon.mp3"
+        "audio": "audio/Ta Ot.mp3"
       },
       "geometry": {
         "type": "Polygon",
