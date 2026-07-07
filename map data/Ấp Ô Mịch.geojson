@@ -31,7 +31,24 @@
         "dan_so": "2044",
         "so_ho": "471",
         "mat_do_km2": "433.97",
-        "audio": "audio/O Mich.mp3"
+        "audio": "audio/O Mich.mp3",
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Thị Thân",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0375 036 691"
+          },
+          {
+            "ho_ten": "Thạch Sa Rên",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0907 164 070"
+          },
+          {
+            "ho_ten": "Thạch Sâm Răng",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0972 551 329"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

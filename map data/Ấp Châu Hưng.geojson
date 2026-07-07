@@ -31,7 +31,24 @@
         "dan_so": "2283",
         "so_ho": "530",
         "mat_do_km2": "415.85",
-        "audio": "audio/Chau Hung.mp3"
+        "audio": "audio/Chau Hung.mp3",
+        "can_bo": [
+          {
+            "ho_ten": "Tô Văn Đến",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0939 216 196"
+          },
+          {
+            "ho_ten": "Trần Quốc Trữ",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0364 549 702"
+          },
+          {
+            "ho_ten": "Trần Thị Quỳnh Như",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0962 835 372"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

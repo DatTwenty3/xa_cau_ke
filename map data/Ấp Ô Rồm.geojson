@@ -31,7 +31,24 @@
         "dan_so": "1848",
         "so_ho": "429",
         "mat_do_km2": "551.64",
-        "audio": "audio/O Rom.mp3"
+        "audio": "audio/O Rom.mp3",
+        "can_bo": [
+          {
+            "ho_ten": "Lê Hoàng Dinh",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0397 112 848"
+          },
+          {
+            "ho_ten": "Phạm Minh Của",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0397 793 266"
+          },
+          {
+            "ho_ten": "Lý Khanh",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0332 948 858"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

@@ -31,7 +31,24 @@
         "dan_so": "2421",
         "so_ho": "571",
         "mat_do_km2": "627.2",
-        "audio": "audio/Thong Thao.mp3"
+        "audio": "audio/Thong Thao.mp3",
+        "can_bo": [
+          {
+            "ho_ten": "Nguyễn Thanh Nhàn",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0338 717 888"
+          },
+          {
+            "ho_ten": "Thạch Sô Phưa",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0364 595 081"
+          },
+          {
+            "ho_ten": "Giang Công Danh",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0862 499 699"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

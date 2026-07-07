@@ -31,7 +31,24 @@
         "dan_so": "1704",
         "so_ho": "413",
         "mat_do_km2": "529.19",
-        "audio": "audio/Giong Dau.mp3"
+        "audio": "audio/Giong Dau.mp3",
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Thị Kiều",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0399 736 573"
+          },
+          {
+            "ho_ten": "Huỳnh Văn Cường",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0388 373 891"
+          },
+          {
+            "ho_ten": "Thạch Khôn",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0966 618 944"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

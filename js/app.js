@@ -611,6 +611,46 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function renderOfficialsSection(props) {
+    const section = document.getElementById("officials-section");
+    const listEl = document.getElementById("officials-list");
+    if (!section || !listEl) return;
+
+    const officials = Array.isArray(props?.can_bo) ? props.can_bo : [];
+    const normalizedOfficials = officials.filter((item) => {
+      if (!item || typeof item !== "object") return false;
+      return item.ho_ten || item.chuc_vu || item.so_dien_thoai;
+    });
+
+    listEl.innerHTML = "";
+    if (normalizedOfficials.length === 0) {
+      section.style.display = "none";
+      return;
+    }
+
+    normalizedOfficials.forEach((official) => {
+      const card = document.createElement("div");
+      card.className = "official-card";
+
+      const safeName = official.ho_ten || "Chưa cập nhật";
+      const safeRole = official.chuc_vu || "Chưa cập nhật chức vụ";
+      const phone = (official.so_dien_thoai || "").trim();
+      const phoneHref = phone.replace(/[^\d+]/g, "");
+      const phoneHtml = phone
+        ? `<a class="official-phone" href="tel:${phoneHref}"><i class="fas fa-phone"></i> ${phone}</a>`
+        : `<span class="official-phone muted"><i class="fas fa-phone-slash"></i> Chưa có số điện thoại</span>`;
+
+      card.innerHTML = `
+        <div class="official-name">${safeName}</div>
+        <div class="official-role">${safeRole}</div>
+        ${phoneHtml}
+      `;
+      listEl.appendChild(card);
+    });
+
+    section.style.display = "block";
+  }
+
   function formatPopulationDensity(props) {
     const pop = parseInt(props.dan_so || 0, 10);
     let km2 = 0;
@@ -1108,6 +1148,9 @@ document.addEventListener("DOMContentLoaded", () => {
                   } else if (hConfig.ma) {
                     feature.properties.audio = normalizeAudioPath(`audio/${hConfig.ma}`);
                   }
+                  feature.properties.can_bo = Array.isArray(hConfig.properties?.can_bo)
+                    ? hConfig.properties.can_bo
+                    : [];
                 }
 
                 hamletFeaturesByName[hamletName] = feature;
@@ -1461,6 +1504,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hide back to commune button
     const backBtn = document.getElementById("back-to-commune");
     if (backBtn) backBtn.style.display = "none";
+    const officialsSection = document.getElementById("officials-section");
+    if (officialsSection) officialsSection.style.display = "none";
 
     // Header updates
     const communeNameDisplay = communeProperties && communeProperties.ten
@@ -1643,6 +1688,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (mergerContainer) {
       renderMergerTags(mergerContainer, props);
     }
+    renderOfficialsSection(props);
 
     speakCommuneInfo(props);
     updateSidebarToggleButton();
@@ -1666,6 +1712,8 @@ document.addEventListener("DOMContentLoaded", () => {
       audioNameElClose.textContent = "";
       audioNameElClose.style.display = "none";
     }
+    const officialsSection = document.getElementById("officials-section");
+    if (officialsSection) officialsSection.style.display = "none";
 
     map.closePopup();
     clearHamletSelection();

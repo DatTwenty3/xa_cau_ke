@@ -45,6 +45,23 @@
         "sap_nhap_tu": [
           "Ấp 1",
           "Ấp 5"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Danh",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0986 516 275"
+          },
+          {
+            "ho_ten": "Huỳnh Thành Trung",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0977 727 403"
+          },
+          {
+            "ho_ten": "Nguyễn Minh Phú",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0939 093 033"
+          }
         ]
       },
       "subHamlets": [
@@ -90,6 +107,23 @@
         "sap_nhap_tu": [
           "Ấp 2",
           "Ấp 3"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Trương Thị Mỹ Thanh",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0987 451 681"
+          },
+          {
+            "ho_ten": "Thạch Phong",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0776 715 520"
+          },
+          {
+            "ho_ten": "Lê Minh Thư",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0917 097 066"
+          }
         ]
       },
       "subHamlets": [
@@ -135,6 +169,23 @@
         "sap_nhap_tu": [
           "Ấp 4",
           "Ấp 6"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Dương Văn Dũng",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0972 424 357"
+          },
+          {
+            "ho_ten": "Lê Thị Ngọc Linh",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0385 194 089"
+          },
+          {
+            "ho_ten": "Thạch Lý Danh",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0389 018 846"
+          }
         ]
       },
       "subHamlets": [
@@ -179,6 +230,23 @@
         "mat_do_km2": "535.87",
         "sap_nhap_tu": [
           "Ấp Bà My"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Đinh Thị Nhật Tân",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0919 253 686"
+          },
+          {
+            "ho_ten": "Nguyễn Văn Trọng",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0907 023 847"
+          },
+          {
+            "ho_ten": "Thạch Thị Hồng Mai",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0987 807 613"
+          }
         ]
       },
       "subHamlets": [
@@ -214,6 +282,23 @@
         "mat_do_km2": "416.04",
         "sap_nhap_tu": [
           "Ấp Châu Hưng"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Tô Văn Đến",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0939 216 196"
+          },
+          {
+            "ho_ten": "Trần Quốc Trữ",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0364 549 702"
+          },
+          {
+            "ho_ten": "Trần Thị Quỳnh Như",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0962 835 372"
+          }
         ]
       },
       "subHamlets": [
@@ -249,6 +334,23 @@
         "mat_do_km2": "529.34",
         "sap_nhap_tu": [
           "Ấp Giồng Dầu"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Thị Kiều",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0399 736 573"
+          },
+          {
+            "ho_ten": "Huỳnh Văn Cường",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0388 373 891"
+          },
+          {
+            "ho_ten": "Thạch Khôn",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0966 618 944"
+          }
         ]
       },
       "subHamlets": [
@@ -284,6 +386,23 @@
         "mat_do_km2": "633.30",
         "sap_nhap_tu": [
           "Ấp Giồng Lớn"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Dươnl",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0978 746 120"
+          },
+          {
+            "ho_ten": "Kim Sa Oong",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0334 152 568"
+          },
+          {
+            "ho_ten": "Sơn Thị Thúy Vi",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0762 955 304"
+          }
         ]
       },
       "subHamlets": [
@@ -319,6 +438,23 @@
         "mat_do_km2": "643.32",
         "sap_nhap_tu": [
           "Ấp Rùm Sóc"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Thị Cane",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0339 998 662"
+          },
+          {
+            "ho_ten": "Thạch Sa Rinh",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0985 295 810"
+          },
+          {
+            "ho_ten": "Thạch Ri",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0385 970 781"
+          }
         ]
       },
       "subHamlets": [
@@ -354,6 +490,23 @@
         "mat_do_km2": "627.35",
         "sap_nhap_tu": [
           "Ấp Thông Thảo"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Nguyễn Thanh Nhàn",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0338 717 888"
+          },
+          {
+            "ho_ten": "Thạch Sô Phưa",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0364 595 081"
+          },
+          {
+            "ho_ten": "Giang Công Danh",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0862 499 699"
+          }
         ]
       },
       "subHamlets": [
@@ -389,6 +542,23 @@
         "mat_do_km2": "738.40",
         "sap_nhap_tu": [
           "Ấp Trà Kháo"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Ngọc",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0974 750 440"
+          },
+          {
+            "ho_ten": "Thạch Ngân",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0787 955 977"
+          },
+          {
+            "ho_ten": "Phạm Thị Mỹ Hạnh",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0355 840 804"
+          }
         ]
       },
       "subHamlets": [
@@ -425,6 +595,23 @@
         "sap_nhap_tu": [
           "Ấp Xóm Lớn",
           "Ấp Trà Bôn"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Sơn Đường",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0366 280 229"
+          },
+          {
+            "ho_ten": "Lý Sa Qui",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0368 589 683"
+          },
+          {
+            "ho_ten": "Thạch Hoàng Phương",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0347 610 109"
+          }
         ]
       },
       "subHamlets": [
@@ -469,6 +656,23 @@
         "mat_do_km2": "433.99",
         "sap_nhap_tu": [
           "Ấp Ô Mịch"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Thị Thân",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0375 036 691"
+          },
+          {
+            "ho_ten": "Thạch Sa Rên",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0907 164 070"
+          },
+          {
+            "ho_ten": "Thạch Sâm Răng",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0972 551 329"
+          }
         ]
       },
       "subHamlets": [
@@ -504,6 +708,23 @@
         "mat_do_km2": "552.02",
         "sap_nhap_tu": [
           "Ấp Ô Rồm"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Lê Hoàng Dinh",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0397 112 848"
+          },
+          {
+            "ho_ten": "Phạm Minh Của",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0397 793 266"
+          },
+          {
+            "ho_ten": "Lý Khanh",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0332 948 858"
+          }
         ]
       },
       "subHamlets": [
@@ -540,6 +761,23 @@
         "sap_nhap_tu": [
           "Ấp Ô Tưng B",
           "Ấp Ô Tưng A"
+        ],
+        "can_bo": [
+          {
+            "ho_ten": "Lê Thị Pho Ly",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0392 678 136"
+          },
+          {
+            "ho_ten": "Thạch Thị Hồng Tươi",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0377 970 747"
+          },
+          {
+            "ho_ten": "Thạch Thị Rớt Thi",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0985 560 450"
+          }
         ]
       },
       "subHamlets": [

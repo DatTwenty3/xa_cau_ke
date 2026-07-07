@@ -33,7 +33,24 @@
         "so_ho": "676",
         "mat_do_km2": "2541.82",
         "audio": "audio/1.mp3",
-        "path": "D:\\5. work\\2026\\xa_cau_ke\\Ấp 2.geojson"
+        "path": "D:\\5. work\\2026\\xa_cau_ke\\Ấp 2.geojson",
+        "can_bo": [
+          {
+            "ho_ten": "Thạch Danh",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0986 516 275"
+          },
+          {
+            "ho_ten": "Huỳnh Thành Trung",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0977 727 403"
+          },
+          {
+            "ho_ten": "Nguyễn Minh Phú",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0939 093 033"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

@@ -31,7 +31,24 @@
         "dan_so": "2910",
         "so_ho": "705",
         "mat_do_km2": "535.91",
-        "audio": "audio/Ba My.mp3"
+        "audio": "audio/Ba My.mp3",
+        "can_bo": [
+          {
+            "ho_ten": "Đinh Thị Nhật Tân",
+            "chuc_vu": "Bí thư Chi bộ",
+            "so_dien_thoai": "0919 253 686"
+          },
+          {
+            "ho_ten": "Nguyễn Văn Trọng",
+            "chuc_vu": "Trưởng Ban Nhân Dân",
+            "so_dien_thoai": "0907 023 847"
+          },
+          {
+            "ho_ten": "Thạch Thị Hồng Mai",
+            "chuc_vu": "Trưởng Ban công tác Mặt trận",
+            "so_dien_thoai": "0987 807 613"
+          }
+        ]
       },
       "geometry": {
         "type": "Polygon",

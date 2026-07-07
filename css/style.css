@@ -684,6 +684,80 @@ body {
   opacity: 0.8;
 }
 
+.officials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.info-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--accent-emerald);
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(207, 77, 3, 0.14), rgba(207, 77, 3, 0.06));
+  border: 1px solid rgba(207, 77, 3, 0.25);
+  box-shadow: 0 8px 20px -12px rgba(15, 43, 92, 0.45);
+}
+
+.info-section-title i {
+  color: var(--accent-emerald);
+}
+
+.official-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  border: 1px solid rgba(15, 43, 92, 0.1);
+  border-left: 4px solid var(--accent-emerald);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(207, 77, 3, 0.1), rgba(15, 43, 92, 0.03));
+  box-shadow: 0 10px 18px -14px rgba(15, 43, 92, 0.5);
+}
+
+.official-name {
+  font-size: 16.4px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.official-role {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  font-size: 13.6px;
+  font-weight: 700;
+  color: var(--accent-emerald);
+  background: rgba(207, 77, 3, 0.14);
+  border: 1px solid rgba(207, 77, 3, 0.25);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.official-phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent-emerald);
+  text-decoration: none;
+}
+
+.official-phone:hover {
+  text-decoration: underline;
+}
+
+.official-phone.muted {
+  color: var(--text-secondary);
+}
+
 /* Floating custom layer control button panel */
 .map-layer-control {
   position: absolute;
