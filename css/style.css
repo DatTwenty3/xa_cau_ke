@@ -697,7 +697,7 @@ body {
   gap: 8px;
   font-size: 17px;
   font-weight: 800;
-  color: var(--accent-emerald);
+  color: var(--accent-indigo);
   padding: 10px 12px;
   border-radius: 12px;
   background: linear-gradient(135deg, rgba(207, 77, 3, 0.14), rgba(207, 77, 3, 0.06));
